@@ -18,6 +18,8 @@ public sealed class AppSettings
     public AppProxyMode ProxyMode { get; set; } = AppProxyMode.System;
     public string ProxyAddress { get; set; } = "";
     public string DefaultHeaderText { get; set; } = "";
+    public SaveDirectoryMode SaveDirectoryMode { get; set; } = SaveDirectoryMode.LastUsed;
+    public string FixedDownloadDirectory { get; set; } = "";
     public string LastDownloadDirectory { get; set; } = "";
     public ObservableCollection<SiteCredential> SiteCredentials { get; set; } = [];
 
@@ -42,6 +44,8 @@ public sealed class AppSettings
             ProxyMode = ProxyMode,
             ProxyAddress = ProxyAddress,
             DefaultHeaderText = DefaultHeaderText,
+            SaveDirectoryMode = SaveDirectoryMode,
+            FixedDownloadDirectory = FixedDownloadDirectory,
             LastDownloadDirectory = LastDownloadDirectory,
             TaskDataFile = TaskDataFile,
             SettingsDataFile = SettingsDataFile,

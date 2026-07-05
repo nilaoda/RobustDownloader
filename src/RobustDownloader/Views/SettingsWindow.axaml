@@ -122,12 +122,20 @@
                     <StackPanel Spacing="18" Margin="0,14,14,0">
                         <StackPanel Spacing="8">
                             <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.DefaultSaveDirectory}"/>
+                            <ComboBox x:Name="CmbSaveDirectoryMode" HorizontalAlignment="Left" MinWidth="240" SelectionChanged="SaveDirectoryMode_SelectionChanged">
+                                <ComboBoxItem Tag="LastUsed" Content="{DynamicResource Settings.SaveDirectoryLastUsed}"/>
+                                <ComboBoxItem Tag="Fixed" Content="{DynamicResource Settings.SaveDirectoryFixed}"/>
+                            </ComboBox>
                             <Grid ColumnDefinitions="*,8,Auto">
-                                <TextBox x:Name="TxtLastDownloadDirectory"
+                                <TextBox x:Name="TxtFixedDownloadDirectory"
                                          Grid.Column="0"
-                                         Text="{Binding LastDownloadDirectory}"
+                                         Text="{Binding FixedDownloadDirectory}"
                                          VerticalContentAlignment="Center"/>
-                                <Button Grid.Column="2" Content="{DynamicResource Add.Browse}" Padding="14,7" Click="BrowseDirectory_Click"/>
+                                <Button x:Name="BtnBrowseFixedDirectory"
+                                        Grid.Column="2"
+                                        Content="{DynamicResource Add.Browse}"
+                                        Padding="14,7"
+                                        Click="BrowseDirectory_Click"/>
                             </Grid>
                             <TextBlock Classes="Hint" Text="{DynamicResource Settings.DefaultSaveDirectoryHint}"/>
                         </StackPanel>

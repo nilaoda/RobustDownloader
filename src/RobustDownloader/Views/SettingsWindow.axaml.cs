@@ -24,7 +24,9 @@ public partial class SettingsWindow : ShadUI.Window
         SelectComboBoxItem(CmbLanguage, settings.LanguageMode.ToString());
         SelectComboBoxItem(CmbTheme, settings.ThemeMode.ToString());
         SelectComboBoxItem(CmbProxyMode, settings.ProxyMode.ToString());
+        SelectComboBoxItem(CmbSaveDirectoryMode, settings.SaveDirectoryMode.ToString());
         UpdateProxyAddressState();
+        UpdateSaveDirectoryState();
     }
 
     private async void BrowseDirectory_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -37,7 +39,7 @@ public partial class SettingsWindow : ShadUI.Window
 
         var path = folders.FirstOrDefault()?.Path.LocalPath;
         if (!string.IsNullOrWhiteSpace(path))
-            TxtLastDownloadDirectory.Text = path;
+            TxtFixedDownloadDirectory.Text = path;
     }
 
     private void AddCredential_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -69,6 +71,7 @@ public partial class SettingsWindow : ShadUI.Window
         settings.LanguageMode = ReadComboBoxTag(CmbLanguage, AppLanguageMode.Auto);
         settings.ThemeMode = ReadComboBoxTag(CmbTheme, AppThemeMode.System);
         settings.ProxyMode = ReadComboBoxTag(CmbProxyMode, AppProxyMode.System);
+        settings.SaveDirectoryMode = ReadComboBoxTag(CmbSaveDirectoryMode, SaveDirectoryMode.LastUsed);
 
         if (!Validate(settings, out var message))
         {
@@ -104,8 +107,8 @@ public partial class SettingsWindow : ShadUI.Window
             return false;
         }
 
-        if (!string.IsNullOrWhiteSpace(settings.LastDownloadDirectory) &&
-            !Directory.Exists(settings.LastDownloadDirectory))
+        if (settings.SaveDirectoryMode == SaveDirectoryMode.Fixed &&
+            (string.IsNullOrWhiteSpace(settings.FixedDownloadDirectory) || !Directory.Exists(settings.FixedDownloadDirectory)))
         {
             message = LocalizationService.Get("Validation.DefaultDirectoryMissing");
             return false;
@@ -136,9 +139,21 @@ public partial class SettingsWindow : ShadUI.Window
         UpdateProxyAddressState();
     }
 
+    private void SaveDirectoryMode_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        UpdateSaveDirectoryState();
+    }
+
     private void UpdateProxyAddressState()
     {
         TxtProxyAddress.IsEnabled = ReadComboBoxTag(CmbProxyMode, AppProxyMode.System) == AppProxyMode.Manual;
+    }
+
+    private void UpdateSaveDirectoryState()
+    {
+        var isFixed = ReadComboBoxTag(CmbSaveDirectoryMode, SaveDirectoryMode.LastUsed) == SaveDirectoryMode.Fixed;
+        TxtFixedDownloadDirectory.IsEnabled = isFixed;
+        BtnBrowseFixedDirectory.IsEnabled = isFixed;
     }
 
     private static bool IsValidProxyAddress(string address)

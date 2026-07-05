@@ -1,5 +1,6 @@
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Globalization;
 using Avalonia;
 using RobustDownloader.Models;
@@ -45,7 +46,22 @@ public static class LocalizationService
     {
         if (mode != AppLanguageMode.Auto) return mode;
 
-        var name = CultureInfo.CurrentUICulture.Name;
+        foreach (var name in GetPreferredLanguageNames())
+        {
+            var resolved = ResolveLanguageName(name);
+            if (resolved.HasValue)
+                return resolved.Value;
+        }
+
+        return AppLanguageMode.English;
+    }
+
+    private static AppLanguageMode? ResolveLanguageName(string? name)
+    {
+        if (string.IsNullOrWhiteSpace(name))
+            return null;
+
+        name = NormalizeLanguageName(name);
         if (name.StartsWith("zh-Hant", StringComparison.OrdinalIgnoreCase) ||
             name.Contains("-TW", StringComparison.OrdinalIgnoreCase) ||
             name.Contains("-HK", StringComparison.OrdinalIgnoreCase) ||
@@ -55,7 +71,71 @@ public static class LocalizationService
         if (name.StartsWith("zh", StringComparison.OrdinalIgnoreCase))
             return AppLanguageMode.SimplifiedChinese;
 
-        return AppLanguageMode.English;
+        return name.StartsWith("en", StringComparison.OrdinalIgnoreCase)
+            ? AppLanguageMode.English
+            : null;
+    }
+
+    private static IEnumerable<string> GetPreferredLanguageNames()
+    {
+        if (OperatingSystem.IsMacOS())
+        {
+            foreach (var name in ReadMacOSAppleLanguages())
+                yield return name;
+        }
+
+        yield return CultureInfo.CurrentUICulture.Name;
+        yield return CultureInfo.CurrentCulture.Name;
+
+        foreach (var variable in new[] { "LC_ALL", "LC_MESSAGES", "LANG" })
+            yield return Environment.GetEnvironmentVariable(variable) ?? "";
+    }
+
+    private static IReadOnlyList<string> ReadMacOSAppleLanguages()
+    {
+        try
+        {
+            var startInfo = new ProcessStartInfo
+            {
+                FileName = "/usr/bin/defaults",
+                UseShellExecute = false,
+                RedirectStandardOutput = true,
+                RedirectStandardError = true
+            };
+
+            startInfo.ArgumentList.Add("read");
+            startInfo.ArgumentList.Add("-g");
+            startInfo.ArgumentList.Add("AppleLanguages");
+
+            using var process = Process.Start(startInfo);
+            if (process == null || !process.WaitForExit(1000))
+                return [];
+
+            var output = process.StandardOutput.ReadToEnd();
+            var names = new List<string>();
+            foreach (var line in output.Split('\n'))
+            {
+                var name = line.Trim().Trim(',', '"');
+                if (name.Length > 0 && name is not "(" and not ")")
+                    names.Add(name);
+            }
+
+            return names;
+        }
+        catch
+        {
+            return [];
+        }
+    }
+
+    private static string NormalizeLanguageName(string name)
+    {
+        var normalized = name.Trim().Trim('"').Replace('_', '-');
+        var dotIndex = normalized.IndexOf('.', StringComparison.Ordinal);
+        if (dotIndex >= 0)
+            normalized = normalized[..dotIndex];
+
+        return normalized;
     }
 
     private static IReadOnlyDictionary<string, string> GetResources(AppLanguageMode mode)
@@ -197,7 +277,9 @@ public static class LocalizationService
         ["Settings.ProxyHint"] = "手动模式请填写完整代理地址，例如 http://127.0.0.1:7890。",
         ["Settings.SaveAndHeaders"] = "保存与 Header",
         ["Settings.DefaultSaveDirectory"] = "默认保存目录",
-        ["Settings.DefaultSaveDirectoryHint"] = "新建任务会优先使用此目录；每次成功加入任务后会记住当次保存目录。",
+        ["Settings.DefaultSaveDirectoryHint"] = "使用上一次目录时，每次成功加入任务后会记住当次保存目录；固定目录默认使用系统下载目录。",
+        ["Settings.SaveDirectoryLastUsed"] = "使用上一次的下载目录",
+        ["Settings.SaveDirectoryFixed"] = "使用固定目录",
         ["Settings.DefaultHeaders"] = "默认 HTTP Header",
         ["Settings.Credentials"] = "站点凭据",
         ["Settings.CredentialsTitle"] = "站点用户名/密码",
@@ -368,7 +450,9 @@ public static class LocalizationService
         ["Settings.ProxyHint"] = "For manual mode, enter a full proxy URL, for example http://127.0.0.1:7890.",
         ["Settings.SaveAndHeaders"] = "Save & Header",
         ["Settings.DefaultSaveDirectory"] = "Default Save Directory",
-        ["Settings.DefaultSaveDirectoryHint"] = "New tasks prefer this folder. The app also remembers the last folder used when tasks are added.",
+        ["Settings.DefaultSaveDirectoryHint"] = "Last-used mode remembers the directory from each successfully added task. Fixed mode defaults to the system Downloads folder.",
+        ["Settings.SaveDirectoryLastUsed"] = "Use last download directory",
+        ["Settings.SaveDirectoryFixed"] = "Use fixed directory",
         ["Settings.DefaultHeaders"] = "Default HTTP Headers",
         ["Settings.Credentials"] = "Credentials",
         ["Settings.CredentialsTitle"] = "Site Username / Password",
@@ -539,7 +623,9 @@ public static class LocalizationService
         ["Settings.ProxyHint"] = "手動模式請填寫完整代理地址，例如 http://127.0.0.1:7890。",
         ["Settings.SaveAndHeaders"] = "儲存與 Header",
         ["Settings.DefaultSaveDirectory"] = "預設儲存目錄",
-        ["Settings.DefaultSaveDirectoryHint"] = "新增任務會優先使用此目錄；每次成功加入任務後會記住當次儲存目錄。",
+        ["Settings.DefaultSaveDirectoryHint"] = "使用上一次目錄時，每次成功加入任務後會記住當次儲存目錄；固定目錄預設使用系統下載目錄。",
+        ["Settings.SaveDirectoryLastUsed"] = "使用上一次的下載目錄",
+        ["Settings.SaveDirectoryFixed"] = "使用固定目錄",
         ["Settings.DefaultHeaders"] = "預設 HTTP Header",
         ["Settings.Credentials"] = "站台憑證",
         ["Settings.CredentialsTitle"] = "站台使用者名稱/密碼",

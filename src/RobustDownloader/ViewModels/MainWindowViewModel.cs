@@ -196,10 +196,23 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public string GetDefaultDirectory()
     {
+        if (_settings.SaveDirectoryMode == SaveDirectoryMode.Fixed)
+        {
+            if (!string.IsNullOrWhiteSpace(_settings.FixedDownloadDirectory) && Directory.Exists(_settings.FixedDownloadDirectory))
+                return _settings.FixedDownloadDirectory;
+
+            return GetDownloadsDirectory();
+        }
+
         if (!string.IsNullOrWhiteSpace(_settings.LastDownloadDirectory) && Directory.Exists(_settings.LastDownloadDirectory))
             return _settings.LastDownloadDirectory;
 
-        return Tasks.LastOrDefault()?.SaveDirectory ?? Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        var lastTaskDirectory = Tasks
+            .Reverse()
+            .FirstOrDefault(task => !string.IsNullOrWhiteSpace(task.SaveDirectory) && Directory.Exists(task.SaveDirectory))
+            ?.SaveDirectory;
+
+        return lastTaskDirectory ?? GetDownloadsDirectory();
     }
 
     public AddTaskResult BuildDefaultAddTask()
@@ -219,6 +232,8 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         SyncSettingsFromTopBar();
         var snapshot = _settings.Clone();
+        if (string.IsNullOrWhiteSpace(snapshot.FixedDownloadDirectory) || !Directory.Exists(snapshot.FixedDownloadDirectory))
+            snapshot.FixedDownloadDirectory = GetDownloadsDirectory();
         snapshot.TaskDataFile = _dataFile;
         snapshot.SettingsDataFile = _settingsFile;
         return snapshot;
@@ -232,6 +247,8 @@ public partial class MainWindowViewModel : ViewModelBase
         DefaultThreads = _settings.DefaultThreadCount.ToString();
         DefaultBlockSize = _settings.DefaultBlockSizeMb.ToString("0.##");
         MaxConcurrency = CoerceConcurrency(_settings.MaxConcurrency);
+        if (string.IsNullOrWhiteSpace(_settings.FixedDownloadDirectory) || !Directory.Exists(_settings.FixedDownloadDirectory))
+            _settings.FixedDownloadDirectory = GetDownloadsDirectory();
         _taskListLimit = CoerceTaskListLimit(_settings.TaskListLimit);
         RefreshTaskListScopeOptions(_taskListLimit);
         RefreshVisibleTasks();
@@ -478,6 +495,8 @@ public partial class MainWindowViewModel : ViewModelBase
 
         LocalizationService.Apply(_settings.LanguageMode);
         AppThemeService.Apply(_settings.ThemeMode);
+        if (string.IsNullOrWhiteSpace(_settings.FixedDownloadDirectory) || !Directory.Exists(_settings.FixedDownloadDirectory))
+            _settings.FixedDownloadDirectory = GetDownloadsDirectory();
         _taskListLimit = CoerceTaskListLimit(_settings.TaskListLimit);
         _settings.TaskListLimit = _taskListLimit;
         RefreshTaskListScopeOptions(_taskListLimit);
@@ -489,6 +508,8 @@ public partial class MainWindowViewModel : ViewModelBase
         try
         {
             SyncSettingsFromTopBar();
+            if (string.IsNullOrWhiteSpace(_settings.FixedDownloadDirectory) || !Directory.Exists(_settings.FixedDownloadDirectory))
+                _settings.FixedDownloadDirectory = GetDownloadsDirectory();
             Directory.CreateDirectory(_dataDirectory);
             using var stream = File.Create(_settingsFile);
             JsonSerializer.Serialize(stream, _settings, AppJsonContext.Default.AppSettings);
@@ -546,6 +567,16 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         int[] options = [1, 2, 3, 5, 8];
         return options.Contains(value) ? value : 3;
+    }
+
+    private static string GetDownloadsDirectory()
+    {
+        var userProfile = Environment.GetFolderPath(Environment.SpecialFolder.UserProfile);
+        if (string.IsNullOrWhiteSpace(userProfile))
+            return AppContext.BaseDirectory;
+
+        var downloads = Path.Combine(userProfile, "Downloads");
+        return Directory.Exists(downloads) ? downloads : userProfile;
     }
 
     private static int CoerceTaskListLimit(int value)
