@@ -31,15 +31,22 @@ public partial class SettingsWindow : ShadUI.Window
 
     private async void BrowseDirectory_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        try
         {
-            Title = LocalizationService.Get("Dialog.SelectDefaultSaveDirectory"),
-            AllowMultiple = false
-        });
+            var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = LocalizationService.Get("Dialog.SelectDefaultSaveDirectory"),
+                AllowMultiple = false
+            });
 
-        var path = folders.FirstOrDefault()?.Path.LocalPath;
-        if (!string.IsNullOrWhiteSpace(path))
-            TxtFixedDownloadDirectory.Text = path;
+            var path = FolderPathHelper.GetLocalPath(folders.FirstOrDefault());
+            if (!string.IsNullOrWhiteSpace(path))
+                TxtFixedDownloadDirectory.Text = path;
+        }
+        catch (Exception ex)
+        {
+            TxtValidation.Text = LocalizationService.Format("Validation.SelectDirectoryFailed", ex.Message);
+        }
     }
 
     private void AddCredential_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -72,6 +79,7 @@ public partial class SettingsWindow : ShadUI.Window
         settings.ThemeMode = ReadComboBoxTag(CmbTheme, AppThemeMode.System);
         settings.ProxyMode = ReadComboBoxTag(CmbProxyMode, AppProxyMode.System);
         settings.SaveDirectoryMode = ReadComboBoxTag(CmbSaveDirectoryMode, SaveDirectoryMode.LastUsed);
+        settings.FixedDownloadDirectory = FolderPathHelper.Normalize(settings.FixedDownloadDirectory);
 
         if (!Validate(settings, out var message))
         {
@@ -108,7 +116,7 @@ public partial class SettingsWindow : ShadUI.Window
         }
 
         if (settings.SaveDirectoryMode == SaveDirectoryMode.Fixed &&
-            (string.IsNullOrWhiteSpace(settings.FixedDownloadDirectory) || !Directory.Exists(settings.FixedDownloadDirectory)))
+            (string.IsNullOrWhiteSpace(settings.FixedDownloadDirectory) || !FolderPathHelper.DirectoryExists(settings.FixedDownloadDirectory)))
         {
             message = LocalizationService.Get("Validation.DefaultDirectoryMissing");
             return false;

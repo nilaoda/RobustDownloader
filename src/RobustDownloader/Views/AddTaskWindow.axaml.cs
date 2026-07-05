@@ -48,15 +48,22 @@ public partial class AddTaskWindow : ShadUI.Window
 
     private async void BtnBrowse_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+        try
         {
-            Title = LocalizationService.Get("Dialog.SelectSaveDirectory"),
-            AllowMultiple = false
-        });
+            var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
+            {
+                Title = LocalizationService.Get("Dialog.SelectSaveDirectory"),
+                AllowMultiple = false
+            });
 
-        var path = folders.FirstOrDefault()?.Path.LocalPath;
-        if (!string.IsNullOrWhiteSpace(path))
-            TxtSaveDir.Text = path;
+            var path = FolderPathHelper.GetLocalPath(folders.FirstOrDefault());
+            if (!string.IsNullOrWhiteSpace(path))
+                TxtSaveDir.Text = path;
+        }
+        catch (Exception ex)
+        {
+            TxtValidation.Text = LocalizationService.Format("Validation.SelectDirectoryFailed", ex.Message);
+        }
     }
 
     private void BtnAdd_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -69,14 +76,14 @@ public partial class AddTaskWindow : ShadUI.Window
             return;
         }
 
-        var saveDir = TxtSaveDir.Text?.Trim() ?? "";
+        var saveDir = FolderPathHelper.Normalize(TxtSaveDir.Text ?? "");
         if (string.IsNullOrWhiteSpace(saveDir))
         {
             TxtValidation.Text = LocalizationService.Get("Validation.SelectDirectory");
             return;
         }
 
-        if (!Directory.Exists(saveDir))
+        if (!FolderPathHelper.DirectoryExists(saveDir))
         {
             TxtValidation.Text = LocalizationService.Get("Validation.DirectoryMissing");
             return;
