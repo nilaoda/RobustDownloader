@@ -1,0 +1,31 @@
+<Project>
+    <PropertyGroup>
+        <PublishAot>true</PublishAot>
+        <PublishTrimmed>true</PublishTrimmed>
+        <StripSymbols>true</StripSymbols>
+        <IlcOptimizationPreference>Speed</IlcOptimizationPreference>
+        <IlcFoldIdenticalMethodBodies>true</IlcFoldIdenticalMethodBodies>
+        <IlcTrimMetadata>true</IlcTrimMetadata>
+        <IlcGenerateStackTraceData>true</IlcGenerateStackTraceData>
+    </PropertyGroup>
+
+    <PropertyGroup Condition="'$(PublishAot)' == 'true' and '$(Configuration)' == 'Release'">
+        <DebugType>None</DebugType>
+        <DebuggerSupport>false</DebuggerSupport>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**" />
+        <None Remove=".gitignore" />
+    </ItemGroup>
+
+    <ItemGroup Condition="'$(PublishAot)' == 'true' and '$(RuntimeIdentifier)' == 'win-x64'">
+        <DirectPInvoke Include="libHarfBuzzSharp" />
+        <NativeLibrary Include="lib\libHarfBuzzSharp.lib"/>
+        <DirectPInvoke Include="libSkiaSharp" />
+        <NativeLibrary Include="lib\SkiaSharp.lib"/>
+        <NativeLibrary Include="lib\skia.lib"/>
+        <DirectPInvoke Include="av_libglesv2" />
+        <NativeLibrary Include="lib\av_libglesv2.lib"/>
+    </ItemGroup>
+</Project>

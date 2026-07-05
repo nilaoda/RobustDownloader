@@ -1,0 +1,406 @@
+<shad:Window xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RobustDownloader.ViewModels"
+             xmlns:models="using:RobustDownloader.Models"
+             xmlns:views="using:RobustDownloader.Views"
+             xmlns:shad="clr-namespace:ShadUI;assembly=ShadUI"
+             x:Class="RobustDownloader.Views.MainWindow"
+             x:DataType="vm:MainWindowViewModel"
+             Title="{Binding WindowTitle}"
+             Width="1180" Height="720"
+             MinWidth="980" MinHeight="560"
+             WindowStartupLocation="CenterScreen"
+             Icon="/Assets/app-icon.ico">
+    <shad:Window.Resources>
+        <views:DownloadStatusBrushConverter x:Key="StatusBackgroundConverter"/>
+        <views:DownloadStatusBrushConverter x:Key="StatusForegroundConverter" Variant="Foreground"/>
+    </shad:Window.Resources>
+
+    <shad:Window.Styles>
+        <Style Selector="Button">
+            <Setter Property="BorderBrush" Value="{DynamicResource BorderColor}"/>
+            <Setter Property="BorderThickness" Value="1"/>
+        </Style>
+        <Style Selector="TextBox">
+            <Setter Property="SelectionBrush" Value="{DynamicResource PrimaryColor50}"/>
+            <Setter Property="SelectionForegroundBrush" Value="{x:Null}"/>
+        </Style>
+        <Style Selector="TextBlock.FieldLabel">
+            <Setter Property="Foreground" Value="{DynamicResource MutedColor}"/>
+            <Setter Property="FontSize" Value="12"/>
+        </Style>
+        <Style Selector="TextBlock.FieldValue">
+            <Setter Property="TextWrapping" Value="Wrap"/>
+            <Setter Property="FontSize" Value="13"/>
+        </Style>
+        <Style Selector="TextBlock.SectionTitle">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+        <Style Selector="ComboBox.ToolbarComboBox">
+            <Setter Property="Width" Value="86"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="ComboBox.QueueFilterComboBox">
+            <Setter Property="Width" Value="132"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.ToolbarButton">
+            <Setter Property="MinWidth" Value="72"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.ToolbarWideButton">
+            <Setter Property="MinWidth" Value="96"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.QueueFilterButton">
+            <Setter Property="MinWidth" Value="104"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="TextBlock.ToolbarText">
+            <Setter Property="VerticalAlignment" Value="Center"/>
+            <Setter Property="TextAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Border.StatusBadge">
+            <Setter Property="CornerRadius" Value="12"/>
+            <Setter Property="Padding" Value="10,3"/>
+            <Setter Property="HorizontalAlignment" Value="Left"/>
+            <Setter Property="VerticalAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="TextBlock.StatusBadgeText">
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+    </shad:Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto">
+        <Border Grid.Row="0"
+                Background="{DynamicResource CardBackgroundColor}"
+                BorderBrush="{DynamicResource BorderColor}"
+                BorderThickness="0,0,0,1"
+                Padding="16,12">
+            <Grid ColumnDefinitions="Auto,*,Auto">
+                <StackPanel Grid.Column="0"
+                            Orientation="Horizontal"
+                            Spacing="8"
+                            VerticalAlignment="Center">
+                    <Button Content="{DynamicResource Main.NewTask}" Classes="Primary ToolbarWideButton" Click="BtnAdd_Click"/>
+                    <Button Content="{DynamicResource Main.Start}" Classes="ToolbarButton" Click="BtnStart_Click">
+                        <ToolTip.Tip>
+                            <TextBlock Text="{DynamicResource Main.Start}"/>
+                        </ToolTip.Tip>
+                    </Button>
+                    <Button Content="{DynamicResource Main.Stop}" Classes="ToolbarButton" Click="BtnStop_Click">
+                        <ToolTip.Tip>
+                            <TextBlock Text="{DynamicResource Main.Stop}"/>
+                        </ToolTip.Tip>
+                    </Button>
+                    <Button Content="{DynamicResource Main.Delete}" Classes="Destructive ToolbarButton" Click="BtnDelete_Click">
+                        <ToolTip.Tip>
+                            <TextBlock Text="{DynamicResource Main.Delete}"/>
+                        </ToolTip.Tip>
+                    </Button>
+                </StackPanel>
+
+                <Grid Grid.Column="2"
+                      HorizontalAlignment="Right"
+                      VerticalAlignment="Center"
+                      ColumnDefinitions="Auto,18,Auto,8,Auto,10,Auto,10,Auto,10,Auto">
+                    <TextBlock Grid.Column="0"
+                               Classes="ToolbarText"
+                               Text="{Binding GlobalSpeedDisplay}"
+                               FontWeight="SemiBold"/>
+                    <TextBlock Grid.Column="2"
+                               Classes="ToolbarText"
+                               Text="{DynamicResource Main.Concurrency}"
+                               Foreground="{DynamicResource MutedColor}"/>
+                    <ComboBox Grid.Column="4"
+                              Classes="ToolbarComboBox"
+                              ItemsSource="{Binding ConcurrencyOptions}"
+                              SelectedItem="{Binding MaxConcurrency}"/>
+                    <Button Grid.Column="6" Content="{DynamicResource Main.StartAll}" Classes="ToolbarWideButton" Click="BtnStartAll_Click"/>
+                    <Button Grid.Column="8" Content="{DynamicResource Main.StopAll}" Classes="ToolbarWideButton" Click="BtnStopAll_Click"/>
+                    <Button Grid.Column="10" Content="{DynamicResource Main.Settings}" Classes="ToolbarButton" Click="BtnSettings_Click"/>
+                </Grid>
+            </Grid>
+        </Border>
+
+        <Grid Grid.Row="1" ColumnDefinitions="*,Auto">
+            <Grid Grid.Column="0" RowDefinitions="Auto,*">
+                <Border Grid.Row="0"
+                        Background="{DynamicResource BackgroundColor}"
+                        BorderBrush="{DynamicResource BorderColor}"
+                        BorderThickness="0,0,0,1"
+                        Padding="16,12">
+                    <Grid ColumnDefinitions="Auto,12,Auto,*,Auto">
+                        <StackPanel Grid.Column="0" Spacing="2">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Main.Queue}"/>
+                            <TextBlock Text="{Binding TabInfo}"
+                                       Foreground="{DynamicResource MutedColor}"
+                                       FontSize="12"/>
+                        </StackPanel>
+
+                        <ComboBox Grid.Column="2"
+                                  Classes="QueueFilterComboBox"
+                                  ItemsSource="{Binding TaskListScopes}"
+                                  SelectedItem="{Binding SelectedTaskListScope}"/>
+
+                        <Button Grid.Column="4"
+                                Content="{Binding DetailPaneButtonText}"
+                                Classes="QueueFilterButton"
+                                HorizontalAlignment="Right"
+                                Click="BtnToggleDetails_Click"/>
+                    </Grid>
+                </Border>
+
+                <Grid Grid.Row="1">
+                    <DataGrid x:Name="TaskGrid"
+                              IsVisible="{Binding HasVisibleTasks}"
+                              ItemsSource="{Binding VisibleTasks}"
+                              SelectedItem="{Binding SelectedTask}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="True"
+                              SelectionMode="Extended"
+                              GridLinesVisibility="Horizontal"
+                              CanUserResizeColumns="True"
+                              CanUserSortColumns="True"
+                              x:CompileBindings="False">
+                        <DataGrid.ContextMenu>
+                            <ContextMenu>
+                                <MenuItem Header="{DynamicResource Main.CopyUrl}" Click="CopyUrl_Click"/>
+                                <MenuItem Header="{DynamicResource Main.CopyFileName}" Click="CopyFileName_Click"/>
+                                <MenuItem Header="{DynamicResource Main.CopySavePath}" Click="CopySavePath_Click"/>
+                                <Separator/>
+                                <MenuItem Header="{DynamicResource Main.OpenFolder}" Click="OpenFolder_Click"/>
+                            </ContextMenu>
+                        </DataGrid.ContextMenu>
+                        <DataGrid.Columns>
+                            <DataGridTextColumn Header="{DynamicResource Column.FileName}" Binding="{Binding FileName}" Width="*"/>
+                            <DataGridTemplateColumn Header="{DynamicResource Column.Status}" Width="96">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="models:DownloadTask">
+                                        <Border Classes="StatusBadge"
+                                                Background="{Binding Status, Converter={StaticResource StatusBackgroundConverter}}">
+                                            <TextBlock Classes="StatusBadgeText"
+                                                       Text="{Binding StatusLabel}"
+                                                       Foreground="{Binding Status, Converter={StaticResource StatusForegroundConverter}}"/>
+                                        </Border>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTemplateColumn Header="{DynamicResource Column.Progress}" Width="150">
+                                <DataGridTemplateColumn.CellTemplate>
+                                    <DataTemplate DataType="models:DownloadTask">
+                                        <Grid Height="18">
+                                            <ProgressBar Minimum="0" Maximum="100" Value="{Binding Progress}"/>
+                                            <TextBlock Text="{Binding Progress, StringFormat={}{0:0.0}%}"
+                                                       HorizontalAlignment="Center"
+                                                       VerticalAlignment="Center"
+                                                       FontSize="11"/>
+                                        </Grid>
+                                    </DataTemplate>
+                                </DataGridTemplateColumn.CellTemplate>
+                            </DataGridTemplateColumn>
+                            <DataGridTextColumn Header="{DynamicResource Column.Speed}" Binding="{Binding Speed}" Width="105"/>
+                            <DataGridTextColumn Header="{DynamicResource Column.Eta}" Binding="{Binding Eta}" Width="105"/>
+                            <DataGridTextColumn Header="{DynamicResource Column.Size}" Binding="{Binding FileSize}" Width="220"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+
+                    <StackPanel IsVisible="{Binding HasNoVisibleTasks}"
+                                Width="360"
+                                HorizontalAlignment="Center"
+                                VerticalAlignment="Center"
+                                Spacing="12">
+                        <TextBlock Text="{DynamicResource Main.EmptyTitle}"
+                                   FontSize="20"
+                                   FontWeight="SemiBold"
+                                   TextAlignment="Center"/>
+                        <TextBlock Text="{DynamicResource Main.EmptyBody}"
+                                   Foreground="{DynamicResource MutedColor}"
+                                   TextWrapping="Wrap"
+                                   TextAlignment="Center"/>
+                        <Button Content="{DynamicResource Main.NewTask}"
+                                Classes="Primary"
+                                Padding="18,8"
+                                HorizontalAlignment="Center"
+                                Click="BtnAdd_Click"/>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+
+            <Border Grid.Column="1"
+                    IsVisible="{Binding IsDetailPaneOpen}"
+                    Width="340"
+                    BorderBrush="{DynamicResource BorderColor}"
+                    BorderThickness="1,0,0,0"
+                    Background="{DynamicResource CardBackgroundColor}"
+                    Padding="16">
+                <Grid RowDefinitions="Auto,*">
+                    <Grid Grid.Row="0"
+                          ColumnDefinitions="*,Auto"
+                          Margin="0,0,0,14">
+                        <TextBlock Grid.Column="0"
+                                   Classes="SectionTitle"
+                                   Text="{DynamicResource Main.Details}"
+                                   VerticalAlignment="Center"/>
+                        <Button Grid.Column="1"
+                                Content="{DynamicResource Main.CollapseDetails}"
+                                Padding="10,5"
+                                Click="BtnToggleDetails_Click"/>
+                    </Grid>
+
+                    <Grid Grid.Row="1">
+                        <StackPanel IsVisible="{Binding HasNoSelectedTask}"
+                                    HorizontalAlignment="Center"
+                                    VerticalAlignment="Center"
+                                    Width="240"
+                                    Spacing="8">
+                            <TextBlock Text="{DynamicResource Main.SelectTaskTitle}"
+                                       FontSize="18"
+                                       FontWeight="SemiBold"
+                                       TextAlignment="Center"/>
+                            <TextBlock Text="{DynamicResource Main.SelectTaskBody}"
+                                       Foreground="{DynamicResource MutedColor}"
+                                       TextWrapping="Wrap"
+                                       TextAlignment="Center"/>
+                        </StackPanel>
+
+                        <ScrollViewer IsVisible="{Binding HasSelectedTask}">
+                            <StackPanel Spacing="16">
+                            <StackPanel Spacing="8">
+                                <Grid ColumnDefinitions="*,Auto">
+                                    <TextBlock Grid.Column="0"
+                                               Text="{Binding SelectedTask.FileName}"
+                                               FontSize="18"
+                                               FontWeight="SemiBold"
+                                               TextWrapping="Wrap"/>
+                                    <Border Grid.Column="1"
+                                            Classes="StatusBadge"
+                                            Background="{Binding SelectedTask.Status, Converter={StaticResource StatusBackgroundConverter}}">
+                                        <TextBlock Classes="StatusBadgeText"
+                                                   Text="{Binding SelectedTask.StatusLabel}"
+                                                   Foreground="{Binding SelectedTask.Status, Converter={StaticResource StatusForegroundConverter}}"/>
+                                    </Border>
+                                </Grid>
+
+                                <Grid RowDefinitions="Auto,Auto" RowSpacing="6">
+                                    <ProgressBar Grid.Row="0"
+                                                 Minimum="0"
+                                                 Maximum="100"
+                                                 Height="8"
+                                                 Value="{Binding SelectedTask.Progress}"/>
+                                    <TextBlock Grid.Row="1"
+                                               Text="{Binding SelectedTask.Progress, StringFormat={}{0:0.0}%}"
+                                               Foreground="{DynamicResource MutedColor}"
+                                               FontSize="12"/>
+                                </Grid>
+                            </StackPanel>
+
+                            <Grid ColumnDefinitions="*,*,*" ColumnSpacing="10">
+                                <StackPanel Grid.Column="0" Spacing="2">
+                                    <TextBlock Classes="FieldLabel" Text="{DynamicResource Column.Speed}"/>
+                                    <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.Speed}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Spacing="2">
+                                    <TextBlock Classes="FieldLabel" Text="{DynamicResource Column.Eta}"/>
+                                    <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.Eta}"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Spacing="2">
+                                    <TextBlock Classes="FieldLabel" Text="{DynamicResource Column.Size}"/>
+                                    <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.FileSize}"/>
+                                </StackPanel>
+                            </Grid>
+
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Button Content="{DynamicResource Main.CopyUrl}" Padding="10,5" Click="CopyUrl_Click"/>
+                                <Button Content="{DynamicResource Main.CopyPath}" Padding="10,5" Click="CopySavePath_Click"/>
+                                <Button Content="{DynamicResource Main.OpenFolder}" Padding="10,5" Click="OpenFolder_Click"/>
+                            </StackPanel>
+
+                            <TabControl>
+                                <TabItem Header="{DynamicResource Main.Overview}">
+                                    <StackPanel Spacing="14" Margin="0,12,0,0">
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Classes="FieldLabel" Text="{DynamicResource Field.SavePath}"/>
+                                            <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.FullSavePath}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Classes="FieldLabel" Text="{DynamicResource Field.Url}"/>
+                                            <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.Url}"/>
+                                        </StackPanel>
+
+                                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                            <StackPanel Grid.Column="0" Spacing="4">
+                                                <TextBlock Classes="FieldLabel" Text="{DynamicResource Field.Threads}"/>
+                                                <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.ThreadCount}"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Spacing="4">
+                                                <TextBlock Classes="FieldLabel" Text="{DynamicResource Field.BlockSizeMb}"/>
+                                                <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.BlockSize}"/>
+                                            </StackPanel>
+                                        </Grid>
+
+                                        <Grid ColumnDefinitions="*,*" ColumnSpacing="10">
+                                            <StackPanel Grid.Column="0" Spacing="4">
+                                                <TextBlock Classes="FieldLabel" Text="{DynamicResource Field.Mode}"/>
+                                                <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.Mode}"/>
+                                            </StackPanel>
+                                            <StackPanel Grid.Column="1" Spacing="4">
+                                                <TextBlock Classes="FieldLabel" Text="{DynamicResource Field.FileTime}"/>
+                                                <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.UpdateFileTimestampText}"/>
+                                            </StackPanel>
+                                        </Grid>
+                                    </StackPanel>
+                                </TabItem>
+
+                                <TabItem Header="{DynamicResource Main.Log}">
+                                    <StackPanel Spacing="14" Margin="0,12,0,0">
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Classes="FieldLabel" Text="{DynamicResource Main.RecentLog}"/>
+                                            <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.Log}"/>
+                                        </StackPanel>
+
+                                        <StackPanel Spacing="4">
+                                            <TextBlock Classes="FieldLabel" Text="{DynamicResource Main.Diagnostics}"/>
+                                            <TextBlock Classes="FieldValue" Text="{Binding SelectedTask.DiagnosticText}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </TabItem>
+
+                                <TabItem Header="{DynamicResource Main.Headers}">
+                                    <TextBox Text="{Binding SelectedTask.HeaderText}"
+                                             Margin="0,12,0,0"
+                                             IsReadOnly="True"
+                                             AcceptsReturn="True"
+                                             MinHeight="160"
+                                             TextWrapping="Wrap"
+                                             ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                                </TabItem>
+                            </TabControl>
+                            </StackPanel>
+                        </ScrollViewer>
+                    </Grid>
+                </Grid>
+            </Border>
+        </Grid>
+
+        <Border Grid.Row="2"
+                Background="{DynamicResource CardBackgroundColor}"
+                BorderBrush="{DynamicResource BorderColor}"
+                BorderThickness="0,1,0,0"
+                Padding="16,8">
+            <DockPanel>
+                <TextBlock Text="{Binding StatusText}"/>
+            </DockPanel>
+        </Border>
+    </Grid>
+</shad:Window>

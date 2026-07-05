@@ -1,0 +1,202 @@
+name: Build and Release
+
+on:
+  workflow_dispatch:
+    inputs:
+      publish_release:
+        description: Publish GitHub release after build
+        required: true
+        type: boolean
+        default: true
+
+env:
+  DOTNET_SDK_VERSION: 10.x
+  ACTIONS_ALLOW_USE_UNSECURE_NODE_VERSION: true
+
+jobs:
+  set-date:
+    runs-on: ubuntu-latest
+    outputs:
+      date: ${{ steps.get_date.outputs.date }}
+    steps:
+      - name: Get Date in UTC+8
+        id: get_date
+        run: echo "date=$(date -u -d '8 hours' +'%Y%m%d')" >> "$GITHUB_OUTPUT"
+
+  build-win-x64:
+    runs-on: windows-latest
+    needs: set-date
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+
+      - name: Install 7zip and zip
+        run: |
+          choco install 7zip --no-progress --yes
+          choco install zip --no-progress --yes
+
+      - name: Download ANGLE.Static
+        run: |
+          cd src/RobustDownloader/lib
+          curl -L https://github.com/2ndlab/ANGLE.Static/releases/download/v1.1.0/av_libglesv2-10.0.22621.0.7z -o angle.7z
+          7z x angle.7z
+
+      - name: Download SkiaSharp.Static (HarfBuzz 3.x)
+        run: |
+          cd src/RobustDownloader/lib
+          curl -L https://github.com/2ndlab/SkiaSharp.Static/releases/download/251104/libHarfBuzzSharp-3.119.0-10.0.26100.0-1.1c7d845.7z -o harfbuzz.7z
+          7z x harfbuzz.7z
+
+      - name: Download SkiaSharp.Static (SkiaSharp 3.x)
+        run: |
+          cd src/RobustDownloader/lib
+          curl -L https://github.com/2ndlab/SkiaSharp.Static/releases/download/251104/libSkiaSharp-3.119.0-10.0.26100.0-1.1c7d845.7z -o skiasharp.7z
+          7z x skiasharp.7z
+
+      - name: Publish [win-x64]
+        run: |
+          cd src/RobustDownloader
+          dotnet publish -r win-x64 -c Release -o artifact
+
+      - name: Package [win-x64]
+        run: |
+          cd src/RobustDownloader/artifact
+          zip -r ../../../RobustDownloader_win-x64_${{ needs.set-date.outputs.date }}.zip . -x "lib*" -x "av_*" -x "*.pdb"
+
+      - name: Upload Artifact [win-x64]
+        uses: actions/upload-artifact@v4
+        with:
+          name: RobustDownloader_win-x64
+          path: RobustDownloader_win-x64_${{ needs.set-date.outputs.date }}.zip
+
+  build-linux-x64:
+    runs-on: ubuntu-latest
+    needs: set-date
+
+    steps:
+      - run: sudo apt-get update
+      - run: sudo apt-get install -y curl wget unzip libicu-dev libcurl4-openssl-dev zlib1g-dev libkrb5-dev zip
+      - uses: actions/checkout@v4
+
+      - name: Set up dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+
+      - name: Publish [linux-x64]
+        run: dotnet publish src/RobustDownloader -r linux-x64 -c Release -o artifact
+
+      - name: Package [linux-x64]
+        run: |
+          cd artifact
+          zip -r ../RobustDownloader_linux-x64_${{ needs.set-date.outputs.date }}.zip . -x "*.dbg"
+
+      - name: Upload Artifact [linux-x64]
+        uses: actions/upload-artifact@v4
+        with:
+          name: RobustDownloader_linux-x64
+          path: RobustDownloader_linux-x64_${{ needs.set-date.outputs.date }}.zip
+
+  build-mac-arm64:
+    runs-on: macos-14
+    needs: set-date
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up dotnet
+        uses: actions/setup-dotnet@v4
+        with:
+          dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
+
+      - name: Publish [osx-arm64]
+        run: dotnet publish src/RobustDownloader -r osx-arm64 -c Release -o artifact
+
+      - name: Assemble .app [osx-arm64]
+        run: |
+          APP_NAME="RobustDownloader.app"
+          APP_ROOT="$RUNNER_TEMP/$APP_NAME"
+          CONTENTS_DIR="$APP_ROOT/Contents"
+          MACOS_DIR="$CONTENTS_DIR/MacOS"
+          RESOURCES_DIR="$CONTENTS_DIR/Resources"
+
+          rm -rf "$APP_ROOT"
+          mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
+
+          cp -R artifact/. "$MACOS_DIR/"
+          cp src/RobustDownloader/Assets/app-icon.icns "$RESOURCES_DIR/app-icon.icns"
+          find "$MACOS_DIR" -maxdepth 1 -name '*.dSYM' -prune -exec rm -rf {} +
+
+          cat > "$CONTENTS_DIR/Info.plist" <<EOF
+          <?xml version="1.0" encoding="UTF-8"?>
+          <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+          <plist version="1.0">
+          <dict>
+            <key>CFBundleDevelopmentRegion</key>
+            <string>en</string>
+            <key>CFBundleDisplayName</key>
+            <string>RobustDownloader</string>
+            <key>CFBundleExecutable</key>
+            <string>RobustDownloader</string>
+            <key>CFBundleIdentifier</key>
+            <string>com.robustdownloader.app</string>
+            <key>CFBundleIconFile</key>
+            <string>app-icon</string>
+            <key>CFBundleInfoDictionaryVersion</key>
+            <string>6.0</string>
+            <key>CFBundleName</key>
+            <string>RobustDownloader</string>
+            <key>CFBundlePackageType</key>
+            <string>APPL</string>
+            <key>CFBundleShortVersionString</key>
+            <string>0.0.1</string>
+            <key>CFBundleVersion</key>
+            <string>${{ needs.set-date.outputs.date }}</string>
+            <key>LSMinimumSystemVersion</key>
+            <string>13.0</string>
+            <key>NSHighResolutionCapable</key>
+            <true/>
+          </dict>
+          </plist>
+          EOF
+
+      - name: Package [osx-arm64]
+        run: |
+          cd "$RUNNER_TEMP"
+          ditto -c -k --sequesterRsrc --keepParent "RobustDownloader.app" "$GITHUB_WORKSPACE/RobustDownloader_osx-arm64_${{ needs.set-date.outputs.date }}.zip"
+
+      - name: Upload Artifact [osx-arm64]
+        uses: actions/upload-artifact@v4
+        with:
+          name: RobustDownloader_osx-arm64
+          path: RobustDownloader_osx-arm64_${{ needs.set-date.outputs.date }}.zip
+
+  release:
+    if: ${{ github.event.inputs.publish_release != 'false' }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    needs: [build-win-x64, build-linux-x64, build-mac-arm64, set-date]
+
+    steps:
+      - name: Fetch artifacts
+        uses: actions/download-artifact@v4
+
+      - name: Get Release Time
+        id: get_release_time
+        run: echo "release_time=$(date -u -d '8 hours' +'%Y-%m-%d %H:%M:%S')" >> "$GITHUB_OUTPUT"
+
+      - name: Create GitHub Release
+        uses: ncipollo/release-action@v1
+        with:
+          tag: build_${{ needs.set-date.outputs.date }}
+          name: Build (${{ steps.get_release_time.outputs.release_time }})
+          artifacts: "RobustDownloader_linux-x64/*,RobustDownloader_osx-arm64/*,RobustDownloader_win-x64/*"
+          draft: false
+          allowUpdates: true
+          generateReleaseNotes: true

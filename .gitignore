@@ -1,0 +1,68 @@
+# Build output
+bin/
+obj/
+out/
+publish/
+artifacts/
+TestResults/
+
+# .NET
+*.user
+*.rsuser
+*.suo
+*.userosscache
+*.sln.docstates
+*.nupkg
+*.snupkg
+project.lock.json
+project.assets.json
+*.nuget.props
+*.nuget.targets
+
+# Rider / JetBrains
+.idea/
+*.sln.iml
+*.DotSettings.user
+_ReSharper.Caches/
+riderModule.iml
+
+# Visual Studio / VS Code
+.vs/
+.vscode/
+*.code-workspace
+
+# Avalonia / desktop app artifacts
+*.pdb
+*.dll
+*.exe
+*.app
+*.dmg
+*.msi
+*.pkg
+
+# Logs and diagnostics
+*.log
+logs/
+crashdumps/
+
+# OS files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.swp
+*.swo
+~$*
+
+# Local environment
+.env
+.env.*
+!.env.example
+
+# NuGet fallback packages
+packages/

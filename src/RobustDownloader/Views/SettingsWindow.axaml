@@ -1,0 +1,225 @@
+<shad:Window xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:models="using:RobustDownloader.Models"
+             xmlns:shad="clr-namespace:ShadUI;assembly=ShadUI"
+             x:Class="RobustDownloader.Views.SettingsWindow"
+             Title="{DynamicResource Settings.Title}"
+             Width="760" Height="660"
+             MinWidth="640" MinHeight="560"
+             WindowStartupLocation="CenterOwner"
+             x:DataType="models:AppSettings">
+    <shad:Window.Styles>
+        <Style Selector="TextBox">
+            <Setter Property="SelectionBrush" Value="{DynamicResource PrimaryColor50}"/>
+            <Setter Property="SelectionForegroundBrush" Value="{x:Null}"/>
+        </Style>
+        <Style Selector="TextBlock.Label">
+            <Setter Property="FontWeight" Value="SemiBold"/>
+            <Setter Property="Margin" Value="0,0,0,6"/>
+        </Style>
+        <Style Selector="TextBlock.Hint">
+            <Setter Property="Foreground" Value="{DynamicResource MutedColor}"/>
+            <Setter Property="FontSize" Value="12"/>
+            <Setter Property="TextWrapping" Value="Wrap"/>
+        </Style>
+        <Style Selector="TextBlock.SectionTitle">
+            <Setter Property="FontSize" Value="16"/>
+            <Setter Property="FontWeight" Value="SemiBold"/>
+        </Style>
+    </shad:Window.Styles>
+
+    <Grid RowDefinitions="Auto,*,Auto" Margin="20">
+        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+            <TextBlock Text="{DynamicResource Settings.Title}" FontSize="20" FontWeight="SemiBold"/>
+            <TextBlock Text="{DynamicResource Settings.Description}"
+                       Foreground="{DynamicResource MutedColor}"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <TabControl Grid.Row="1">
+            <TabItem Header="{DynamicResource Settings.Appearance}">
+                <StackPanel Spacing="18" Margin="0,14,14,0">
+                    <StackPanel Spacing="8">
+                        <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.Language}"/>
+                        <ComboBox x:Name="CmbLanguage" HorizontalAlignment="Left" MinWidth="220">
+                            <ComboBoxItem Tag="Auto" Content="{DynamicResource Settings.Auto}"/>
+                            <ComboBoxItem Tag="English" Content="{DynamicResource Settings.LanguageEn}"/>
+                            <ComboBoxItem Tag="SimplifiedChinese" Content="{DynamicResource Settings.LanguageZhHans}"/>
+                            <ComboBoxItem Tag="TraditionalChinese" Content="{DynamicResource Settings.LanguageZhHant}"/>
+                        </ComboBox>
+                        <TextBlock Classes="Hint" Text="{DynamicResource Settings.LanguageHint}"/>
+                    </StackPanel>
+
+                    <StackPanel Spacing="8">
+                        <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.Theme}"/>
+                        <ComboBox x:Name="CmbTheme" HorizontalAlignment="Left" MinWidth="220">
+                            <ComboBoxItem Tag="System" Content="{DynamicResource Settings.ThemeSystem}"/>
+                            <ComboBoxItem Tag="Light" Content="{DynamicResource Settings.ThemeLight}"/>
+                            <ComboBoxItem Tag="Dark" Content="{DynamicResource Settings.ThemeDark}"/>
+                        </ComboBox>
+                        <TextBlock Classes="Hint" Text="{DynamicResource Settings.ThemeHint}"/>
+                    </StackPanel>
+                </StackPanel>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource Settings.Download}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="18" Margin="0,14,14,0">
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.DownloadDefaults}"/>
+                            <Grid ColumnDefinitions="*,12,*,12,*">
+                                <StackPanel Grid.Column="0">
+                                    <TextBlock Classes="Label" Text="{DynamicResource Settings.DefaultThreads}"/>
+                                    <TextBox Text="{Binding DefaultThreadCount}" HorizontalContentAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2">
+                                    <TextBlock Classes="Label" Text="{DynamicResource Settings.DefaultBlock}"/>
+                                    <TextBox Text="{Binding DefaultBlockSizeMb}" HorizontalContentAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="4">
+                                    <TextBlock Classes="Label" Text="{DynamicResource Settings.DefaultConcurrency}"/>
+                                    <ComboBox x:Name="CmbConcurrency"
+                                              SelectedItem="{Binding MaxConcurrency}"
+                                              HorizontalContentAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                        </StackPanel>
+
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.DefaultBehavior}"/>
+                            <CheckBox Content="{DynamicResource Settings.DefaultUpdateTimestamp}"
+                                      IsChecked="{Binding UpdateFileTimestampByDefault}"/>
+                            <CheckBox Content="{DynamicResource Settings.DefaultSkipCrc}"
+                                      IsChecked="{Binding SkipCrcByDefault}"/>
+                        </StackPanel>
+
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource Settings.Network}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="18" Margin="0,14,14,0">
+                        <StackPanel Spacing="10">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.Proxy}"/>
+                            <ComboBox x:Name="CmbProxyMode" HorizontalAlignment="Left" MinWidth="220" SelectionChanged="ProxyMode_SelectionChanged">
+                                <ComboBoxItem Tag="System" Content="{DynamicResource Settings.ProxySystem}"/>
+                                <ComboBoxItem Tag="Disabled" Content="{DynamicResource Settings.ProxyDisabled}"/>
+                                <ComboBoxItem Tag="Manual" Content="{DynamicResource Settings.ProxyManual}"/>
+                            </ComboBox>
+                            <TextBox x:Name="TxtProxyAddress"
+                                     Text="{Binding ProxyAddress}"
+                                     PlaceholderText="http://127.0.0.1:7890"
+                                     VerticalContentAlignment="Center"/>
+                            <TextBlock Classes="Hint" Text="{DynamicResource Settings.ProxyHint}"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource Settings.SaveAndHeaders}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="18" Margin="0,14,14,0">
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.DefaultSaveDirectory}"/>
+                            <Grid ColumnDefinitions="*,8,Auto">
+                                <TextBox x:Name="TxtLastDownloadDirectory"
+                                         Grid.Column="0"
+                                         Text="{Binding LastDownloadDirectory}"
+                                         VerticalContentAlignment="Center"/>
+                                <Button Grid.Column="2" Content="{DynamicResource Add.Browse}" Padding="14,7" Click="BrowseDirectory_Click"/>
+                            </Grid>
+                            <TextBlock Classes="Hint" Text="{DynamicResource Settings.DefaultSaveDirectoryHint}"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.DefaultHeaders}"/>
+                            <TextBox Text="{Binding DefaultHeaderText}"
+                                     AcceptsReturn="True"
+                                     MinHeight="180"
+                                     PlaceholderText="Name: value"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource Settings.Credentials}">
+                <Grid RowDefinitions="Auto,Auto,*" Margin="0,14,14,0" RowSpacing="10">
+                    <Grid Grid.Row="0" ColumnDefinitions="Auto,*,Auto,8,Auto">
+                        <TextBlock Grid.Column="0"
+                                   Classes="SectionTitle"
+                                   Text="{DynamicResource Settings.CredentialsTitle}"
+                                   VerticalAlignment="Center"/>
+                        <Button Grid.Column="2" Content="{DynamicResource Settings.Add}" Padding="12,5" Click="AddCredential_Click"/>
+                        <Button Grid.Column="4" Content="{DynamicResource Settings.Delete}" Padding="12,5" Classes="Destructive" Click="DeleteCredential_Click"/>
+                    </Grid>
+
+                    <TextBlock Grid.Row="1"
+                               Classes="Hint"
+                               Text="{DynamicResource Settings.CredentialsHint}"/>
+
+                    <DataGrid x:Name="CredentialGrid"
+                              Grid.Row="2"
+                              ItemsSource="{Binding SiteCredentials}"
+                              AutoGenerateColumns="False"
+                              IsReadOnly="False"
+                              GridLinesVisibility="Horizontal"
+                              CanUserResizeColumns="True"
+                              x:CompileBindings="False">
+                        <DataGrid.Columns>
+                            <DataGridCheckBoxColumn Header="{DynamicResource Settings.Enabled}" Binding="{Binding Enabled}" Width="70"/>
+                            <DataGridTextColumn Header="{DynamicResource Settings.Match}" Binding="{Binding Pattern}" Width="*"/>
+                            <DataGridTextColumn Header="{DynamicResource Settings.Username}" Binding="{Binding Username}" Width="150"/>
+                            <DataGridTextColumn Header="{DynamicResource Settings.Password}" Binding="{Binding Password}" Width="150"/>
+                        </DataGrid.Columns>
+                    </DataGrid>
+                </Grid>
+            </TabItem>
+
+            <TabItem Header="{DynamicResource Settings.DataFiles}">
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="18" Margin="0,14,14,0">
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.LocalDataFiles}"/>
+                            <TextBlock Classes="Hint" Text="{DynamicResource Settings.DataFilesHint}"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="6">
+                            <TextBlock Classes="Label" Text="{DynamicResource Settings.TasksJson}"/>
+                            <TextBox Text="{Binding TaskDataFile}"
+                                     IsReadOnly="True"
+                                     TextWrapping="Wrap"
+                                     VerticalContentAlignment="Center"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="6">
+                            <TextBlock Classes="Label" Text="{DynamicResource Settings.SettingsJson}"/>
+                            <TextBox Text="{Binding SettingsDataFile}"
+                                     IsReadOnly="True"
+                                     TextWrapping="Wrap"
+                                     VerticalContentAlignment="Center"/>
+                        </StackPanel>
+                    </StackPanel>
+                </ScrollViewer>
+            </TabItem>
+        </TabControl>
+
+        <Border Grid.Row="2"
+                BorderBrush="{DynamicResource BorderColor}"
+                BorderThickness="0,1,0,0"
+                Margin="0,16,0,0"
+                Padding="0,14,0,0">
+            <DockPanel>
+                <TextBlock x:Name="TxtValidation"
+                           Foreground="{DynamicResource DestructiveColor}"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                    <Button Content="{DynamicResource Settings.Cancel}" Padding="18,8" Click="Cancel_Click"/>
+                    <Button Content="{DynamicResource Settings.Save}" Padding="20,8" Classes="Primary" Click="Save_Click"/>
+                </StackPanel>
+            </DockPanel>
+        </Border>
+    </Grid>
+</shad:Window>

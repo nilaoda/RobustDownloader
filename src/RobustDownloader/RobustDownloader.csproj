@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+    <PropertyGroup>
+        <OutputType>WinExe</OutputType>
+        <TargetFramework>net10.0</TargetFramework>
+        <AssemblyName>RobustDownloader</AssemblyName>
+        <RootNamespace>RobustDownloader</RootNamespace>
+        <Version>0.0.1</Version>
+        <Product>RobustDownloader</Product>
+        <Title>RobustDownloader</Title>
+        <Description>RobustDownloader desktop download manager</Description>
+        <Nullable>enable</Nullable>
+        <BuiltInComInteropSupport>false</BuiltInComInteropSupport>
+        <ApplicationManifest>app.manifest</ApplicationManifest>
+        <ApplicationIcon>Assets\app-icon.ico</ApplicationIcon>
+        <AvaloniaUseCompiledBindingsByDefault>true</AvaloniaUseCompiledBindingsByDefault>
+        <LangVersion>preview</LangVersion>
+        <IsAotCompatible>true</IsAotCompatible>
+    </PropertyGroup>
+
+    <ItemGroup>
+        <AvaloniaResource Include="Assets\**"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <TrimmerRootAssembly Include="RobustDownloader"/>
+        <TrimmerRootAssembly Include="Avalonia.Controls"/>
+    </ItemGroup>
+
+    <ItemGroup>
+        <PackageReference Include="Avalonia" Version="12.0.4"/>
+        <PackageReference Include="Avalonia.Desktop" Version="12.0.4"/>
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.0.0"/>
+        <PackageReference Include="ShadUI" Version="0.2.3"/>
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+    </ItemGroup>
+</Project>
