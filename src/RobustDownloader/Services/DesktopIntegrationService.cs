@@ -3,6 +3,7 @@ using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia.Platform;
+using Avalonia.Threading;
 using RobustDownloader.Models;
 using RobustDownloader.ViewModels;
 using RobustDownloader.Views;
@@ -17,6 +18,8 @@ public sealed class DesktopIntegrationService : IDisposable
     private readonly IClassicDesktopStyleApplicationLifetime _desktop;
     private readonly MainWindow _mainWindow;
     private readonly MainWindowViewModel _viewModel;
+    private readonly NativeMenuItem _showMenuItem = new();
+    private readonly NativeMenuItem _hideMenuItem = new();
     private readonly NativeMenuItem _exitMenuItem = new();
     private readonly IActivatableLifetime? _activatableLifetime;
     private TrayIcon? _trayIcon;
@@ -47,6 +50,12 @@ public sealed class DesktopIntegrationService : IDisposable
     public void ShowMainWindow()
     {
         if (_disposed) return;
+
+        _closeDialogOpen = false;
+        _viewModel.DialogManager.Dispose();
+
+        MacOSDockIconService.ShowDockIcon();
+        _activatableLifetime?.TryLeaveBackground();
 
         if (_mainWindow.WindowState == WindowState.Minimized)
             _mainWindow.WindowState = WindowState.Normal;
@@ -86,7 +95,7 @@ public sealed class DesktopIntegrationService : IDisposable
             .CreateDialog(context)
             .WithSuccessCallback(HandleCloseConfirmation)
             .WithCancelCallback(() => _closeDialogOpen = false)
-            .WithMinWidth(420)
+            .WithMinWidth(520)
             .Show();
     }
 
@@ -98,21 +107,35 @@ public sealed class DesktopIntegrationService : IDisposable
             _viewModel.RememberWindowCloseChoice(context.Choice);
 
         if (context.Choice == WindowCloseBehavior.ExitApplication)
+        {
             ExitApplication();
+        }
         else
-            HideMainWindow();
+        {
+            HideMainWindowAfterDialogDismissal();
+        }
+    }
+
+    private void HideMainWindowAfterDialogDismissal()
+    {
+        DispatcherTimer.RunOnce(HideMainWindow, TimeSpan.FromMilliseconds(120), DispatcherPriority.Background);
     }
 
     private void HideMainWindow()
     {
         _mainWindow.Hide();
+        MacOSDockIconService.HideDockIcon();
     }
 
     private void ConfigureTrayIcon()
     {
+        _showMenuItem.Click += (_, _) => ShowMainWindow();
+        _hideMenuItem.Click += (_, _) => HideMainWindow();
         _exitMenuItem.Click += (_, _) => ExitApplication();
 
         var menu = new NativeMenu();
+        menu.Items.Add(_showMenuItem);
+        menu.Items.Add(_hideMenuItem);
         menu.Items.Add(_exitMenuItem);
 
         _trayIcon = new TrayIcon
@@ -138,6 +161,8 @@ public sealed class DesktopIntegrationService : IDisposable
 
     private void UpdateLocalizedText()
     {
+        _showMenuItem.Header = LocalizationService.Get("Tray.Show");
+        _hideMenuItem.Header = LocalizationService.Get("Tray.Hide");
         _exitMenuItem.Header = LocalizationService.Get("Tray.Exit");
         if (_trayIcon != null)
             _trayIcon.ToolTipText = LocalizationService.Get("App.Name");
@@ -148,6 +173,7 @@ public sealed class DesktopIntegrationService : IDisposable
         if (_exitRequested) return;
 
         _exitRequested = true;
+        MacOSDockIconService.ShowDockIcon();
         _trayIcon?.Dispose();
         _trayIcon = null;
         _viewModel.Shutdown();
