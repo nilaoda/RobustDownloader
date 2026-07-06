@@ -119,31 +119,41 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public void AddTasks(AddTaskResult result)
     {
-        foreach (var url in result.Urls)
+        _suppressTaskCollectionSideEffects = true;
+        try
         {
-            var fileName = result.Urls.Length == 1 && !string.IsNullOrWhiteSpace(result.SingleFileName)
-                ? result.SingleFileName.Trim()
-                : TaskFileNameHelper.GetFileName(url);
-
-            var task = new DownloadTask
+            foreach (var url in result.Urls)
             {
-                Url = url,
-                SaveDirectory = result.SaveDirectory,
-                FileName = fileName,
-                ThreadCount = result.ThreadCount,
-                BlockSize = result.BlockSize,
-                CrcOnly = result.CrcOnly,
-                SkipCrc = result.SkipCrc,
-                UpdateFileTimestamp = result.UpdateFileTimestamp,
-                HeaderText = result.HeaderText,
-                Status = DownloadTaskStatus.Stopped,
-                Log = "TaskLog.Added"
-            };
+                var fileName = result.Urls.Length == 1 && !string.IsNullOrWhiteSpace(result.SingleFileName)
+                    ? result.SingleFileName.Trim()
+                    : TaskFileNameHelper.GetFileName(url);
 
-            Tasks.Add(task);
+                var task = new DownloadTask
+                {
+                    Url = url,
+                    SaveDirectory = result.SaveDirectory,
+                    FileName = fileName,
+                    ThreadCount = result.ThreadCount,
+                    BlockSize = result.BlockSize,
+                    CrcOnly = result.CrcOnly,
+                    SkipCrc = result.SkipCrc,
+                    UpdateFileTimestamp = result.UpdateFileTimestamp,
+                    HeaderText = result.HeaderText,
+                    Status = DownloadTaskStatus.Stopped,
+                    Log = "TaskLog.Added"
+                };
+
+                Tasks.Add(task);
+            }
         }
+        finally
+        {
+            _suppressTaskCollectionSideEffects = false;
+        }
+
         _settings.LastDownloadDirectory = result.SaveDirectory;
         SaveSettings();
+        RefreshVisibleTasks();
         SaveTasks();
     }
 
