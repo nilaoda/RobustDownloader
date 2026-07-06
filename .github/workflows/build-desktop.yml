@@ -21,7 +21,7 @@ jobs:
     steps:
       - name: Get Date in UTC+8
         id: get_date
-        run: echo "date=$(date -u -d '8 hours' +'%Y%m%d')" >> "$GITHUB_OUTPUT"
+        run: echo "date=$(date -u -d '8 hours' +'%Y%m%d%H')" >> "$GITHUB_OUTPUT"
 
   build-win-x64:
     runs-on: windows-latest
