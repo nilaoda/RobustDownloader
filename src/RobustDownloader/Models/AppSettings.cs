@@ -11,6 +11,8 @@ public sealed class AppSettings
     public double DefaultBlockSizeMb { get; set; } = 16;
     public int MaxConcurrency { get; set; } = 3;
     public int TaskListLimit { get; set; } = 100;
+    public bool IsTaskTreePaneVisible { get; set; } = true;
+    public double TaskTreePaneWidth { get; set; } = 220;
     public bool UpdateFileTimestampByDefault { get; set; } = true;
     public bool SkipCrcByDefault { get; set; }
     public AppLanguageMode LanguageMode { get; set; } = AppLanguageMode.Auto;
@@ -39,6 +41,8 @@ public sealed class AppSettings
             DefaultBlockSizeMb = DefaultBlockSizeMb,
             MaxConcurrency = MaxConcurrency,
             TaskListLimit = TaskListLimit,
+            IsTaskTreePaneVisible = IsTaskTreePaneVisible,
+            TaskTreePaneWidth = TaskTreePaneWidth,
             UpdateFileTimestampByDefault = UpdateFileTimestampByDefault,
             SkipCrcByDefault = SkipCrcByDefault,
             LanguageMode = LanguageMode,

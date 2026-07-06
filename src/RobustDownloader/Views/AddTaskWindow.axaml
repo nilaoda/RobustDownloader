@@ -37,7 +37,7 @@
                     <TextBlock Classes="Label" Text="{DynamicResource Add.Urls}"/>
                     <TextBox x:Name="TxtUrls"
                              AcceptsReturn="True"
-                             MinHeight="150"
+                             Height="108"
                              TextWrapping="NoWrap"
                              ScrollViewer.VerticalScrollBarVisibility="Auto"
                              TextChanged="TxtUrls_TextChanged"/>

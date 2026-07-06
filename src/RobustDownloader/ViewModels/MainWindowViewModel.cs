@@ -26,10 +26,12 @@ public partial class MainWindowViewModel : ViewModelBase
     private readonly ConcurrentDictionary<string, long> _taskSpeeds = new();
     private AppSettings _settings = new();
     private int _taskListLimit = 100;
+    private double _taskTreePaneWidth = 220;
     private bool _queueStarted;
     private bool _isShutdown;
     private bool _suppressTaskCollectionSideEffects;
     private bool _suppressSettingsSideEffects;
+    private bool _suppressTaskTreeSelectionSideEffects;
 
     [ObservableProperty] private string _defaultThreads = "4";
     [ObservableProperty] private string _defaultBlockSize = "16";
@@ -39,11 +41,14 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private string _tabInfo = "";
     [ObservableProperty] private DownloadTask? _selectedTask;
     [ObservableProperty] private bool _isDetailPaneOpen;
+    [ObservableProperty] private bool _isTaskTreePaneVisible = true;
     [ObservableProperty] private TaskListScopeOption? _selectedTaskListScope;
+    [ObservableProperty] private TaskTreeNode? _selectedTaskTreeNode;
 
     public ObservableCollection<DownloadTask> Tasks { get; } = [];
     public ObservableCollection<DownloadTask> VisibleTasks { get; } = [];
     public ObservableCollection<TaskListScopeOption> TaskListScopes { get; } = [];
+    public ObservableCollection<TaskTreeNode> TaskTreeNodes { get; } = [];
     public int[] ConcurrencyOptions { get; } = [1, 2, 3, 5, 8];
     public DialogManager DialogManager { get; } = new();
 
@@ -57,11 +62,13 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             if (_suppressTaskCollectionSideEffects) return;
 
+            RefreshTaskTree();
             RefreshVisibleTasks();
             SaveTasks();
         };
         LocalizationService.LanguageChanged += (_, _) => RefreshLocalizedText();
         RefreshTaskListScopeOptions(_taskListLimit);
+        RefreshTaskTree();
         RefreshVisibleTasks();
     }
 
@@ -69,11 +76,29 @@ public partial class MainWindowViewModel : ViewModelBase
     public string SettingsFile => _settingsFile;
     public bool HasVisibleTasks => VisibleTasks.Count > 0;
     public bool HasNoVisibleTasks => !HasVisibleTasks;
+    public bool HasNoTasks => Tasks.Count == 0;
+    public bool HasNoMatchingVisibleTasks => Tasks.Count > 0 && VisibleTasks.Count == 0;
     public bool HasSelectedTask => SelectedTask != null;
     public bool HasNoSelectedTask => SelectedTask == null;
     public string WindowTitle => $"{LocalizationService.Get("App.Name")} v{AppVersion}";
     public string GlobalSpeedDisplay => $"{LocalizationService.Get("Main.GlobalSpeed")} {GlobalSpeedText}";
     public string DetailPaneButtonText => LocalizationService.Get(IsDetailPaneOpen ? "Main.HideDetails" : "Main.ShowDetails");
+    public string TaskTreePaneButtonText => LocalizationService.Get(IsTaskTreePaneVisible ? "Main.HideTaskTree" : "Main.ShowTaskTree");
+    public string ActiveTaskTreeFilterText => SelectedTaskTreeNode?.Label ?? LocalizationService.Get("TaskTree.All");
+    public double TaskTreePaneWidth
+    {
+        get => _taskTreePaneWidth;
+        set
+        {
+            var coerced = CoerceTaskTreePaneWidth(value);
+            if (Math.Abs(_taskTreePaneWidth - coerced) < 0.1) return;
+            _taskTreePaneWidth = coerced;
+            _settings.TaskTreePaneWidth = coerced;
+            OnPropertyChanged();
+            if (!_suppressSettingsSideEffects)
+                SaveSettings();
+        }
+    }
     public WindowCloseBehavior WindowCloseBehavior => _settings.WindowCloseBehavior;
     public bool ConfirmCloseToTray => _settings.ConfirmCloseToTray;
 
@@ -91,6 +116,22 @@ public partial class MainWindowViewModel : ViewModelBase
     partial void OnIsDetailPaneOpenChanged(bool value)
     {
         OnPropertyChanged(nameof(DetailPaneButtonText));
+    }
+
+    partial void OnIsTaskTreePaneVisibleChanged(bool value)
+    {
+        _settings.IsTaskTreePaneVisible = value;
+        OnPropertyChanged(nameof(TaskTreePaneButtonText));
+        if (!_suppressSettingsSideEffects)
+            SaveSettings();
+    }
+
+    partial void OnSelectedTaskTreeNodeChanged(TaskTreeNode? value)
+    {
+        RefreshTaskTreeSelectionState();
+        OnPropertyChanged(nameof(ActiveTaskTreeFilterText));
+        if (_suppressTaskTreeSelectionSideEffects) return;
+        RefreshVisibleTasks();
     }
 
     partial void OnSelectedTaskListScopeChanged(TaskListScopeOption? value)
@@ -158,6 +199,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
         _settings.LastDownloadDirectory = result.SaveDirectory;
         SaveSettings();
+        RefreshTaskTree();
         RefreshVisibleTasks();
         SaveTasks();
     }
@@ -174,6 +216,8 @@ public partial class MainWindowViewModel : ViewModelBase
                 task.Eta = "-";
             }
         }
+        RefreshTaskTree();
+        RefreshVisibleTasks();
         SaveTasks();
     }
 
@@ -181,6 +225,8 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         foreach (var task in tasks)
             StopTask(task);
+        RefreshTaskTree();
+        RefreshVisibleTasks();
         SaveTasks();
     }
 
@@ -191,6 +237,8 @@ public partial class MainWindowViewModel : ViewModelBase
             StopTask(task);
             Tasks.Remove(task);
         }
+        RefreshTaskTree();
+        RefreshVisibleTasks();
         SaveTasks();
     }
 
@@ -207,6 +255,21 @@ public partial class MainWindowViewModel : ViewModelBase
     public void ToggleDetailPane()
     {
         IsDetailPaneOpen = !IsDetailPaneOpen;
+    }
+
+    public void ToggleTaskTreePane()
+    {
+        IsTaskTreePaneVisible = !IsTaskTreePaneVisible;
+    }
+
+    public void SelectTaskTreeNode(TaskTreeNode node)
+    {
+        SelectedTaskTreeNode = node;
+    }
+
+    public void ToggleTaskTreeNodeExpansion(TaskTreeNode node)
+    {
+        node.IsExpanded = !node.IsExpanded;
     }
 
     public string GetDefaultDirectory()
@@ -265,7 +328,10 @@ public partial class MainWindowViewModel : ViewModelBase
         if (string.IsNullOrWhiteSpace(_settings.FixedDownloadDirectory) || !Directory.Exists(_settings.FixedDownloadDirectory))
             _settings.FixedDownloadDirectory = GetDownloadsDirectory();
         _taskListLimit = CoerceTaskListLimit(_settings.TaskListLimit);
+        IsTaskTreePaneVisible = _settings.IsTaskTreePaneVisible;
+        TaskTreePaneWidth = CoerceTaskTreePaneWidth(_settings.TaskTreePaneWidth);
         RefreshTaskListScopeOptions(_taskListLimit);
+        RefreshTaskTree();
         RefreshVisibleTasks();
         SaveSettings();
     }
@@ -357,7 +423,12 @@ public partial class MainWindowViewModel : ViewModelBase
                 ProxyAddress = _settings.ProxyMode == AppProxyMode.Manual ? _settings.ProxyAddress : ""
             }, progress, cts.Token);
 
-            await Dispatcher.UIThread.InvokeAsync(() => ApplyResult(task, result));
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ApplyResult(task, result);
+                RefreshTaskTree();
+                RefreshVisibleTasks();
+            });
         }
         finally
         {
@@ -487,6 +558,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 _suppressTaskCollectionSideEffects = false;
             }
 
+            RefreshTaskTree();
             RefreshVisibleTasks();
             UpdateStatusText(_runningTasks.Count, Tasks.Count(t => t.Status == DownloadTaskStatus.Pending));
         }
@@ -532,6 +604,16 @@ public partial class MainWindowViewModel : ViewModelBase
             _settings.FixedDownloadDirectory = GetDownloadsDirectory();
         _taskListLimit = CoerceTaskListLimit(_settings.TaskListLimit);
         _settings.TaskListLimit = _taskListLimit;
+        _suppressSettingsSideEffects = true;
+        try
+        {
+            IsTaskTreePaneVisible = _settings.IsTaskTreePaneVisible;
+            TaskTreePaneWidth = CoerceTaskTreePaneWidth(_settings.TaskTreePaneWidth);
+        }
+        finally
+        {
+            _suppressSettingsSideEffects = false;
+        }
         RefreshTaskListScopeOptions(_taskListLimit);
         ApplySettingsToTopBar();
     }
@@ -567,6 +649,8 @@ public partial class MainWindowViewModel : ViewModelBase
             _settings.DefaultBlockSizeMb = Math.Max(0.03125, block);
         _settings.MaxConcurrency = CoerceConcurrency(MaxConcurrency);
         _settings.TaskListLimit = _taskListLimit;
+        _settings.IsTaskTreePaneVisible = IsTaskTreePaneVisible;
+        _settings.TaskTreePaneWidth = CoerceTaskTreePaneWidth(TaskTreePaneWidth);
     }
 
     private void UpdateGlobalSpeed()
@@ -618,6 +702,13 @@ public partial class MainWindowViewModel : ViewModelBase
         return options.Contains(value) ? value : 100;
     }
 
+    private static double CoerceTaskTreePaneWidth(double value)
+    {
+        if (double.IsNaN(value) || double.IsInfinity(value))
+            return 220;
+        return Math.Clamp(value, 160, 360);
+    }
+
     private void RefreshTaskListScopeOptions(int selectedLimit)
     {
         selectedLimit = CoerceTaskListLimit(selectedLimit);
@@ -643,15 +734,147 @@ public partial class MainWindowViewModel : ViewModelBase
         IEnumerable<DownloadTask> source = _taskListLimit == 0
             ? Tasks
             : Tasks.Skip(Math.Max(0, Tasks.Count - _taskListLimit));
+        source = ApplyTaskTreeFilter(source);
         foreach (var task in source)
             VisibleTasks.Add(task);
 
         var visible = VisibleTasks.Count;
+        var total = ApplyTaskTreeFilter(Tasks).Count();
         TabInfo = _taskListLimit == 0
-            ? LocalizationService.Format("Queue.AllInfo", Tasks.Count)
-            : LocalizationService.Format("Queue.RecentInfo", visible, Tasks.Count);
+            ? LocalizationService.Format("Queue.AllInfo", total)
+            : LocalizationService.Format("Queue.RecentInfo", visible, total);
         OnPropertyChanged(nameof(HasVisibleTasks));
         OnPropertyChanged(nameof(HasNoVisibleTasks));
+        OnPropertyChanged(nameof(HasNoTasks));
+        OnPropertyChanged(nameof(HasNoMatchingVisibleTasks));
+    }
+
+    private IEnumerable<DownloadTask> ApplyTaskTreeFilter(IEnumerable<DownloadTask> source)
+    {
+        var node = SelectedTaskTreeNode;
+        if (node == null)
+            return source;
+
+        source = node.Group switch
+        {
+            TaskTreeGroup.Completed => source.Where(task => task.Status == DownloadTaskStatus.Completed),
+            TaskTreeGroup.Incomplete => source.Where(task => task.Status != DownloadTaskStatus.Completed),
+            _ => source
+        };
+
+        return node.Extension == null
+            ? source
+            : source.Where(task => GetExtensionKey(task.FileName) == node.Extension);
+    }
+
+    private void RefreshTaskTree()
+    {
+        var previousGroup = SelectedTaskTreeNode?.Group ?? TaskTreeGroup.All;
+        var previousExtension = SelectedTaskTreeNode?.Extension;
+        var expandedGroups = TaskTreeNodes.Count == 0
+            ? Enum.GetValues<TaskTreeGroup>().ToHashSet()
+            : TaskTreeNodes.Where(node => node.IsExpanded).Select(node => node.Group).ToHashSet();
+
+        _suppressTaskTreeSelectionSideEffects = true;
+        try
+        {
+            TaskTreeNodes.Clear();
+            TaskTreeNodes.Add(BuildTaskTreeNode(TaskTreeGroup.All, expandedGroups.Contains(TaskTreeGroup.All)));
+            TaskTreeNodes.Add(BuildTaskTreeNode(TaskTreeGroup.Completed, expandedGroups.Contains(TaskTreeGroup.Completed)));
+            TaskTreeNodes.Add(BuildTaskTreeNode(TaskTreeGroup.Incomplete, expandedGroups.Contains(TaskTreeGroup.Incomplete)));
+            SelectedTaskTreeNode = FindTaskTreeNode(previousGroup, previousExtension)
+                ?? TaskTreeNodes.FirstOrDefault();
+        }
+        finally
+        {
+            _suppressTaskTreeSelectionSideEffects = false;
+        }
+
+        OnPropertyChanged(nameof(ActiveTaskTreeFilterText));
+        RefreshTaskTreeSelectionState();
+    }
+
+    private void RefreshTaskTreeSelectionState()
+    {
+        foreach (var node in TaskTreeNodes)
+        {
+            node.IsSelected = ReferenceEquals(node, SelectedTaskTreeNode);
+            foreach (var child in node.Children)
+                child.IsSelected = ReferenceEquals(child, SelectedTaskTreeNode);
+        }
+    }
+
+    private TaskTreeNode BuildTaskTreeNode(TaskTreeGroup group, bool isExpanded)
+    {
+        var source = group switch
+        {
+            TaskTreeGroup.Completed => Tasks.Where(task => task.Status == DownloadTaskStatus.Completed),
+            TaskTreeGroup.Incomplete => Tasks.Where(task => task.Status != DownloadTaskStatus.Completed),
+            _ => Tasks
+        };
+        var tasks = source.ToList();
+        var node = new TaskTreeNode
+        {
+            Group = group,
+            IsExpanded = isExpanded,
+            Count = tasks.Count,
+            Label = FormatTaskTreeLabel(GetTaskTreeGroupLabel(group), tasks.Count)
+        };
+
+        foreach (var extensionGroup in tasks
+                     .GroupBy(task => GetExtensionKey(task.FileName))
+                     .OrderBy(grouping => grouping.Key == NoExtensionKey)
+                     .ThenBy(grouping => grouping.Key, StringComparer.OrdinalIgnoreCase))
+        {
+            var count = extensionGroup.Count();
+            node.Children.Add(new TaskTreeNode
+            {
+                Group = group,
+                Extension = extensionGroup.Key,
+                Count = count,
+                Label = FormatTaskTreeLabel(GetExtensionLabel(extensionGroup.Key), count)
+            });
+        }
+
+        return node;
+    }
+
+    private TaskTreeNode? FindTaskTreeNode(TaskTreeGroup group, string? extension)
+    {
+        var root = TaskTreeNodes.FirstOrDefault(node => node.Group == group);
+        if (extension == null)
+            return root;
+        return root?.Children.FirstOrDefault(node => node.Extension == extension);
+    }
+
+    private static string GetTaskTreeGroupLabel(TaskTreeGroup group)
+    {
+        return group switch
+        {
+            TaskTreeGroup.Completed => LocalizationService.Get("TaskTree.Completed"),
+            TaskTreeGroup.Incomplete => LocalizationService.Get("TaskTree.Incomplete"),
+            _ => LocalizationService.Get("TaskTree.All")
+        };
+    }
+
+    private static string FormatTaskTreeLabel(string label, int count)
+    {
+        return LocalizationService.Format("TaskTree.NodeLabel", label, count);
+    }
+
+    private static string GetExtensionLabel(string extension)
+    {
+        return extension == NoExtensionKey ? LocalizationService.Get("TaskTree.NoExtension") : extension;
+    }
+
+    private const string NoExtensionKey = "__none__";
+
+    private static string GetExtensionKey(string fileName)
+    {
+        var extension = Path.GetExtension(fileName);
+        if (string.IsNullOrWhiteSpace(extension))
+            return NoExtensionKey;
+        return extension.TrimStart('.').ToLowerInvariant();
     }
 
     private void RefreshLocalizedText()
@@ -660,11 +883,13 @@ public partial class MainWindowViewModel : ViewModelBase
             task.RefreshLocalizedProperties();
 
         RefreshTaskListScopeOptions(_taskListLimit);
+        RefreshTaskTree();
         RefreshVisibleTasks();
         UpdateStatusText(_runningTasks.Count, Tasks.Count(t => t.Status == DownloadTaskStatus.Pending));
         OnPropertyChanged(nameof(WindowTitle));
         OnPropertyChanged(nameof(GlobalSpeedDisplay));
         OnPropertyChanged(nameof(DetailPaneButtonText));
+        OnPropertyChanged(nameof(TaskTreePaneButtonText));
     }
 
     private static string AppVersion
