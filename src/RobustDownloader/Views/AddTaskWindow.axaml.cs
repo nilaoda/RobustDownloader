@@ -1,7 +1,9 @@
 using System;
 using System.IO;
 using System.Linq;
+using System.Threading.Tasks;
 using Avalonia.Controls;
+using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
 using RobustDownloader.Models;
 using RobustDownloader.Services;
@@ -24,6 +26,33 @@ public partial class AddTaskWindow : ShadUI.Window
         ChkCrcOnly.IsChecked = defaults.CrcOnly;
         ChkSkipCrc.IsChecked = defaults.SkipCrc;
         ChkUpdateFileTimestamp.IsChecked = defaults.UpdateFileTimestamp;
+    }
+
+    protected override async void OnOpened(EventArgs e)
+    {
+        base.OnOpened(e);
+        await TryFillUrlsFromClipboardAsync();
+    }
+
+    private async Task TryFillUrlsFromClipboardAsync()
+    {
+        if (!string.IsNullOrWhiteSpace(TxtUrls.Text) || Clipboard == null) return;
+
+        string? clipboardText;
+        try
+        {
+            clipboardText = await Clipboard.TryGetTextAsync();
+        }
+        catch
+        {
+            return;
+        }
+
+        var urls = GetHttpUrlsFromClipboard(clipboardText);
+        if (urls.Length == 0) return;
+
+        TxtUrls.Text = string.Join(Environment.NewLine, urls);
+        TxtUrls.CaretIndex = TxtUrls.Text.Length;
     }
 
     private void TxtUrls_TextChanged(object? sender, TextChangedEventArgs e)
@@ -133,5 +162,31 @@ public partial class AddTaskWindow : ShadUI.Window
             .Select(u => u.Trim())
             .Where(u => !string.IsNullOrWhiteSpace(u))
             .ToArray();
+    }
+
+    private static string[] GetHttpUrlsFromClipboard(string? text)
+    {
+        var candidates = (text ?? "")
+            .Split(['\r', '\n', '\t', ' '], StringSplitOptions.RemoveEmptyEntries)
+            .Select(NormalizeClipboardUrlToken)
+            .Where(token => token.Length > 0)
+            .ToArray();
+
+        if (candidates.Length == 0)
+            return [];
+
+        return candidates.All(IsHttpUrl) ? candidates : [];
+    }
+
+    private static string NormalizeClipboardUrlToken(string token)
+    {
+        return token.Trim().Trim('"', '\'', '<', '>');
+    }
+
+    private static bool IsHttpUrl(string value)
+    {
+        return Uri.TryCreate(value, UriKind.Absolute, out var uri) &&
+               uri.Scheme is "http" or "https" &&
+               !string.IsNullOrWhiteSpace(uri.Host);
     }
 }

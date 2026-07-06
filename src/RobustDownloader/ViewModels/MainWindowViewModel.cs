@@ -899,7 +899,7 @@ public partial class MainWindowViewModel : ViewModelBase
             var version = typeof(MainWindowViewModel).Assembly
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
                 ?.InformationalVersion;
-            return string.IsNullOrWhiteSpace(version) ? "0.0.1" : version.Split('+')[0];
+            return string.IsNullOrWhiteSpace(version) ? "0.0.2" : version.Split('+')[0];
         }
     }
 
