@@ -1,0 +1,38 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RobustDownloader.ViewModels"
+             x:Class="RobustDownloader.Views.CloseToTrayDialog"
+             x:DataType="vm:CloseToTrayDialogViewModel">
+    <StackPanel Spacing="16" Width="420">
+        <StackPanel Spacing="6">
+            <TextBlock Text="{Binding Title}"
+                       FontSize="18"
+                       FontWeight="SemiBold"/>
+            <TextBlock Text="{Binding Message}"
+                       Foreground="{DynamicResource MutedColor}"
+                       TextWrapping="Wrap"/>
+        </StackPanel>
+
+        <CheckBox Content="{Binding DoNotAskAgainText}"
+                  IsChecked="{Binding DoNotAskAgain}"/>
+
+        <Grid ColumnDefinitions="*,8,Auto,8,Auto">
+            <Button Grid.Column="2"
+                    Content="{Binding CancelText}"
+                    Padding="14,7"
+                    Click="Cancel_Click"/>
+            <Button Grid.Column="4"
+                    Content="{Binding ExitText}"
+                    Padding="14,7"
+                    Classes="Destructive"
+                    Click="Exit_Click"/>
+        </Grid>
+
+        <Button Content="{Binding MinimizeText}"
+                HorizontalAlignment="Stretch"
+                HorizontalContentAlignment="Center"
+                Padding="16,8"
+                Classes="Primary"
+                Click="Minimize_Click"/>
+    </StackPanel>
+</UserControl>

@@ -59,6 +59,21 @@
                         </ComboBox>
                         <TextBlock Classes="Hint" Text="{DynamicResource Settings.ThemeHint}"/>
                     </StackPanel>
+
+                    <StackPanel Spacing="8">
+                        <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.WindowBehavior}"/>
+                        <ComboBox x:Name="CmbCloseBehavior"
+                                  HorizontalAlignment="Left"
+                                  MinWidth="260"
+                                  SelectionChanged="CloseBehavior_SelectionChanged">
+                            <ComboBoxItem Tag="MinimizeToTray" Content="{DynamicResource Settings.CloseToTray}"/>
+                            <ComboBoxItem Tag="ExitApplication" Content="{DynamicResource Settings.CloseToExit}"/>
+                        </ComboBox>
+                        <CheckBox x:Name="ChkConfirmCloseToTray"
+                                  Content="{DynamicResource Settings.ConfirmCloseToTray}"
+                                  IsChecked="{Binding ConfirmCloseToTray}"/>
+                        <TextBlock Classes="Hint" Text="{DynamicResource Settings.WindowBehaviorHint}"/>
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
 

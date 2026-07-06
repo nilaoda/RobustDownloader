@@ -24,8 +24,10 @@ public partial class SettingsWindow : ShadUI.Window
         SelectComboBoxItem(CmbLanguage, settings.LanguageMode.ToString());
         SelectComboBoxItem(CmbTheme, settings.ThemeMode.ToString());
         SelectComboBoxItem(CmbProxyMode, settings.ProxyMode.ToString());
+        SelectComboBoxItem(CmbCloseBehavior, settings.WindowCloseBehavior.ToString());
         SelectComboBoxItem(CmbSaveDirectoryMode, settings.SaveDirectoryMode.ToString());
         UpdateProxyAddressState();
+        UpdateCloseBehaviorState();
         UpdateSaveDirectoryState();
     }
 
@@ -78,6 +80,7 @@ public partial class SettingsWindow : ShadUI.Window
         settings.LanguageMode = ReadComboBoxTag(CmbLanguage, AppLanguageMode.Auto);
         settings.ThemeMode = ReadComboBoxTag(CmbTheme, AppThemeMode.System);
         settings.ProxyMode = ReadComboBoxTag(CmbProxyMode, AppProxyMode.System);
+        settings.WindowCloseBehavior = ReadComboBoxTag(CmbCloseBehavior, WindowCloseBehavior.MinimizeToTray);
         settings.SaveDirectoryMode = ReadComboBoxTag(CmbSaveDirectoryMode, SaveDirectoryMode.LastUsed);
         settings.FixedDownloadDirectory = FolderPathHelper.Normalize(settings.FixedDownloadDirectory);
 
@@ -152,6 +155,11 @@ public partial class SettingsWindow : ShadUI.Window
         UpdateSaveDirectoryState();
     }
 
+    private void CloseBehavior_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        UpdateCloseBehaviorState();
+    }
+
     private void UpdateProxyAddressState()
     {
         TxtProxyAddress.IsEnabled = ReadComboBoxTag(CmbProxyMode, AppProxyMode.System) == AppProxyMode.Manual;
@@ -162,6 +170,12 @@ public partial class SettingsWindow : ShadUI.Window
         var isFixed = ReadComboBoxTag(CmbSaveDirectoryMode, SaveDirectoryMode.LastUsed) == SaveDirectoryMode.Fixed;
         TxtFixedDownloadDirectory.IsEnabled = isFixed;
         BtnBrowseFixedDirectory.IsEnabled = isFixed;
+    }
+
+    private void UpdateCloseBehaviorState()
+    {
+        ChkConfirmCloseToTray.IsEnabled =
+            ReadComboBoxTag(CmbCloseBehavior, WindowCloseBehavior.MinimizeToTray) == WindowCloseBehavior.MinimizeToTray;
     }
 
     private static bool IsValidProxyAddress(string address)

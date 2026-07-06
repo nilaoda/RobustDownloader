@@ -12,6 +12,7 @@ using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
 using RobustDownloader.Models;
 using RobustDownloader.Services;
+using ShadUI;
 
 namespace RobustDownloader.ViewModels;
 
@@ -26,6 +27,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private AppSettings _settings = new();
     private int _taskListLimit = 100;
     private bool _queueStarted;
+    private bool _isShutdown;
     private bool _suppressTaskCollectionSideEffects;
     private bool _suppressSettingsSideEffects;
 
@@ -43,6 +45,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<DownloadTask> VisibleTasks { get; } = [];
     public ObservableCollection<TaskListScopeOption> TaskListScopes { get; } = [];
     public int[] ConcurrencyOptions { get; } = [1, 2, 3, 5, 8];
+    public DialogManager DialogManager { get; } = new();
 
     public MainWindowViewModel()
     {
@@ -71,6 +74,8 @@ public partial class MainWindowViewModel : ViewModelBase
     public string WindowTitle => $"{LocalizationService.Get("App.Name")} v{AppVersion}";
     public string GlobalSpeedDisplay => $"{LocalizationService.Get("Main.GlobalSpeed")} {GlobalSpeedText}";
     public string DetailPaneButtonText => LocalizationService.Get(IsDetailPaneOpen ? "Main.HideDetails" : "Main.ShowDetails");
+    public WindowCloseBehavior WindowCloseBehavior => _settings.WindowCloseBehavior;
+    public bool ConfirmCloseToTray => _settings.ConfirmCloseToTray;
 
     partial void OnSelectedTaskChanged(DownloadTask? value)
     {
@@ -255,13 +260,23 @@ public partial class MainWindowViewModel : ViewModelBase
         SaveSettings();
     }
 
+    public void RememberWindowCloseChoice(WindowCloseBehavior behavior)
+    {
+        _settings.WindowCloseBehavior = behavior;
+        _settings.ConfirmCloseToTray = false;
+        SaveSettings();
+    }
+
     public void Shutdown()
     {
+        if (_isShutdown) return;
+        _isShutdown = true;
         _globalCts.Cancel();
         foreach (var kvp in _runningTasks)
             kvp.Value.Cancel();
         SaveTasks();
         SaveSettings();
+        DialogManager.Dispose();
     }
 
     private async Task QueueLoop()
