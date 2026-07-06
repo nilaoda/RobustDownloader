@@ -6,7 +6,11 @@ RobustDownloader is a cross-platform desktop download manager built with .NET, A
 
 ## Screenshot
 
-![RobustDownloader screenshot](screens/SS1_en.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="screens/SS1_en_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="screens/SS1_en.png">
+  <img alt="RobustDownloader screenshot" src="screens/SS1_en.png">
+</picture>
 
 ## Authorship
 

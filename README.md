@@ -6,7 +6,11 @@ RobustDownloader 是一个基于 .NET、Avalonia 和 ShadUI 的跨平台桌面�
 
 ## 界面预览
 
-![RobustDownloader 界面预览](screens/SS1.png)
+<picture>
+  <source media="(prefers-color-scheme: dark)" srcset="screens/SS1_dark.png">
+  <source media="(prefers-color-scheme: light)" srcset="screens/SS1.png">
+  <img alt="RobustDownloader 界面预览" src="screens/SS1.png">
+</picture>
 
 ## 作者声明
 
