@@ -4,6 +4,7 @@ using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
 using Avalonia.Controls;
+using Avalonia.Input;
 using Avalonia.Input.Platform;
 using RobustDownloader.Models;
 using RobustDownloader.Services;
@@ -14,6 +15,10 @@ namespace RobustDownloader.Views;
 
 public partial class MainWindow : ShadUI.Window
 {
+    private bool _isTaskTreePaneResizing;
+    private double _taskTreePaneResizeStartX;
+    private double _taskTreePaneResizeStartWidth;
+
     public MainWindow()
     {
         InitializeComponent();
@@ -70,6 +75,66 @@ public partial class MainWindow : ShadUI.Window
     {
         if (DataContext is MainWindowViewModel vm)
             vm.ToggleDetailPane();
+    }
+
+    private void BtnToggleTaskTree_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+            vm.ToggleTaskTreePane();
+    }
+
+    private void TaskTreeNode_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm &&
+            sender is Button { Tag: TaskTreeNode node })
+        {
+            vm.SelectTaskTreeNode(node);
+        }
+    }
+
+    private void TaskTreeDisclosure_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm &&
+            sender is Control { Tag: TaskTreeNode node })
+        {
+            vm.ToggleTaskTreeNodeExpansion(node);
+            e.Handled = true;
+        }
+    }
+
+    private void TaskTreeResizeHandle_PointerPressed(object? sender, PointerPressedEventArgs e)
+    {
+        if (DataContext is not MainWindowViewModel vm || sender is not Control control) return;
+        if (!e.GetCurrentPoint(control).Properties.IsLeftButtonPressed) return;
+
+        _isTaskTreePaneResizing = true;
+        _taskTreePaneResizeStartX = e.GetPosition(this).X;
+        _taskTreePaneResizeStartWidth = vm.TaskTreePaneWidth;
+        e.Pointer.Capture(control);
+        e.Handled = true;
+    }
+
+    private void TaskTreeResizeHandle_PointerMoved(object? sender, PointerEventArgs e)
+    {
+        if (!_isTaskTreePaneResizing || DataContext is not MainWindowViewModel vm) return;
+
+        var delta = e.GetPosition(this).X - _taskTreePaneResizeStartX;
+        vm.TaskTreePaneWidth = _taskTreePaneResizeStartWidth + delta;
+        e.Handled = true;
+    }
+
+    private void TaskTreeResizeHandle_PointerReleased(object? sender, PointerReleasedEventArgs e)
+    {
+        if (!_isTaskTreePaneResizing) return;
+
+        _isTaskTreePaneResizing = false;
+        e.Pointer.Capture(null);
+        e.Handled = true;
+    }
+
+    private void TaskTreeResizeHandle_PointerCaptureLost(object? sender, PointerCaptureLostEventArgs e)
+    {
+        _isTaskTreePaneResizing = false;
     }
 
     private async void BtnSettings_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
