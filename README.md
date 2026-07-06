@@ -4,6 +4,10 @@
 
 RobustDownloader 是一个基于 .NET、Avalonia 和 ShadUI 的跨平台桌面下载管理器。它重点面向大文件下载场景，提供队列管理、可续传分段下载、站点凭据、CRC64 工作流，以及清晰的工具型界面。
 
+## 界面预览
+
+![RobustDownloader 界面预览](screens/SS1.png)
+
 ## 作者声明
 
 本项目代码完全由 AI 实现。人工仅提供产品方向、设计思路、需求描述和评审反馈。

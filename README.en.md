@@ -4,6 +4,10 @@
 
 RobustDownloader is a cross-platform desktop download manager built with .NET, Avalonia, and ShadUI. It focuses on resilient large-file downloads with queue management, resumable segmented downloading, site credentials, CRC64 workflows, and a clean operational UI.
 
+## Screenshot
+
+![RobustDownloader screenshot](screens/SS1_en.png)
+
 ## Authorship
 
 This project's code was implemented entirely by AI. Human input was limited to product direction, design preferences, requirements, and review feedback.
