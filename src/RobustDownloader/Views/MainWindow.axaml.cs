@@ -146,14 +146,16 @@ public partial class MainWindow : ShadUI.Window
 
         if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
         {
-            var startInfo = new ProcessStartInfo
+            var target = File.Exists(fullPath) ? fullPath : directory;
+            if (Win32Util.TryOpenFolderAndSelectItem(target))
+                return;
+
+            Process.Start(new ProcessStartInfo
             {
                 FileName = "explorer.exe",
-                UseShellExecute = false
-            };
-
-            startInfo.ArgumentList.Add(File.Exists(fullPath) ? $"/select,{fullPath}" : directory);
-            Process.Start(startInfo);
+                UseShellExecute = false,
+                ArgumentList = { directory }
+            });
             return;
         }
 
