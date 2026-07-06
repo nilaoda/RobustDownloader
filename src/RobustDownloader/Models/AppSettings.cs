@@ -16,6 +16,8 @@ public sealed class AppSettings
     public AppLanguageMode LanguageMode { get; set; } = AppLanguageMode.Auto;
     public AppThemeMode ThemeMode { get; set; } = AppThemeMode.System;
     public AppProxyMode ProxyMode { get; set; } = AppProxyMode.System;
+    public WindowCloseBehavior WindowCloseBehavior { get; set; } = WindowCloseBehavior.MinimizeToTray;
+    public bool ConfirmCloseToTray { get; set; } = true;
     public string ProxyAddress { get; set; } = "";
     public string DefaultHeaderText { get; set; } = "";
     public SaveDirectoryMode SaveDirectoryMode { get; set; } = SaveDirectoryMode.LastUsed;
@@ -42,6 +44,8 @@ public sealed class AppSettings
             LanguageMode = LanguageMode,
             ThemeMode = ThemeMode,
             ProxyMode = ProxyMode,
+            WindowCloseBehavior = WindowCloseBehavior,
+            ConfirmCloseToTray = ConfirmCloseToTray,
             ProxyAddress = ProxyAddress,
             DefaultHeaderText = DefaultHeaderText,
             SaveDirectoryMode = SaveDirectoryMode,

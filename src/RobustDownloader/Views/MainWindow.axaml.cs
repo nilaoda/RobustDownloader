@@ -8,6 +8,7 @@ using Avalonia.Input.Platform;
 using RobustDownloader.Models;
 using RobustDownloader.Services;
 using RobustDownloader.ViewModels;
+using ShadUI;
 
 namespace RobustDownloader.Views;
 
@@ -16,11 +17,12 @@ public partial class MainWindow : ShadUI.Window
     public MainWindow()
     {
         InitializeComponent();
-        Closing += (_, _) =>
-        {
-            if (DataContext is MainWindowViewModel vm)
-                vm.Shutdown();
-        };
+    }
+
+    protected override void OnClosed(System.EventArgs e)
+    {
+        base.OnClosed(e);
+        this.FindControl<DialogHost>("PART_DialogHost")?.Dispose();
     }
 
     private async void BtnAdd_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
