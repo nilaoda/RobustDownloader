@@ -93,7 +93,7 @@ public sealed class RobustDownloaderService
         if (!request.CrcOnly && File.Exists(_savePath))
         {
             ReportMessage($"Target file already exists, skipping download: {_savePath}");
-            return new DownloadResult { Kind = DownloadResultKind.Skipped, Message = LocalizationService.Get("Download.SkippedExisting") };
+            return new DownloadResult { Kind = DownloadResultKind.Skipped, MessageKey = "Download.SkippedExisting" };
         }
 
         Directory.CreateDirectory(Path.GetDirectoryName(_savePath) ?? AppContext.BaseDirectory);
@@ -106,7 +106,7 @@ public sealed class RobustDownloaderService
 
             if (request.CrcOnly)
             {
-                return new DownloadResult { Kind = DownloadResultKind.CrcOnlyCompleted, Message = LocalizationService.Get("Download.CrcDone") };
+                return new DownloadResult { Kind = DownloadResultKind.CrcOnlyCompleted, MessageKey = "Download.CrcDone" };
             }
 
             if (supportsRange)
@@ -118,7 +118,7 @@ public sealed class RobustDownloaderService
             _mode = "Single";
             Report(new DownloadProgress
             {
-                Message = LocalizationService.Get("Download.RangeFallback"),
+                Message = "Download.RangeFallback",
                 Diagnostic = "No Range support",
                 Mode = _mode,
                 IsWarning = true
@@ -127,8 +127,8 @@ public sealed class RobustDownloaderService
         }
         catch (OperationCanceledException)
         {
-            ReportMessage(LocalizationService.Get("Download.CanceledWithResume"));
-            return new DownloadResult { Kind = DownloadResultKind.Canceled, Message = LocalizationService.Get("Download.Canceled") };
+            ReportMessage("Download.CanceledWithResume");
+            return new DownloadResult { Kind = DownloadResultKind.Canceled, MessageKey = "Download.Canceled" };
         }
         catch (Exception ex)
         {
@@ -192,7 +192,8 @@ public sealed class RobustDownloaderService
             return new DownloadResult
             {
                 Kind = DownloadResultKind.Completed,
-                Message = LocalizationService.Format("Download.CompletedAverageSpeed", FormatSize(avgSpeed))
+                MessageKey = "Download.CompletedAverageSpeed",
+                MessageArgs = [FormatSize(avgSpeed)]
             };
         }
 
@@ -266,7 +267,7 @@ public sealed class RobustDownloaderService
 
         CompleteFile();
         UpdateProgress("Completed");
-        return new DownloadResult { Kind = DownloadResultKind.Completed, Message = LocalizationService.Get("Download.SingleThreadCompleted") };
+        return new DownloadResult { Kind = DownloadResultKind.Completed, MessageKey = "Download.SingleThreadCompleted" };
     }
 
     private async Task<bool> InitializeDownloadAsync(HttpClient client, string url, bool crcOnly, bool skipCrc, CancellationToken token)

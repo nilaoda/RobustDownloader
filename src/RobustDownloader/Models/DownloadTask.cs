@@ -9,6 +9,25 @@ namespace RobustDownloader.Models;
 
 public sealed class DownloadTask : INotifyPropertyChanged
 {
+    private const string FormattedLogSeparator = "|";
+    private const string CompletedAverageSpeedKey = "Download.CompletedAverageSpeed";
+
+    private static readonly string[] LocalizableLogKeys =
+    [
+        "TaskLog.Added",
+        "TaskLog.Queued",
+        "TaskLog.Started",
+        "TaskLog.Stopping",
+        "TaskLog.Removed",
+        "Download.SkippedExisting",
+        "Download.CrcDone",
+        "Download.RangeFallback",
+        "Download.CanceledWithResume",
+        "Download.Canceled",
+        "Download.SingleThreadCompleted",
+        CompletedAverageSpeedKey
+    ];
+
     private string _fileName = "";
     private string _fileSize = "-";
     private double _progress;
@@ -53,6 +72,8 @@ public sealed class DownloadTask : INotifyPropertyChanged
     {
         OnPropertyChanged(nameof(StatusLabel));
         OnPropertyChanged(nameof(UpdateFileTimestampText));
+        OnPropertyChanged(nameof(EtaText));
+        OnPropertyChanged(nameof(LogText));
         OnPropertyChanged(nameof(DiagnosticText));
     }
 
@@ -86,8 +107,16 @@ public sealed class DownloadTask : INotifyPropertyChanged
     public string Eta
     {
         get => _eta;
-        set => SetField(ref _eta, value);
+        set => SetField(ref _eta, NormalizeEta(value));
     }
+
+    [JsonIgnore]
+    public string EtaText => Eta switch
+    {
+        "Eta.Completed" => LocalizationService.Get("Eta.Completed"),
+        "Eta.Exists" => LocalizationService.Get("Eta.Exists"),
+        _ => Eta
+    };
 
     public DownloadTaskStatus Status
     {
@@ -98,8 +127,11 @@ public sealed class DownloadTask : INotifyPropertyChanged
     public string Log
     {
         get => _log;
-        set => SetField(ref _log, value);
+        set => SetField(ref _log, NormalizeLog(value));
     }
+
+    [JsonIgnore]
+    public string LogText => LocalizeLog(Log);
 
     public string Diagnostic
     {
@@ -136,6 +168,10 @@ public sealed class DownloadTask : INotifyPropertyChanged
         OnPropertyChanged(propertyName);
         if (propertyName is nameof(FileName) or nameof(SaveDirectory))
             OnPropertyChanged(nameof(FullSavePath));
+        if (propertyName is nameof(Eta))
+            OnPropertyChanged(nameof(EtaText));
+        if (propertyName is nameof(Log))
+            OnPropertyChanged(nameof(LogText));
         if (propertyName is nameof(Status))
             OnPropertyChanged(nameof(StatusLabel));
         if (propertyName is nameof(Diagnostic))
@@ -145,5 +181,78 @@ public sealed class DownloadTask : INotifyPropertyChanged
     private void OnPropertyChanged([CallerMemberName] string? propertyName = null)
     {
         PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
+    }
+
+    public static string FormatLogValue(string key, params string[] args)
+    {
+        return args.Length == 0 ? key : $"{key}{FormattedLogSeparator}{string.Join(FormattedLogSeparator, args)}";
+    }
+
+    private static string NormalizeEta(string value)
+    {
+        if (LocalizationService.IsLocalizedValue("Eta.Completed", value))
+            return "Eta.Completed";
+        if (LocalizationService.IsLocalizedValue("Eta.Exists", value))
+            return "Eta.Exists";
+        return value;
+    }
+
+    private static string NormalizeLog(string value)
+    {
+        foreach (var key in LocalizableLogKeys)
+        {
+            if (LocalizationService.IsLocalizedValue(key, value))
+                return key;
+        }
+
+        return TryNormalizeFormattedLog(value) ?? value;
+    }
+
+    private static string? TryNormalizeFormattedLog(string value)
+    {
+        foreach (var format in LocalizationService.GetLocalizedValues(CompletedAverageSpeedKey))
+        {
+            var parts = format.Split("{0}", StringSplitOptions.None);
+            if (parts.Length != 2 ||
+                !value.StartsWith(parts[0], StringComparison.Ordinal) ||
+                !value.EndsWith(parts[1], StringComparison.Ordinal))
+                continue;
+
+            var argStart = parts[0].Length;
+            var argLength = value.Length - argStart - parts[1].Length;
+            if (argLength < 0) continue;
+            return FormatLogValue(CompletedAverageSpeedKey, value.Substring(argStart, argLength));
+        }
+
+        return null;
+    }
+
+    private static string LocalizeLog(string value)
+    {
+        if (TryDecodeFormattedLog(value, out var key, out var args))
+            return LocalizationService.Format(key, args);
+
+        foreach (var logKey in LocalizableLogKeys)
+        {
+            if (value == logKey)
+                return LocalizationService.Get(logKey);
+        }
+
+        return value;
+    }
+
+    private static bool TryDecodeFormattedLog(string value, out string key, out object[] args)
+    {
+        var parts = value.Split(FormattedLogSeparator);
+        if (parts.Length > 1 && parts[0] == CompletedAverageSpeedKey)
+        {
+            key = parts[0];
+            args = parts[1..];
+            return true;
+        }
+
+        key = "";
+        args = [];
+        return false;
     }
 }

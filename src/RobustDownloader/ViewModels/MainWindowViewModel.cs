@@ -137,7 +137,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 UpdateFileTimestamp = result.UpdateFileTimestamp,
                 HeaderText = result.HeaderText,
                 Status = DownloadTaskStatus.Stopped,
-                Log = LocalizationService.Get("TaskLog.Added")
+                Log = "TaskLog.Added"
             };
 
             Tasks.Add(task);
@@ -154,7 +154,7 @@ public partial class MainWindowViewModel : ViewModelBase
             if (task.Status is DownloadTaskStatus.Stopped or DownloadTaskStatus.Error or DownloadTaskStatus.Paused)
             {
                 task.Status = DownloadTaskStatus.Pending;
-                task.Log = LocalizationService.Get("TaskLog.Queued");
+                task.Log = "TaskLog.Queued";
                 task.Speed = "-";
                 task.Eta = "-";
             }
@@ -300,7 +300,7 @@ public partial class MainWindowViewModel : ViewModelBase
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             task.Status = DownloadTaskStatus.Running;
-            task.Log = LocalizationService.Get("TaskLog.Started");
+            task.Log = "TaskLog.Started";
             task.Mode = "-";
         });
 
@@ -376,7 +376,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 task.Status = DownloadTaskStatus.Completed;
                 task.Progress = 100;
                 task.Speed = "-";
-                task.Eta = LocalizationService.Get("Eta.Completed");
+                task.Eta = "Eta.Completed";
                 if (task.TotalSizeStr != "?")
                     task.FileSize = $"{task.TotalSizeStr} / {task.TotalSizeStr}";
                 break;
@@ -384,7 +384,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 task.Status = DownloadTaskStatus.Completed;
                 task.Progress = 100;
                 task.Speed = "-";
-                task.Eta = LocalizationService.Get("Eta.Exists");
+                task.Eta = "Eta.Exists";
                 break;
             case DownloadResultKind.CrcOnlyCompleted:
                 task.Status = DownloadTaskStatus.Completed;
@@ -402,7 +402,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 break;
         }
 
-        task.Log = result.Message;
+        task.Log = GetResultLogValue(result);
     }
 
     private void StopTask(DownloadTask task)
@@ -412,14 +412,22 @@ public partial class MainWindowViewModel : ViewModelBase
             if (_runningTasks.TryGetValue(task.Id, out var cts))
             {
                 cts.Cancel();
-                task.Log = LocalizationService.Get("TaskLog.Stopping");
+                task.Log = "TaskLog.Stopping";
             }
         }
         else if (task.Status == DownloadTaskStatus.Pending)
         {
             task.Status = DownloadTaskStatus.Stopped;
-            task.Log = LocalizationService.Get("TaskLog.Removed");
+            task.Log = "TaskLog.Removed";
         }
+    }
+
+    private static string GetResultLogValue(DownloadResult result)
+    {
+        if (!string.IsNullOrWhiteSpace(result.MessageKey))
+            return DownloadTask.FormatLogValue(result.MessageKey, result.MessageArgs);
+
+        return result.Message;
     }
 
     private void LoadTasks()

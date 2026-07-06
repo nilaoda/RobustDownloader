@@ -13,4 +13,6 @@ public sealed class DownloadResult
 {
     public DownloadResultKind Kind { get; init; }
     public string Message { get; init; } = "";
+    public string MessageKey { get; init; } = "";
+    public string[] MessageArgs { get; init; } = [];
 }

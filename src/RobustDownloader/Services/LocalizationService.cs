@@ -42,6 +42,26 @@ public static class LocalizationService
         return string.Format(CultureInfo.CurrentCulture, Get(key), args);
     }
 
+    public static bool IsLocalizedValue(string key, string value)
+    {
+        return string.Equals(value, key, StringComparison.Ordinal) ||
+               string.Equals(GetResourceValue(ZhHans, key), value, StringComparison.Ordinal) ||
+               string.Equals(GetResourceValue(En, key), value, StringComparison.Ordinal) ||
+               string.Equals(GetResourceValue(ZhHant, key), value, StringComparison.Ordinal);
+    }
+
+    public static IEnumerable<string> GetLocalizedValues(string key)
+    {
+        yield return GetResourceValue(ZhHans, key);
+        yield return GetResourceValue(En, key);
+        yield return GetResourceValue(ZhHant, key);
+    }
+
+    private static string GetResourceValue(IReadOnlyDictionary<string, string> resources, string key)
+    {
+        return resources.TryGetValue(key, out var value) ? value : key;
+    }
+
     private static AppLanguageMode Resolve(AppLanguageMode mode)
     {
         if (mode != AppLanguageMode.Auto) return mode;
