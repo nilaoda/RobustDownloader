@@ -1,6 +1,8 @@
-# RobustDownloader
-
-[中文](README.md)
+<div align="center">
+  <img src="src/RobustDownloader/Assets/app-icon.png" alt="RobustDownloader" width="112">
+  <h1>RobustDownloader</h1>
+  <p><a href="README.md">中文</a></p>
+</div>
 
 RobustDownloader is a cross-platform desktop download manager built with .NET, Avalonia, and ShadUI. It focuses on resilient large-file downloads with queue management, resumable segmented downloading, site credentials, CRC64 workflows, and a clean operational UI.
 
@@ -15,6 +17,14 @@ RobustDownloader is a cross-platform desktop download manager built with .NET, A
 ## Authorship
 
 This project's code was implemented entirely by AI. Human input was limited to product direction, design preferences, requirements, and review feedback.
+
+## Download
+
+End users do not need to install the .NET SDK or a development environment. Download a prebuilt package for your platform from [Releases](https://github.com/nilaoda/RobustDownloader/releases), then extract or install it and run the app.
+
+- Windows: download the Windows build archive, extract it, and run the app.
+- macOS: download the macOS app package and open the app.
+- Linux: download a matching package if available, or build from source.
 
 ## Features
 
@@ -42,12 +52,9 @@ This project's code was implemented entirely by AI. Human input was limited to p
 - Collapsible task detail panel with logs, headers, diagnostics, and run mode
 - Window title includes the application version from the project metadata
 
-## Requirements
+## Build From Source
 
-- .NET SDK compatible with the project target framework
-- macOS, Windows, or Linux desktop environment supported by Avalonia
-
-## Build And Run
+This section is only for developers or users who want to run or package the app from source.
 
 ```bash
 dotnet restore src/RobustDownloader.sln
@@ -59,6 +66,8 @@ To build only:
 ```bash
 dotnet build src/RobustDownloader.sln
 ```
+
+Building from source requires a .NET SDK compatible with the project target framework and a macOS, Windows, or Linux desktop environment supported by Avalonia.
 
 ## Settings
 

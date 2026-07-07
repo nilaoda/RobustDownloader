@@ -1,6 +1,8 @@
-# RobustDownloader
-
-[English](README.en.md)
+<div align="center">
+  <img src="src/RobustDownloader/Assets/app-icon.png" alt="RobustDownloader" width="112">
+  <h1>RobustDownloader</h1>
+  <p><a href="README.en.md">English</a></p>
+</div>
 
 RobustDownloader 是一个基于 .NET、Avalonia 和 ShadUI 的跨平台桌面下载管理器。它重点面向大文件下载场景，提供队列管理、可续传分段下载、站点凭据、CRC64 工作流，以及清晰的工具型界面。
 
@@ -15,6 +17,14 @@ RobustDownloader 是一个基于 .NET、Avalonia 和 ShadUI 的跨平台桌面�
 ## 作者声明
 
 本项目代码完全由 AI 实现。人工仅提供产品方向、设计思路、需求描述和评审反馈。
+
+## 下载和运行
+
+普通用户不需要安装 .NET SDK 或开发环境。请直接在 [Releases](https://github.com/nilaoda/RobustDownloader/releases) 下载对应平台的编译包，解压或安装后运行即可。
+
+- Windows：下载 Windows 构建压缩包，解压后运行程序。
+- macOS：下载 macOS 应用包，打开应用即可。
+- Linux：下载对应发行包或自行从源码构建。
 
 ## 功能
 
@@ -42,12 +52,9 @@ RobustDownloader 是一个基于 .NET、Avalonia 和 ShadUI 的跨平台桌面�
 - 支持可折叠的任务详情面板，展示日志、Header、诊断和运行模式
 - 标题栏展示来自项目元数据的应用版本号
 
-## 环境要求
+## 从源码构建
 
-- 与项目目标框架兼容的 .NET SDK
-- macOS、Windows 或 Linux 桌面环境
-
-## 构建和运行
+以下内容仅面向开发者，或需要自行从源码运行/打包的用户。
 
 ```bash
 dotnet restore src/RobustDownloader.sln
@@ -59,6 +66,8 @@ dotnet run --project src/RobustDownloader/RobustDownloader.csproj
 ```bash
 dotnet build src/RobustDownloader.sln
 ```
+
+源码构建需要安装与项目目标框架兼容的 .NET SDK，并使用 macOS、Windows 或 Linux 桌面环境。
 
 ## 设置项
 
