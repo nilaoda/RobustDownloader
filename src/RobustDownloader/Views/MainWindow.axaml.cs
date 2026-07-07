@@ -6,6 +6,7 @@ using System.Runtime.InteropServices;
 using Avalonia.Controls;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
+using Avalonia.Threading;
 using RobustDownloader.Models;
 using RobustDownloader.Services;
 using RobustDownloader.ViewModels;
@@ -37,8 +38,18 @@ public partial class MainWindow : ShadUI.Window
         var result = await dialog.ShowDialog<AddTaskResult?>(this);
         if (result == null) return;
         vm.AddTasks(result);
-        if (vm.VisibleTasks.Count > 0)
-            TaskGrid.ScrollIntoView(vm.VisibleTasks.LastOrDefault(), null);
+        ScrollTaskGridToBottom();
+    }
+
+    private void ScrollTaskGridToBottom()
+    {
+        if (DataContext is not MainWindowViewModel vm) return;
+
+        var lastTask = vm.VisibleTasks.LastOrDefault();
+        if (lastTask == null) return;
+
+        TaskGrid.ScrollIntoView(lastTask, null);
+        Dispatcher.UIThread.Post(() => TaskGrid.ScrollIntoView(lastTask, null), DispatcherPriority.Loaded);
     }
 
     private void BtnStart_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
