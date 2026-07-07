@@ -5,6 +5,7 @@ using System.Threading.Tasks;
 using Avalonia.Controls;
 using Avalonia.Input.Platform;
 using Avalonia.Platform.Storage;
+using Avalonia.Threading;
 using RobustDownloader.Models;
 using RobustDownloader.Services;
 
@@ -15,6 +16,12 @@ public partial class AddTaskWindow : ShadUI.Window
     public AddTaskWindow()
     {
         InitializeComponent();
+        TxtBatchTemplate.Text = "#.mp4";
+        TxtBatchStart.Text = "1";
+        TxtBatchStep.Text = "1";
+        TxtBatchDigits.Text = "2";
+        RdoBatchNamingAuto.IsChecked = true;
+        UpdateUrlDependentFields();
     }
 
     public AddTaskWindow(AddTaskResult defaults) : this()
@@ -52,27 +59,87 @@ public partial class AddTaskWindow : ShadUI.Window
         if (urls.Length == 0) return;
 
         TxtUrls.Text = string.Join(Environment.NewLine, urls);
-        TxtUrls.CaretIndex = TxtUrls.Text.Length;
+        ResetClipboardUrlTextBoxPosition();
+    }
+
+    private void ResetClipboardUrlTextBoxPosition()
+    {
+        TxtUrls.CaretIndex = 0;
+        Dispatcher.UIThread.Post(() => TxtUrls.CaretIndex = 0, DispatcherPriority.Loaded);
     }
 
     private void TxtUrls_TextChanged(object? sender, TextChangedEventArgs e)
     {
+        UpdateUrlDependentFields();
+    }
+
+    private void UpdateUrlDependentFields()
+    {
         var lines = GetUrls();
+        TxtUrlsLabel.Text = lines.Length == 0
+            ? LocalizationService.Get("Add.Urls")
+            : LocalizationService.Format("Add.UrlsWithCount", lines.Length);
+
         if (lines.Length == 1)
         {
+            SingleFileNamePanel.IsVisible = true;
+            BatchFileNamingPanel.IsVisible = false;
             TxtFileName.IsEnabled = true;
             TxtFileName.Text = TaskFileNameHelper.GetFileName(lines[0]);
         }
         else if (lines.Length > 1)
         {
-            TxtFileName.Text = LocalizationService.Get("Add.BatchFileName");
+            SingleFileNamePanel.IsVisible = false;
+            BatchFileNamingPanel.IsVisible = true;
             TxtFileName.IsEnabled = false;
+            TxtFileName.Text = LocalizationService.Get("Add.BatchFileName");
         }
         else
         {
+            SingleFileNamePanel.IsVisible = true;
+            BatchFileNamingPanel.IsVisible = false;
             TxtFileName.Text = "";
             TxtFileName.IsEnabled = true;
         }
+
+        UpdateBatchNamingFields();
+    }
+
+    private void BatchNaming_Changed(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        UpdateBatchNamingFields();
+    }
+
+    private void BatchNaming_Changed(object? sender, TextChangedEventArgs e)
+    {
+        UpdateBatchNamingFields();
+    }
+
+    private void UpdateBatchNamingFields()
+    {
+        var isTemplateMode = RdoBatchNamingTemplate.IsChecked == true;
+        BatchTemplateSettingsPanel.IsVisible = isTemplateMode;
+        BatchNumberSettingsPanel.IsVisible = isTemplateMode && TemplateHasNumberPlaceholder();
+        var duplicateMessage = LocalizationService.Get("Validation.BatchDuplicateFileName");
+        if (!isTemplateMode)
+        {
+            TxtBatchPreview.Text = "";
+            if (TxtValidation.Text == duplicateMessage)
+                TxtValidation.Text = "";
+            return;
+        }
+
+        if (TryBuildBatchFileNames(GetUrls(), out var fileNames, out var error))
+        {
+            TxtBatchPreview.Text = string.Join(Environment.NewLine, fileNames.Take(5));
+            if (TxtValidation.Text == duplicateMessage)
+                TxtValidation.Text = "";
+            return;
+        }
+
+        TxtBatchPreview.Text = "";
+        if (error == duplicateMessage)
+            TxtValidation.Text = error;
     }
 
     private async void BtnBrowse_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -136,9 +203,20 @@ public partial class AddTaskWindow : ShadUI.Window
             return;
         }
 
+        var fileNames = Array.Empty<string>();
+        if (urls.Length > 1 && RdoBatchNamingTemplate.IsChecked == true)
+        {
+            if (!TryBuildBatchFileNames(urls, out fileNames, out var fileNameError))
+            {
+                TxtValidation.Text = fileNameError;
+                return;
+            }
+        }
+
         Close(new AddTaskResult
         {
             Urls = urls,
+            FileNames = fileNames,
             SaveDirectory = saveDir,
             SingleFileName = TxtFileName.IsEnabled ? TxtFileName.Text?.Trim() ?? "" : "",
             ThreadCount = threads,
@@ -163,6 +241,87 @@ public partial class AddTaskWindow : ShadUI.Window
             .Where(u => !string.IsNullOrWhiteSpace(u))
             .ToArray();
     }
+
+    private bool TemplateHasNumberPlaceholder()
+    {
+        return (TxtBatchTemplate.Text ?? "").Contains('#', StringComparison.Ordinal);
+    }
+
+    private bool TryBuildBatchFileNames(string[] urls, out string[] fileNames, out string error)
+    {
+        fileNames = [];
+        error = "";
+
+        var template = TxtBatchTemplate.Text?.Trim() ?? "";
+        if (string.IsNullOrWhiteSpace(template))
+        {
+            error = LocalizationService.Get("Validation.BatchTemplate");
+            return false;
+        }
+
+        var hasNumberPlaceholder = template.Contains('#', StringComparison.Ordinal);
+        var start = 0;
+        var step = 1;
+        var digits = 1;
+
+        if (hasNumberPlaceholder)
+        {
+            if (!int.TryParse(TxtBatchStart.Text, out start) || start < 0)
+            {
+                error = LocalizationService.Get("Validation.BatchStart");
+                return false;
+            }
+
+            if (!int.TryParse(TxtBatchStep.Text, out step) || step < 1)
+            {
+                error = LocalizationService.Get("Validation.BatchStep");
+                return false;
+            }
+
+            if (!int.TryParse(TxtBatchDigits.Text, out digits) || digits < 1)
+            {
+                error = LocalizationService.Get("Validation.BatchDigits");
+                return false;
+            }
+        }
+
+        fileNames = urls
+            .Select((url, index) => new
+            {
+                Url = url,
+                Number = start + index * step
+            })
+            .Select(item =>
+                template
+                    .Replace("#", item.Number.ToString($"D{digits}"), StringComparison.Ordinal)
+                    .Replace("*", TaskFileNameHelper.GetFileName(item.Url), StringComparison.Ordinal))
+            .ToArray();
+
+        if (fileNames.Any(name => string.IsNullOrWhiteSpace(name) || HasInvalidFileNameChars(name)))
+        {
+            error = LocalizationService.Get("Validation.BatchFileName");
+            return false;
+        }
+
+        if (fileNames.Distinct(StringComparer.Ordinal).Count() != fileNames.Length)
+        {
+            error = LocalizationService.Get("Validation.BatchDuplicateFileName");
+            return false;
+        }
+
+        return true;
+    }
+
+    private static bool HasInvalidFileNameChars(string fileName)
+    {
+        return fileName.IndexOfAny(InvalidFileNameChars) >= 0;
+    }
+
+    private static readonly char[] InvalidFileNameChars =
+    [
+        ..Path.GetInvalidFileNameChars(),
+        '<', '>', ':', '"', '/', '\\', '|', '?', '*'
+    ];
 
     private static string[] GetHttpUrlsFromClipboard(string? text)
     {

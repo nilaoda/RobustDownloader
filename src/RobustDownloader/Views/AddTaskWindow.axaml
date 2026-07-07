@@ -34,7 +34,7 @@
                       HorizontalScrollBarVisibility="Disabled">
             <StackPanel Spacing="16" Margin="0,0,14,0">
                 <StackPanel Spacing="6">
-                    <TextBlock Classes="Label" Text="{DynamicResource Add.Urls}"/>
+                    <TextBlock x:Name="TxtUrlsLabel" Classes="Label" Text="{DynamicResource Add.Urls}"/>
                     <TextBox x:Name="TxtUrls"
                              AcceptsReturn="True"
                              Height="108"
@@ -57,11 +57,74 @@
                     </Grid>
                 </StackPanel>
 
-                <StackPanel Spacing="6">
+                <StackPanel x:Name="SingleFileNamePanel" Spacing="6">
                     <TextBlock Classes="Label" Text="{DynamicResource Add.FileName}"/>
                     <TextBox x:Name="TxtFileName"
                              VerticalContentAlignment="Center"/>
                     <TextBlock Classes="Hint" Text="{DynamicResource Add.FileNameHint}"/>
+                </StackPanel>
+
+                <StackPanel x:Name="BatchFileNamingPanel"
+                            Spacing="8"
+                            IsVisible="False">
+                    <TextBlock Classes="Label" Text="{DynamicResource Add.BatchNaming}"/>
+                    <StackPanel Spacing="6">
+                        <TextBlock Classes="Label" Text="{DynamicResource Add.BatchNamingMode}"/>
+                        <StackPanel Orientation="Horizontal" Spacing="16">
+                            <RadioButton x:Name="RdoBatchNamingAuto"
+                                         GroupName="BatchNamingMode"
+                                         Content="{DynamicResource Add.BatchNamingAuto}"
+                                         Click="BatchNaming_Changed"/>
+                            <RadioButton x:Name="RdoBatchNamingTemplate"
+                                         GroupName="BatchNamingMode"
+                                         Content="{DynamicResource Add.BatchNamingTemplate}"
+                                         Click="BatchNaming_Changed"/>
+                        </StackPanel>
+                    </StackPanel>
+
+                    <StackPanel x:Name="BatchTemplateSettingsPanel" Spacing="8">
+                        <StackPanel Spacing="6">
+                            <TextBlock Classes="Label" Text="{DynamicResource Add.BatchTemplate}"/>
+                            <TextBox x:Name="TxtBatchTemplate"
+                                     TextChanged="BatchNaming_Changed"/>
+                            <TextBlock Classes="Hint" Text="{DynamicResource Add.BatchTemplateHint}"/>
+                        </StackPanel>
+
+                        <Grid x:Name="BatchNumberSettingsPanel"
+                              ColumnDefinitions="*,10,*,10,*">
+                            <StackPanel Grid.Column="0" Spacing="6">
+                                <TextBlock Classes="Label" Text="{DynamicResource Add.BatchStart}"/>
+                                <TextBox x:Name="TxtBatchStart"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalContentAlignment="Center"
+                                         TextChanged="BatchNaming_Changed"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="2" Spacing="6">
+                                <TextBlock Classes="Label" Text="{DynamicResource Add.BatchStep}"/>
+                                <TextBox x:Name="TxtBatchStep"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalContentAlignment="Center"
+                                         TextChanged="BatchNaming_Changed"/>
+                            </StackPanel>
+                            <StackPanel Grid.Column="4" Spacing="6">
+                                <TextBlock Classes="Label" Text="{DynamicResource Add.BatchDigits}"/>
+                                <TextBox x:Name="TxtBatchDigits"
+                                         HorizontalContentAlignment="Center"
+                                         VerticalContentAlignment="Center"
+                                         TextChanged="BatchNaming_Changed"/>
+                            </StackPanel>
+                        </Grid>
+
+                        <StackPanel Spacing="6">
+                            <TextBlock Classes="Label" Text="{DynamicResource Add.BatchPreview}"/>
+                            <TextBox x:Name="TxtBatchPreview"
+                                     AcceptsReturn="True"
+                                     Height="78"
+                                     IsReadOnly="True"
+                                     TextWrapping="NoWrap"
+                                     ScrollViewer.VerticalScrollBarVisibility="Auto"/>
+                        </StackPanel>
+                    </StackPanel>
                 </StackPanel>
 
                 <Expander Header="{DynamicResource Add.Advanced}">
