@@ -131,7 +131,7 @@ public partial class AddTaskWindow : ShadUI.Window
 
         if (TryBuildBatchFileNames(GetUrls(), out var fileNames, out var error))
         {
-            TxtBatchPreview.Text = string.Join(Environment.NewLine, fileNames.Take(5));
+            TxtBatchPreview.Text = string.Join(Environment.NewLine, fileNames);
             if (TxtValidation.Text == duplicateMessage)
                 TxtValidation.Text = "";
             return;
