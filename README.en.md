@@ -23,7 +23,7 @@ This project's code was implemented entirely by AI. Human input was limited to p
 End users do not need to install the .NET SDK or a development environment. Download a prebuilt package for your platform from [Releases](https://github.com/nilaoda/RobustDownloader/releases), then extract or install it and run the app.
 
 - Windows: download the Windows build archive, extract it, and run the app.
-- macOS: download the macOS app package and open the app.
+- macOS: download the macOS app package. If macOS reports that the app is from an unidentified developer or cannot be opened, first make sure you trust the downloaded file, then run `xattr -dr com.apple.quarantine RobustDownloader.app` before opening it.
 - Linux: download a matching package if available, or build from source.
 
 ## Features

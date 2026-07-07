@@ -23,7 +23,7 @@ RobustDownloader 是一个基于 .NET、Avalonia 和 ShadUI 的跨平台桌面�
 普通用户不需要安装 .NET SDK 或开发环境。请直接在 [Releases](https://github.com/nilaoda/RobustDownloader/releases) 下载对应平台的编译包，解压或安装后运行即可。
 
 - Windows：下载 Windows 构建压缩包，解压后运行程序。
-- macOS：下载 macOS 应用包，打开应用即可。
+- macOS：下载 macOS 应用包。若系统提示应用来自未识别开发者或无法打开，请先确认下载来源可信，再执行 `xattr -dr com.apple.quarantine RobustDownloader.app` 移除隔离属性后打开。
 - Linux：下载对应发行包或自行从源码构建。
 
 ## 功能
