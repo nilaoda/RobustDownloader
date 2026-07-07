@@ -22,8 +22,13 @@ This project's code was implemented entirely by AI. Human input was limited to p
 - Resumable segmented downloads with configurable thread count and block size
 - Global concurrency control
 - Persisted task list scope: recent 50, recent 100, recent 200, or all tasks
+- Left-side task tree for filtering by all, completed, incomplete, and file extension
 - Automatic fallback to single-thread mode when the server does not support range requests
 - Batch task creation by pasting one URL per line
+- Automatic Add Task URL filling from the clipboard when it contains one or more HTTP links
+- Batch filename templates: `#` inserts a number and `*` inserts the auto-detected original filename
+- Custom numbering start, step, and digit width for batch filename templates, with full preview and duplicate filename validation
+- The task table automatically scrolls to the bottom after new tasks are added
 - Custom HTTP headers per task and default headers in settings
 - HTTP proxy settings: system proxy, no proxy, or manual proxy URL
 - Site credential rules for Basic Auth
@@ -32,6 +37,8 @@ This project's code was implemented entirely by AI. Human input was limited to p
 - Local task and settings persistence as JSON
 - Dynamic language switching: Auto, English, Simplified Chinese, Traditional Chinese
 - Theme selection: system, light, dark
+- Close-to-tray support, or close to the macOS menu bar, with an exit menu item
+- Single-instance behavior that activates the existing window when launched again
 - Collapsible task detail panel with logs, headers, diagnostics, and run mode
 - Window title includes the application version from the project metadata
 
@@ -58,6 +65,7 @@ dotnet build src/RobustDownloader.sln
 Open **Settings** from the main toolbar to configure:
 
 - Appearance: language and theme
+- Window behavior: close to tray/menu bar or exit directly, plus close confirmation
 - Download defaults: thread count, block size, concurrency, CRC64 behavior, timestamp behavior
 - Network: HTTP proxy mode and manual proxy URL
 - Save and headers: default save directory and default HTTP headers
