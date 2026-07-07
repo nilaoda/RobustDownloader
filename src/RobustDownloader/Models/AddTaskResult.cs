@@ -3,6 +3,7 @@ namespace RobustDownloader.Models;
 public sealed class AddTaskResult
 {
     public string[] Urls { get; init; } = [];
+    public string[] FileNames { get; init; } = [];
     public string SaveDirectory { get; init; } = "";
     public string SingleFileName { get; init; } = "";
     public int ThreadCount { get; init; } = 4;

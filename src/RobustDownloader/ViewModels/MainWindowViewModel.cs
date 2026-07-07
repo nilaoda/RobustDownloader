@@ -168,10 +168,13 @@ public partial class MainWindowViewModel : ViewModelBase
         _suppressTaskCollectionSideEffects = true;
         try
         {
-            foreach (var url in result.Urls)
+            for (var index = 0; index < result.Urls.Length; index++)
             {
+                var url = result.Urls[index];
                 var fileName = result.Urls.Length == 1 && !string.IsNullOrWhiteSpace(result.SingleFileName)
                     ? result.SingleFileName.Trim()
+                    : result.FileNames.Length == result.Urls.Length && !string.IsNullOrWhiteSpace(result.FileNames[index])
+                    ? result.FileNames[index].Trim()
                     : TaskFileNameHelper.GetFileName(url);
 
                 var task = new DownloadTask
@@ -899,7 +902,7 @@ public partial class MainWindowViewModel : ViewModelBase
             var version = typeof(MainWindowViewModel).Assembly
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
                 ?.InformationalVersion;
-            return string.IsNullOrWhiteSpace(version) ? "0.0.2" : version.Split('+')[0];
+            return string.IsNullOrWhiteSpace(version) ? "0.0.3" : version.Split('+')[0];
         }
     }
 
