@@ -13,6 +13,61 @@
             <Setter Property="SelectionBrush" Value="{DynamicResource PrimaryColor50}"/>
             <Setter Property="SelectionForegroundBrush" Value="{x:Null}"/>
         </Style>
+        <!-- Override ShadUI TabControl template: StackPanel → Grid to fix ScrollViewer issue (PR #86) -->
+        <Style Selector="TabControl">
+            <Setter Property="Template">
+                <ControlTemplate>
+                    <Border Background="{TemplateBinding Background}"
+                            BorderBrush="{TemplateBinding BorderBrush}"
+                            BorderThickness="{TemplateBinding BorderThickness}"
+                            CornerRadius="{TemplateBinding CornerRadius}"
+                            HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                            VerticalAlignment="{TemplateBinding VerticalAlignment}">
+                        <Grid RowDefinitions="Auto,8,*">
+                            <LayoutTransformControl
+                                DockPanel.Dock="{TemplateBinding TabStripPlacement}"
+                                HorizontalAlignment="{TemplateBinding HorizontalAlignment}"
+                                Name="LayoutTransform">
+                                <Border Background="{DynamicResource TabItemsBackgroundColor}"
+                                        CornerRadius="{DynamicResource LgCornerRadius}"
+                                        HorizontalAlignment="Left"
+                                        Padding="2,4,2,0">
+                                    <Panel>
+                                        <Canvas IsHitTestVisible="False">
+                                            <Border Background="{DynamicResource TabItemSelectedColor}"
+                                                    BoxShadow="{DynamicResource Shadow}"
+                                                    Canvas.Left="0" Canvas.Top="0"
+                                                    CornerRadius="{DynamicResource MdCornerRadius}"
+                                                    Height="0" Opacity="0" Width="0"
+                                                    x:Name="PART_SelectionPill">
+                                                <Border.Transitions>
+                                                    <Transitions>
+                                                        <DoubleTransition Duration="0:0:0.30" Easing="{StaticResource EaseOut}" Property="(Canvas.Left)"/>
+                                                        <DoubleTransition Duration="0:0:0.30" Easing="{StaticResource EaseOut}" Property="(Canvas.Top)"/>
+                                                        <DoubleTransition Duration="0:0:0.30" Easing="{StaticResource EaseOut}" Property="Width"/>
+                                                        <DoubleTransition Duration="0:0:0.30" Easing="{StaticResource EaseOut}" Property="Height"/>
+                                                        <DoubleTransition Duration="0:0:0.20" Easing="{StaticResource EaseOut}" Property="Opacity"/>
+                                                    </Transitions>
+                                                </Border.Transitions>
+                                            </Border>
+                                        </Canvas>
+                                        <ItemsPresenter ItemsPanel="{TemplateBinding ItemsPanel}" Name="PART_ItemsPresenter"/>
+                                    </Panel>
+                                </Border>
+                            </LayoutTransformControl>
+                            <ContentPresenter
+                                Grid.Row="2"
+                                Content="{TemplateBinding SelectedContent}"
+                                ContentTemplate="{TemplateBinding SelectedContentTemplate}"
+                                HorizontalContentAlignment="{TemplateBinding HorizontalContentAlignment}"
+                                Margin="{TemplateBinding Padding}"
+                                Name="PART_SelectedContentHost"
+                                VerticalContentAlignment="{TemplateBinding VerticalContentAlignment}"/>
+                        </Grid>
+                    </Border>
+                </ControlTemplate>
+            </Setter>
+        </Style>
         <Style Selector="TextBlock.Label">
             <Setter Property="FontWeight" Value="SemiBold"/>
             <Setter Property="Margin" Value="0,0,0,6"/>
@@ -28,60 +83,110 @@
         </Style>
     </shad:Window.Styles>
 
-    <Grid RowDefinitions="Auto,*,Auto" Margin="20">
-        <StackPanel Grid.Row="0" Spacing="4" Margin="0,0,0,16">
+    <DockPanel Margin="20">
+        <StackPanel DockPanel.Dock="Top" Spacing="4" Margin="0,0,0,16">
             <TextBlock Text="{DynamicResource Settings.Title}" FontSize="20" FontWeight="SemiBold"/>
             <TextBlock Text="{DynamicResource Settings.Description}"
                        Foreground="{DynamicResource MutedColor}"
                        TextWrapping="Wrap"/>
         </StackPanel>
 
-        <TabControl Grid.Row="1">
+        <DockPanel DockPanel.Dock="Bottom" Margin="0,16,0,0">
+            <TextBlock x:Name="TxtValidation"
+                       Foreground="{DynamicResource DestructiveColor}"
+                       VerticalAlignment="Center"
+                       TextWrapping="Wrap"/>
+            <StackPanel DockPanel.Dock="Right" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                <Button Content="{DynamicResource Settings.Cancel}" Padding="18,8" Click="Cancel_Click"/>
+                <Button Content="{DynamicResource Settings.Save}" Padding="20,8" Classes="Primary" Click="Save_Click"/>
+            </StackPanel>
+        </DockPanel>
+
+        <TabControl>
             <TabItem Header="{DynamicResource Settings.Appearance}">
-                <StackPanel Spacing="18" Margin="0,14,14,0">
-                    <StackPanel Spacing="8">
-                        <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.Language}"/>
-                        <ComboBox x:Name="CmbLanguage" HorizontalAlignment="Left" MinWidth="220">
-                            <ComboBoxItem Tag="Auto" Content="{DynamicResource Settings.Auto}"/>
-                            <ComboBoxItem Tag="English" Content="{DynamicResource Settings.LanguageEn}"/>
-                            <ComboBoxItem Tag="SimplifiedChinese" Content="{DynamicResource Settings.LanguageZhHans}"/>
-                            <ComboBoxItem Tag="TraditionalChinese" Content="{DynamicResource Settings.LanguageZhHant}"/>
-                        </ComboBox>
-                        <TextBlock Classes="Hint" Text="{DynamicResource Settings.LanguageHint}"/>
-                    </StackPanel>
+                <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled">
+                    <StackPanel Spacing="18" Margin="0,14,14,0">
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.Language}"/>
+                            <ComboBox x:Name="CmbLanguage" HorizontalAlignment="Left" MinWidth="220">
+                                <ComboBoxItem Tag="Auto" Content="{DynamicResource Settings.Auto}"/>
+                                <ComboBoxItem Tag="English" Content="{DynamicResource Settings.LanguageEn}"/>
+                                <ComboBoxItem Tag="SimplifiedChinese" Content="{DynamicResource Settings.LanguageZhHans}"/>
+                                <ComboBoxItem Tag="TraditionalChinese" Content="{DynamicResource Settings.LanguageZhHant}"/>
+                            </ComboBox>
+                            <TextBlock Classes="Hint" Text="{DynamicResource Settings.LanguageHint}"/>
+                        </StackPanel>
 
-                    <StackPanel Spacing="8">
-                        <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.Theme}"/>
-                        <ComboBox x:Name="CmbTheme" HorizontalAlignment="Left" MinWidth="220">
-                            <ComboBoxItem Tag="System" Content="{DynamicResource Settings.ThemeSystem}"/>
-                            <ComboBoxItem Tag="Light" Content="{DynamicResource Settings.ThemeLight}"/>
-                            <ComboBoxItem Tag="Dark" Content="{DynamicResource Settings.ThemeDark}"/>
-                        </ComboBox>
-                        <TextBlock Classes="Hint" Text="{DynamicResource Settings.ThemeHint}"/>
-                    </StackPanel>
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.Theme}"/>
+                            <ComboBox x:Name="CmbTheme" HorizontalAlignment="Left" MinWidth="220">
+                                <ComboBoxItem Tag="System" Content="{DynamicResource Settings.ThemeSystem}"/>
+                                <ComboBoxItem Tag="Light" Content="{DynamicResource Settings.ThemeLight}"/>
+                                <ComboBoxItem Tag="Dark" Content="{DynamicResource Settings.ThemeDark}"/>
+                            </ComboBox>
+                            <TextBlock Classes="Hint" Text="{DynamicResource Settings.ThemeHint}"/>
+                        </StackPanel>
 
-                    <StackPanel Spacing="8">
-                        <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.WindowBehavior}"/>
-                        <ComboBox x:Name="CmbCloseBehavior"
-                                  HorizontalAlignment="Left"
-                                  MinWidth="260"
-                                  SelectionChanged="CloseBehavior_SelectionChanged">
-                            <ComboBoxItem Tag="MinimizeToTray" Content="{DynamicResource Settings.CloseToTray}"/>
-                            <ComboBoxItem Tag="ExitApplication" Content="{DynamicResource Settings.CloseToExit}"/>
-                        </ComboBox>
-                        <CheckBox x:Name="ChkConfirmCloseToTray"
-                                  Content="{DynamicResource Settings.ConfirmCloseToTray}"
-                                  IsChecked="{Binding ConfirmCloseToTray}"/>
-                        <TextBlock Classes="Hint" Text="{DynamicResource Settings.WindowBehaviorHint}"/>
-                    </StackPanel>
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.WindowBehavior}"/>
+                            <ComboBox x:Name="CmbCloseBehavior"
+                                    HorizontalAlignment="Left"
+                                    MinWidth="260"
+                                    SelectionChanged="CloseBehavior_SelectionChanged">
+                                <ComboBoxItem Tag="MinimizeToTray" Content="{DynamicResource Settings.CloseToTray}"/>
+                                <ComboBoxItem Tag="ExitApplication" Content="{DynamicResource Settings.CloseToExit}"/>
+                            </ComboBox>
+                            <CheckBox x:Name="ChkConfirmCloseToTray"
+                                    Content="{DynamicResource Settings.ConfirmCloseToTray}"
+                                    IsChecked="{Binding ConfirmCloseToTray}"/>
+                            <TextBlock Classes="Hint" Text="{DynamicResource Settings.WindowBehaviorHint}"/>
+                        </StackPanel>
 
-                    <StackPanel Spacing="8">
-                        <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.CheckForUpdates}"/>
-                        <CheckBox Content="{DynamicResource Settings.CheckForUpdates}"
-                                  IsChecked="{Binding CheckForUpdates}"/>
-                        <TextBlock Classes="Hint" Text="{DynamicResource Settings.CheckForUpdatesHint}"/>
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.CheckForUpdates}"/>
+                            <CheckBox Content="{DynamicResource Settings.CheckForUpdates}"
+                                    IsChecked="{Binding CheckForUpdates}"/>
+                            <TextBlock Classes="Hint" Text="{DynamicResource Settings.CheckForUpdatesHint}"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.BackgroundImage}"/>
+                            <Grid ColumnDefinitions="*,8,Auto,8,Auto">
+                                <TextBox x:Name="TxtBackgroundImagePath"
+                                        Grid.Column="0"
+                                        Text="{Binding BackgroundImagePath}"
+                                        IsReadOnly="True"
+                                        VerticalContentAlignment="Center"/>
+                                <Button Grid.Column="2"
+                                        Content="{DynamicResource Add.Browse}"
+                                        Padding="14,7"
+                                        Click="BrowseBackgroundImage_Click"/>
+                                <Button Grid.Column="4"
+                                        Content="{DynamicResource Settings.ClearBackground}"
+                                        Padding="14,7"
+                                        Click="ClearBackgroundImage_Click"/>
+                            </Grid>
+                            <StackPanel Spacing="4">
+                                <TextBlock Classes="Hint" Text="{DynamicResource Settings.BackgroundImageHint}"/>
+                                <TextBlock Classes="Hint" Text="{DynamicResource Settings.BackgroundStretch}"/>
+                                <ComboBox x:Name="CmbBackgroundStretch" HorizontalAlignment="Left" MinWidth="180">
+                                    <ComboBoxItem Tag="None" Content="{DynamicResource Settings.StretchNone}"/>
+                                    <ComboBoxItem Tag="Fill" Content="{DynamicResource Settings.StretchFill}"/>
+                                    <ComboBoxItem Tag="Uniform" Content="{DynamicResource Settings.StretchUniform}"/>
+                                    <ComboBoxItem Tag="UniformToFill" Content="{DynamicResource Settings.StretchUniformToFill}"/>
+                                </ComboBox>
+                                <TextBlock Classes="Hint" Text="{DynamicResource Settings.BackgroundBlur}"/>
+                                <Slider Minimum="0" Maximum="20" TickFrequency="1"
+                                        Value="{Binding BackgroundBlur}"
+                                        x:Name="SliderBackgroundBlur"/>
+                                <TextBlock Classes="Hint" Text="{DynamicResource Settings.BackgroundOpacity}"/>
+                                <Slider Minimum="0" Maximum="1" TickFrequency="0.05"
+                                        Value="{Binding BackgroundOpacity}"
+                                        x:Name="SliderBackgroundOpacity"/>
+                            </StackPanel>
+                        </StackPanel>
                     </StackPanel>
-                </StackPanel>
+                </ScrollViewer>
             </TabItem>
 
             <TabItem Header="{DynamicResource Settings.Download}">
@@ -234,22 +339,5 @@
                 </ScrollViewer>
             </TabItem>
         </TabControl>
-
-        <Border Grid.Row="2"
-                BorderBrush="{DynamicResource BorderColor}"
-                BorderThickness="0,1,0,0"
-                Margin="0,16,0,0"
-                Padding="0,14,0,0">
-            <DockPanel>
-                <TextBlock x:Name="TxtValidation"
-                           Foreground="{DynamicResource DestructiveColor}"
-                           VerticalAlignment="Center"
-                           TextWrapping="Wrap"/>
-                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-                    <Button Content="{DynamicResource Settings.Cancel}" Padding="18,8" Click="Cancel_Click"/>
-                    <Button Content="{DynamicResource Settings.Save}" Padding="20,8" Classes="Primary" Click="Save_Click"/>
-                </StackPanel>
-            </DockPanel>
-        </Border>
-    </Grid>
+    </DockPanel>
 </shad:Window>

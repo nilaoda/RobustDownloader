@@ -26,6 +26,7 @@ public partial class SettingsWindow : ShadUI.Window
         SelectComboBoxItem(CmbProxyMode, settings.ProxyMode.ToString());
         SelectComboBoxItem(CmbCloseBehavior, settings.WindowCloseBehavior.ToString());
         SelectComboBoxItem(CmbSaveDirectoryMode, settings.SaveDirectoryMode.ToString());
+        SelectComboBoxItem(CmbBackgroundStretch, settings.BackgroundStretch);
         UpdateProxyAddressState();
         UpdateCloseBehaviorState();
         UpdateSaveDirectoryState();
@@ -49,6 +50,39 @@ public partial class SettingsWindow : ShadUI.Window
         {
             TxtValidation.Text = LocalizationService.Format("Validation.SelectDirectoryFailed", ex.Message);
         }
+    }
+
+    private async void BrowseBackgroundImage_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        try
+        {
+            var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
+            {
+                Title = LocalizationService.Get("Dialog.SelectBackgroundImage"),
+                AllowMultiple = false,
+                FileTypeFilter =
+                [
+                    new FilePickerFileType("Images")
+                    {
+                        Patterns = ["*.jpg", "*.jpeg", "*.png", "*.bmp", "*.webp"]
+                    }
+                ]
+            });
+
+            var file = files.FirstOrDefault();
+            var uri = file?.Path;
+            if (uri is { IsAbsoluteUri: true, IsFile: true })
+                TxtBackgroundImagePath.Text = uri.LocalPath;
+        }
+        catch (Exception ex)
+        {
+            TxtValidation.Text = LocalizationService.Format("Validation.SelectDirectoryFailed", ex.Message);
+        }
+    }
+
+    private void ClearBackgroundImage_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        TxtBackgroundImagePath.Text = "";
     }
 
     private void AddCredential_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -83,6 +117,7 @@ public partial class SettingsWindow : ShadUI.Window
         settings.WindowCloseBehavior = ReadComboBoxTag(CmbCloseBehavior, WindowCloseBehavior.MinimizeToTray);
         settings.SaveDirectoryMode = ReadComboBoxTag(CmbSaveDirectoryMode, SaveDirectoryMode.LastUsed);
         settings.FixedDownloadDirectory = FolderPathHelper.Normalize(settings.FixedDownloadDirectory);
+        settings.BackgroundStretch = ReadComboBoxStringTag(CmbBackgroundStretch, "UniformToFill");
 
         if (!Validate(settings, out var message))
         {
@@ -208,6 +243,14 @@ public partial class SettingsWindow : ShadUI.Window
         if (comboBox.SelectedItem is ComboBoxItem item &&
             Enum.TryParse<TEnum>(item.Tag?.ToString(), out var value))
             return value;
+
+        return fallback;
+    }
+
+    private static string ReadComboBoxStringTag(ComboBox comboBox, string fallback)
+    {
+        if (comboBox.SelectedItem is ComboBoxItem item)
+            return item.Tag?.ToString() ?? fallback;
 
         return fallback;
     }

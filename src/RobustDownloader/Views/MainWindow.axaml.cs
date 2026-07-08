@@ -1,3 +1,5 @@
+using System;
+using System.ComponentModel;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
@@ -25,6 +27,26 @@ public partial class MainWindow : ShadUI.Window
     public MainWindow()
     {
         InitializeComponent();
+    }
+
+    protected override void OnDataContextChanged(EventArgs e)
+    {
+        base.OnDataContextChanged(e);
+        if (DataContext is INotifyPropertyChanged npc)
+            npc.PropertyChanged += OnViewModelPropertyChanged;
+    }
+
+    private void OnViewModelPropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName == nameof(MainWindowViewModel.BackgroundStretch) && DataContext is MainWindowViewModel vm)
+        {
+            if (Enum.TryParse<Avalonia.Media.Stretch>(vm.BackgroundStretch, out var s))
+            {
+                var border = this.FindControl<Border>("BackgroundBorder");
+                if (border?.Background is Avalonia.Media.ImageBrush brush)
+                    brush.Stretch = s;
+            }
+        }
     }
 
     protected override void OnClosed(System.EventArgs e)

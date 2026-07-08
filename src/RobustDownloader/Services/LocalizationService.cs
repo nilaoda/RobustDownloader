@@ -399,7 +399,18 @@ public static class LocalizationService
         ["Toast.DownloadFailed"] = "{0} 下载失败: {1}",
         ["Update.Available"] = "{0} 可用 →",
         ["Settings.CheckForUpdates"] = "自动检查更新",
-        ["Settings.CheckForUpdatesHint"] = "启动时和运行期间定期检查是否有新版本。"
+        ["Settings.CheckForUpdatesHint"] = "启动时和运行期间定期检查是否有新版本。",
+        ["Settings.BackgroundImage"] = "自定义背景图",
+        ["Settings.BackgroundImageHint"] = "选择 JPG/PNG 图片作为程序背景，支持模糊和透明度调整。",
+        ["Settings.BackgroundBlur"] = "模糊半径",
+        ["Settings.BackgroundOpacity"] = "透明度",
+        ["Settings.ClearBackground"] = "清除",
+        ["Settings.BackgroundStretch"] = "拉伸方式",
+        ["Settings.StretchNone"] = "无（原始大小）",
+        ["Settings.StretchFill"] = "拉伸（可能变形）",
+        ["Settings.StretchUniform"] = "等比缩放（可能留黑边）",
+        ["Settings.StretchUniformToFill"] = "等比裁剪填充",
+        ["Dialog.SelectBackgroundImage"] = "选择背景图片"
     };
 
     private static readonly IReadOnlyDictionary<string, string> En = new Dictionary<string, string>
@@ -633,7 +644,18 @@ public static class LocalizationService
         ["Toast.DownloadFailed"] = "{0} download failed: {1}",
         ["Update.Available"] = "{0} available →",
         ["Settings.CheckForUpdates"] = "Check for updates automatically",
-        ["Settings.CheckForUpdatesHint"] = "Periodically check for new versions on startup and while running."
+        ["Settings.CheckForUpdatesHint"] = "Periodically check for new versions on startup and while running.",
+        ["Settings.BackgroundImage"] = "Custom Background Image",
+        ["Settings.BackgroundImageHint"] = "Choose a JPG/PNG image as the app background with blur and opacity controls.",
+        ["Settings.BackgroundBlur"] = "Blur Radius",
+        ["Settings.BackgroundOpacity"] = "Opacity",
+        ["Settings.ClearBackground"] = "Clear",
+        ["Settings.BackgroundStretch"] = "Stretch Mode",
+        ["Settings.StretchNone"] = "None (original size)",
+        ["Settings.StretchFill"] = "Fill (may distort)",
+        ["Settings.StretchUniform"] = "Uniform (may letterbox)",
+        ["Settings.StretchUniformToFill"] = "Uniform to Fill (may crop)",
+        ["Dialog.SelectBackgroundImage"] = "Select Background Image"
     };
 
     private static readonly IReadOnlyDictionary<string, string> ZhHant = new Dictionary<string, string>
@@ -867,6 +889,17 @@ public static class LocalizationService
         ["Toast.DownloadFailed"] = "{0} 下載失敗: {1}",
         ["Update.Available"] = "{0} 可用 →",
         ["Settings.CheckForUpdates"] = "自動檢查更新",
-        ["Settings.CheckForUpdatesHint"] = "啟動時和執行期間定期檢查是否有新版本。"
+        ["Settings.CheckForUpdatesHint"] = "啟動時和執行期間定期檢查是否有新版本。",
+        ["Settings.BackgroundImage"] = "自訂背景圖",
+        ["Settings.BackgroundImageHint"] = "選擇 JPG/PNG 圖片作為程式背景，支援模糊和透明度調整。",
+        ["Settings.BackgroundBlur"] = "模糊半徑",
+        ["Settings.BackgroundOpacity"] = "透明度",
+        ["Settings.ClearBackground"] = "清除",
+        ["Settings.BackgroundStretch"] = "拉伸方式",
+        ["Settings.StretchNone"] = "無（原始大小）",
+        ["Settings.StretchFill"] = "拉伸（可能變形）",
+        ["Settings.StretchUniform"] = "等比縮放（可能留黑邊）",
+        ["Settings.StretchUniformToFill"] = "等比裁剪填充",
+        ["Dialog.SelectBackgroundImage"] = "選擇背景圖片"
     };
 }

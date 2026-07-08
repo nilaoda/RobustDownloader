@@ -48,6 +48,19 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private TaskTreeNode? _selectedTaskTreeNode;
     [ObservableProperty] private bool _hasUpdate;
     [ObservableProperty] private string _latestVersionDisplay = "";
+    [ObservableProperty] private string _backgroundImagePath = "";
+    [ObservableProperty] private string _backgroundStretch = "UniformToFill";
+    [ObservableProperty] private double _backgroundBlur;
+    [ObservableProperty] private double _backgroundOpacity = 0.5;
+
+    public Avalonia.Media.Stretch BackgroundStretchValue =>
+        Enum.TryParse<Avalonia.Media.Stretch>(BackgroundStretch, out var s)
+            ? s : Avalonia.Media.Stretch.UniformToFill;
+
+    public Avalonia.Media.IImage? BackgroundImage =>
+        !string.IsNullOrEmpty(BackgroundImagePath) && File.Exists(BackgroundImagePath)
+            ? new Avalonia.Media.Imaging.Bitmap(BackgroundImagePath)
+            : null;
 
     public ObservableCollection<DownloadTask> Tasks { get; } = [];
     public ObservableCollection<DownloadTask> VisibleTasks { get; } = [];
@@ -123,6 +136,16 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(HasSelectedTask));
         OnPropertyChanged(nameof(HasNoSelectedTask));
+    }
+
+    partial void OnBackgroundStretchChanged(string value)
+    {
+        OnPropertyChanged(nameof(BackgroundStretchValue));
+    }
+
+    partial void OnBackgroundImagePathChanged(string value)
+    {
+        OnPropertyChanged(nameof(BackgroundImage));
     }
 
     public void UpdateIsAnyTaskSelected(bool hasSelection)
@@ -413,6 +436,10 @@ public partial class MainWindowViewModel : ViewModelBase
         _taskListLimit = CoerceTaskListLimit(_settings.TaskListLimit);
         IsTaskTreePaneVisible = _settings.IsTaskTreePaneVisible;
         TaskTreePaneWidth = CoerceTaskTreePaneWidth(_settings.TaskTreePaneWidth);
+        BackgroundImagePath = _settings.BackgroundImagePath;
+        BackgroundStretch = _settings.BackgroundStretch;
+        BackgroundBlur = _settings.BackgroundBlur;
+        BackgroundOpacity = _settings.BackgroundOpacity;
         RefreshTaskListScopeOptions(_taskListLimit);
         RefreshTaskTree();
         RefreshVisibleTasks();
@@ -739,6 +766,10 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             IsTaskTreePaneVisible = _settings.IsTaskTreePaneVisible;
             TaskTreePaneWidth = CoerceTaskTreePaneWidth(_settings.TaskTreePaneWidth);
+            BackgroundImagePath = _settings.BackgroundImagePath;
+            BackgroundStretch = _settings.BackgroundStretch;
+            BackgroundBlur = _settings.BackgroundBlur;
+            BackgroundOpacity = _settings.BackgroundOpacity;
         }
         finally
         {
@@ -782,6 +813,10 @@ public partial class MainWindowViewModel : ViewModelBase
         _settings.TaskListLimit = _taskListLimit;
         _settings.IsTaskTreePaneVisible = IsTaskTreePaneVisible;
         _settings.TaskTreePaneWidth = CoerceTaskTreePaneWidth(TaskTreePaneWidth);
+        _settings.BackgroundImagePath = BackgroundImagePath;
+        _settings.BackgroundStretch = BackgroundStretch;
+        _settings.BackgroundBlur = BackgroundBlur;
+        _settings.BackgroundOpacity = BackgroundOpacity;
     }
 
     private void UpdateGlobalSpeed()
