@@ -27,6 +27,10 @@ public sealed class AppSettings
     public string LastDownloadDirectory { get; set; } = "";
     public bool CheckForUpdates { get; set; } = true;
     public string LatestReleaseTag { get; set; } = "";
+    public string BackgroundImagePath { get; set; } = "";
+    public string BackgroundStretch { get; set; } = "UniformToFill";
+    public double BackgroundBlur { get; set; }
+    public double BackgroundOpacity { get; set; } = 0.5;
     public ObservableCollection<SiteCredential> SiteCredentials { get; set; } = [];
 
     [JsonIgnore]
@@ -59,6 +63,10 @@ public sealed class AppSettings
             LastDownloadDirectory = LastDownloadDirectory,
             CheckForUpdates = CheckForUpdates,
             LatestReleaseTag = LatestReleaseTag,
+            BackgroundImagePath = BackgroundImagePath,
+            BackgroundStretch = BackgroundStretch,
+            BackgroundBlur = BackgroundBlur,
+            BackgroundOpacity = BackgroundOpacity,
             TaskDataFile = TaskDataFile,
             SettingsDataFile = SettingsDataFile,
             SiteCredentials = new ObservableCollection<SiteCredential>(
