@@ -26,7 +26,6 @@ public sealed class AppSettings
     public string FixedDownloadDirectory { get; set; } = "";
     public string LastDownloadDirectory { get; set; } = "";
     public bool CheckForUpdates { get; set; } = true;
-    public string LatestReleaseTag { get; set; } = "";
     public string BackgroundImagePath { get; set; } = "";
     public string BackgroundStretch { get; set; } = "UniformToFill";
     public double BackgroundBlur { get; set; }
@@ -62,7 +61,6 @@ public sealed class AppSettings
             FixedDownloadDirectory = FixedDownloadDirectory,
             LastDownloadDirectory = LastDownloadDirectory,
             CheckForUpdates = CheckForUpdates,
-            LatestReleaseTag = LatestReleaseTag,
             BackgroundImagePath = BackgroundImagePath,
             BackgroundStretch = BackgroundStretch,
             BackgroundBlur = BackgroundBlur,

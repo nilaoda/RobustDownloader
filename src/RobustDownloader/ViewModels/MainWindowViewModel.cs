@@ -469,19 +469,9 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (!_settings.CheckForUpdates || UpdateService.IsLocalBuild) return;
 
-        // Use cached tag if available, otherwise fetch
-        if (!string.IsNullOrEmpty(_settings.LatestReleaseTag) &&
-            _settings.LatestReleaseTag != UpdateService.CurrentReleaseTag)
-        {
-            ApplyUpdateInfo(_settings.LatestReleaseTag);
-            return;
-        }
-
         var latestTag = await UpdateService.CheckForUpdateAsync(_globalCts.Token);
         if (latestTag == null) return;
 
-        _settings.LatestReleaseTag = latestTag;
-        SaveSettings();
         ApplyUpdateInfo(latestTag);
     }
 
@@ -491,11 +481,9 @@ public partial class MainWindowViewModel : ViewModelBase
 
         UpdateService.StartPeriodicCheck(async latestTag =>
         {
-            _settings.LatestReleaseTag = latestTag;
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
                 ApplyUpdateInfo(latestTag);
-                SaveSettings();
             });
         }, _globalCts.Token);
     }
