@@ -10,6 +10,7 @@ using System.Threading;
 using System.Threading.Tasks;
 using Avalonia.Threading;
 using CommunityToolkit.Mvvm.ComponentModel;
+using CommunityToolkit.Mvvm.Input;
 using RobustDownloader.Models;
 using RobustDownloader.Services;
 using ShadUI;
@@ -286,21 +287,25 @@ public partial class MainWindowViewModel : ViewModelBase
         task.Mode = "-";
     }
 
+    [RelayCommand]
     public void StartAll()
     {
         StartTasks(Tasks.Where(t => t.Status is DownloadTaskStatus.Stopped or DownloadTaskStatus.Error or DownloadTaskStatus.Paused));
     }
 
+    [RelayCommand]
     public void StopAll()
     {
         StopTasks(Tasks);
     }
 
+    [RelayCommand]
     public void ToggleDetailPane()
     {
         IsDetailPaneOpen = !IsDetailPaneOpen;
     }
 
+    [RelayCommand]
     public void ToggleTaskTreePane()
     {
         IsTaskTreePaneVisible = !IsTaskTreePaneVisible;
