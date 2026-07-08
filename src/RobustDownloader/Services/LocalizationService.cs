@@ -385,7 +385,18 @@ public static class LocalizationService
         ["Download.CompletedAverageSpeed"] = "下载完成，平均速度 {0}/s",
         ["Download.SingleThreadCompleted"] = "单线程下载完成",
         ["Error.TasksJsonLoadFailed"] = "tasks.json 读取失败",
-        ["Error.SettingsJsonLoadFailed"] = "settings.json 读取失败，已使用默认设置"
+        ["Error.SettingsJsonLoadFailed"] = "settings.json 读取失败，已使用默认设置",
+        ["Error.TasksSaveFailed"] = "任务保存失败: {0}",
+        ["Error.SettingsSaveFailed"] = "设置保存失败: {0}",
+        ["Main.CopyFailed"] = "复制失败: {0}",
+        ["Toast.Error"] = "错误",
+        ["Toast.Warning"] = "警告",
+        ["Toast.Success"] = "成功",
+        ["Toast.Info"] = "提示",
+        ["Toast.DownloadCompleted"] = "{0} 下载完成",
+        ["Toast.DownloadSkipped"] = "{0} 已跳过",
+        ["Toast.CrcCompleted"] = "{0} CRC 提取完成",
+        ["Toast.DownloadFailed"] = "{0} 下载失败: {1}"
     };
 
     private static readonly IReadOnlyDictionary<string, string> En = new Dictionary<string, string>
@@ -605,7 +616,18 @@ public static class LocalizationService
         ["Download.CompletedAverageSpeed"] = "Download completed. Average speed: {0}/s",
         ["Download.SingleThreadCompleted"] = "Single-thread download completed",
         ["Error.TasksJsonLoadFailed"] = "Failed to read tasks.json",
-        ["Error.SettingsJsonLoadFailed"] = "Failed to read settings.json; defaults are used"
+        ["Error.SettingsJsonLoadFailed"] = "Failed to read settings.json; defaults are used",
+        ["Error.TasksSaveFailed"] = "Failed to save tasks: {0}",
+        ["Error.SettingsSaveFailed"] = "Failed to save settings: {0}",
+        ["Main.CopyFailed"] = "Copy failed: {0}",
+        ["Toast.Error"] = "Error",
+        ["Toast.Warning"] = "Warning",
+        ["Toast.Success"] = "Success",
+        ["Toast.Info"] = "Info",
+        ["Toast.DownloadCompleted"] = "{0} download completed",
+        ["Toast.DownloadSkipped"] = "{0} skipped",
+        ["Toast.CrcCompleted"] = "{0} CRC extraction completed",
+        ["Toast.DownloadFailed"] = "{0} download failed: {1}"
     };
 
     private static readonly IReadOnlyDictionary<string, string> ZhHant = new Dictionary<string, string>
@@ -825,6 +847,17 @@ public static class LocalizationService
         ["Download.CompletedAverageSpeed"] = "下載完成，平均速度 {0}/s",
         ["Download.SingleThreadCompleted"] = "單執行緒下載完成",
         ["Error.TasksJsonLoadFailed"] = "tasks.json 讀取失敗",
-        ["Error.SettingsJsonLoadFailed"] = "settings.json 讀取失敗，已使用預設設定"
+        ["Error.SettingsJsonLoadFailed"] = "settings.json 讀取失敗，已使用預設設定",
+        ["Error.TasksSaveFailed"] = "任務儲存失敗: {0}",
+        ["Error.SettingsSaveFailed"] = "設定儲存失敗: {0}",
+        ["Main.CopyFailed"] = "複製失敗: {0}",
+        ["Toast.Error"] = "錯誤",
+        ["Toast.Warning"] = "警告",
+        ["Toast.Success"] = "成功",
+        ["Toast.Info"] = "提示",
+        ["Toast.DownloadCompleted"] = "{0} 下載完成",
+        ["Toast.DownloadSkipped"] = "{0} 已跳過",
+        ["Toast.CrcCompleted"] = "{0} CRC 提取完成",
+        ["Toast.DownloadFailed"] = "{0} 下載失敗: {1}"
     };
 }

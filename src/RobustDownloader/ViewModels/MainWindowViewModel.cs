@@ -51,6 +51,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public ObservableCollection<TaskTreeNode> TaskTreeNodes { get; } = [];
     public int[] ConcurrencyOptions { get; } = [1, 2, 3, 5, 8];
     public DialogManager DialogManager { get; } = new();
+    public ToastManager ToastManager { get; } = new();
 
     public MainWindowViewModel()
     {
@@ -499,7 +500,7 @@ public partial class MainWindowViewModel : ViewModelBase
         task.Mode = progress.Mode;
     }
 
-    private static void ApplyResult(DownloadTask task, DownloadResult result)
+    private void ApplyResult(DownloadTask task, DownloadResult result)
     {
         switch (result.Kind)
         {
@@ -510,17 +511,20 @@ public partial class MainWindowViewModel : ViewModelBase
                 task.Eta = "Eta.Completed";
                 if (task.TotalSizeStr != "?")
                     task.FileSize = $"{task.TotalSizeStr} / {task.TotalSizeStr}";
+                ShowToast(LocalizationService.Format("Toast.DownloadCompleted", task.FileName), ToastKind.Success);
                 break;
             case DownloadResultKind.Skipped:
                 task.Status = DownloadTaskStatus.Completed;
                 task.Progress = 100;
                 task.Speed = "-";
                 task.Eta = "Eta.Exists";
+                ShowToast(LocalizationService.Format("Toast.DownloadSkipped", task.FileName), ToastKind.Info);
                 break;
             case DownloadResultKind.CrcOnlyCompleted:
                 task.Status = DownloadTaskStatus.Completed;
                 task.Speed = "-";
                 task.Eta = "CRC";
+                ShowToast(LocalizationService.Format("Toast.CrcCompleted", task.FileName), ToastKind.Success);
                 break;
             case DownloadResultKind.Canceled:
                 task.Status = DownloadTaskStatus.Stopped;
@@ -530,6 +534,7 @@ public partial class MainWindowViewModel : ViewModelBase
             case DownloadResultKind.Failed:
                 task.Status = DownloadTaskStatus.Error;
                 task.Speed = "-";
+                ShowToast(LocalizationService.Format("Toast.DownloadFailed", task.FileName, task.Log), ToastKind.Error);
                 break;
         }
 
@@ -612,8 +617,9 @@ public partial class MainWindowViewModel : ViewModelBase
             using var stream = File.Create(_dataFile);
             JsonSerializer.Serialize(stream, Tasks, AppJsonContext.Default.ObservableCollectionDownloadTask);
         }
-        catch
+        catch (Exception ex)
         {
+            ShowToast(LocalizationService.Format("Error.TasksSaveFailed", ex.Message), ToastKind.Error);
         }
     }
 
@@ -664,8 +670,9 @@ public partial class MainWindowViewModel : ViewModelBase
             using var stream = File.Create(_settingsFile);
             JsonSerializer.Serialize(stream, _settings, AppJsonContext.Default.AppSettings);
         }
-        catch
+        catch (Exception ex)
         {
+            ShowToast(LocalizationService.Format("Error.SettingsSaveFailed", ex.Message), ToastKind.Error);
         }
     }
 
@@ -951,6 +958,28 @@ public partial class MainWindowViewModel : ViewModelBase
         return $"{len:0.00} {sizes[order]}";
     }
 
+    public void ShowToast(string message, ToastKind kind, double delay = 3)
+    {
+        Dispatcher.UIThread.Post(() =>
+        {
+            var toast = ToastManager.CreateToast(kind switch
+            {
+                ToastKind.Error => LocalizationService.Get("Toast.Error"),
+                ToastKind.Warning => LocalizationService.Get("Toast.Warning"),
+                ToastKind.Success => LocalizationService.Get("Toast.Success"),
+                _ => LocalizationService.Get("Toast.Info")
+            }).WithContent(message).WithDelay(delay).DismissOnClick();
+
+            switch (kind)
+            {
+                case ToastKind.Error: toast.ShowError(); break;
+                case ToastKind.Warning: toast.ShowWarning(); break;
+                case ToastKind.Success: toast.ShowSuccess(); break;
+                default: toast.ShowInfo(); break;
+            }
+        });
+    }
+
     public sealed class TaskListScopeOption(int limit, string label)
     {
         public int Limit { get; } = limit;
@@ -958,4 +987,12 @@ public partial class MainWindowViewModel : ViewModelBase
 
         public override string ToString() => Label;
     }
+}
+
+public enum ToastKind
+{
+    Info,
+    Success,
+    Warning,
+    Error
 }
