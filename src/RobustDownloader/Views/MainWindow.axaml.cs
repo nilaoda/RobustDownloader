@@ -157,7 +157,7 @@ public partial class MainWindow : ShadUI.Window
         if (result == null) return;
 
         vm.ApplySettings(result);
-        SetStatus(LocalizationService.Get("Main.SettingsSaved"));
+        ShowToast(LocalizationService.Get("Main.SettingsSaved"), ToastKind.Success);
     }
 
     private List<DownloadTask> GetSelectedTasks()
@@ -188,11 +188,11 @@ public partial class MainWindow : ShadUI.Window
         try
         {
             OpenContainingFolder(task.FullSavePath, task.SaveDirectory);
-            SetStatus(LocalizationService.Get("Main.OpenedFolder"));
+            ShowToast(LocalizationService.Get("Main.OpenedFolder"), ToastKind.Success);
         }
         catch (System.Exception ex)
         {
-            SetStatus(LocalizationService.Format("Main.OpenFolderFailed", ex.Message));
+            ShowToast(LocalizationService.Format("Main.OpenFolderFailed", ex.Message), ToastKind.Error);
         }
     }
 
@@ -204,11 +204,11 @@ public partial class MainWindow : ShadUI.Window
         try
         {
             (DataContext as MainWindowViewModel)?.ReDownloadTasks(tasks);
-            SetStatus(LocalizationService.Get("Main.ReDownloadQueued"));
+            ShowToast(LocalizationService.Get("Main.ReDownloadQueued"), ToastKind.Success);
         }
         catch (System.Exception ex)
         {
-            SetStatus(LocalizationService.Format("Main.ReDownloadFailed", ex.Message));
+            ShowToast(LocalizationService.Format("Main.ReDownloadFailed", ex.Message), ToastKind.Error);
         }
     }
 
@@ -221,14 +221,27 @@ public partial class MainWindow : ShadUI.Window
     private async System.Threading.Tasks.Task CopyTextAsync(string? text)
     {
         if (string.IsNullOrWhiteSpace(text) || Clipboard == null) return;
-        await Clipboard.SetTextAsync(text);
-        SetStatus(LocalizationService.Get("Main.Copied"));
+        try
+        {
+            await Clipboard.SetTextAsync(text);
+            ShowToast(LocalizationService.Get("Main.Copied"), ToastKind.Success);
+        }
+        catch (System.Exception ex)
+        {
+            ShowToast(LocalizationService.Format("Main.CopyFailed", ex.Message), ToastKind.Error);
+        }
     }
 
     private void SetStatus(string text)
     {
         if (DataContext is MainWindowViewModel vm)
             vm.StatusText = text;
+    }
+
+    private void ShowToast(string message, ToastKind kind, double delay = 3)
+    {
+        if (DataContext is MainWindowViewModel vm)
+            vm.ShowToast(message, kind, delay);
     }
 
     private static void OpenContainingFolder(string filePath, string fallbackDirectory)

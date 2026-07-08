@@ -161,9 +161,6 @@
                     </StackPanel>
                 </Expander>
 
-                <TextBlock x:Name="TxtValidation"
-                           Foreground="{DynamicResource DestructiveColor}"
-                           TextWrapping="Wrap"/>
             </StackPanel>
         </ScrollViewer>
 
@@ -172,10 +169,16 @@
                 BorderThickness="0,1,0,0"
                 Margin="0,16,0,0"
                 Padding="0,14,0,0">
-            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
-                <Button Content="{DynamicResource Add.Cancel}" Padding="18,8" Click="BtnCancel_Click"/>
-                <Button Content="{DynamicResource Add.Enqueue}" Padding="20,8" Classes="Primary" Click="BtnAdd_Click"/>
-            </StackPanel>
+            <DockPanel>
+                <TextBlock x:Name="TxtValidation"
+                           Foreground="{DynamicResource DestructiveColor}"
+                           VerticalAlignment="Center"
+                           TextWrapping="Wrap"/>
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8">
+                    <Button Content="{DynamicResource Add.Cancel}" Padding="18,8" Click="BtnCancel_Click"/>
+                    <Button Content="{DynamicResource Add.Enqueue}" Padding="20,8" Classes="Primary" Click="BtnAdd_Click"/>
+                </StackPanel>
+            </DockPanel>
         </Border>
     </Grid>
 </shad:Window>

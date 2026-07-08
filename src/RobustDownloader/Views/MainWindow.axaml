@@ -13,6 +13,7 @@
              Icon="/Assets/app-icon.png">
     <shad:Window.Hosts>
         <shad:DialogHost x:Name="PART_DialogHost" Manager="{Binding DialogManager}"/>
+        <shad:ToastHost Manager="{Binding ToastManager}" Position="BottomRight" MaxToasts="5"/>
     </shad:Window.Hosts>
 
     <shad:Window.Resources>
