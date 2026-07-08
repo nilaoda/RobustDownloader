@@ -18,19 +18,20 @@
     </PropertyGroup>
 
     <ItemGroup>
-        <AvaloniaResource Include="Assets\**"/>
+        <AvaloniaResource Include="Assets\**" />
     </ItemGroup>
 
     <ItemGroup>
-        <TrimmerRootAssembly Include="RobustDownloader"/>
-        <TrimmerRootAssembly Include="Avalonia.Controls"/>
+        <TrimmerRootAssembly Include="RobustDownloader" />
+        <TrimmerRootAssembly Include="Avalonia.Controls" />
     </ItemGroup>
 
     <ItemGroup>
-        <PackageReference Include="Avalonia" Version="12.0.4"/>
-        <PackageReference Include="Avalonia.Desktop" Version="12.0.4"/>
-        <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.0.0"/>
-        <PackageReference Include="ShadUI" Version="0.2.3"/>
-        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0"/>
+        <PackageReference Include="Avalonia" Version="12.0.4" />
+        <PackageReference Include="Avalonia.Desktop" Version="12.0.4" />
+        <PackageReference Include="Avalonia.Controls.DataGrid" Version="12.0.0" />
+        <PackageReference Include="Lucide.Avalonia" Version="0.2.12" />
+        <PackageReference Include="ShadUI" Version="0.2.3" />
+        <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
     </ItemGroup>
 </Project>

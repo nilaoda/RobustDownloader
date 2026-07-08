@@ -4,6 +4,7 @@
              xmlns:models="using:RobustDownloader.Models"
              xmlns:views="using:RobustDownloader.Views"
              xmlns:shad="clr-namespace:ShadUI;assembly=ShadUI"
+             xmlns:lucide="clr-namespace:Lucide.Avalonia;assembly=Lucide.Avalonia"
              x:Class="RobustDownloader.Views.MainWindow"
              x:DataType="vm:MainWindowViewModel"
              Title="{Binding WindowTitle}"
@@ -63,6 +64,12 @@
             <Setter Property="MinWidth" Value="96"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
             <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
+        <Style Selector="Button.ToolbarIconButton">
+            <Setter Property="MinWidth" Value="72"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+            <Setter Property="Padding" Value="6,0"/>
         </Style>
         <Style Selector="Button.QueueFilterButton">
             <Setter Property="MinWidth" Value="104"/>
@@ -143,18 +150,35 @@
                             Orientation="Horizontal"
                             Spacing="8"
                             VerticalAlignment="Center">
-                    <Button Content="{DynamicResource Main.NewTask}" Classes="Primary ToolbarWideButton" Click="BtnAdd_Click"/>
-                    <Button Content="{DynamicResource Main.Start}" Classes="ToolbarButton" Click="BtnStart_Click">
+                    <Button Classes="Primary ToolbarWideButton" Click="BtnAdd_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="6">
+                            <lucide:LucideIcon Kind="Plus" Size="16"/>
+                            <TextBlock Text="{DynamicResource Main.NewTask}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
+                    <Button Classes="ToolbarIconButton" Click="BtnStart_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <lucide:LucideIcon Kind="Play" Size="14"/>
+                            <TextBlock Text="{DynamicResource Main.Start}" VerticalAlignment="Center"/>
+                        </StackPanel>
                         <ToolTip.Tip>
                             <TextBlock Text="{DynamicResource Main.Start}"/>
                         </ToolTip.Tip>
                     </Button>
-                    <Button Content="{DynamicResource Main.Stop}" Classes="ToolbarButton" Click="BtnStop_Click">
+                    <Button Classes="ToolbarIconButton" Click="BtnStop_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <lucide:LucideIcon Kind="Square" Size="14"/>
+                            <TextBlock Text="{DynamicResource Main.Stop}" VerticalAlignment="Center"/>
+                        </StackPanel>
                         <ToolTip.Tip>
                             <TextBlock Text="{DynamicResource Main.Stop}"/>
                         </ToolTip.Tip>
                     </Button>
-                    <Button Content="{DynamicResource Main.Delete}" Classes="Destructive ToolbarButton" Click="BtnDelete_Click">
+                    <Button Classes="Destructive ToolbarIconButton" Click="BtnDelete_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <lucide:LucideIcon Kind="Trash2" Size="14"/>
+                            <TextBlock Text="{DynamicResource Main.Delete}" VerticalAlignment="Center"/>
+                        </StackPanel>
                         <ToolTip.Tip>
                             <TextBlock Text="{DynamicResource Main.Delete}"/>
                         </ToolTip.Tip>
@@ -179,7 +203,12 @@
                               SelectedItem="{Binding MaxConcurrency}"/>
                     <Button Grid.Column="6" Content="{DynamicResource Main.StartAll}" Classes="ToolbarWideButton" Click="BtnStartAll_Click"/>
                     <Button Grid.Column="8" Content="{DynamicResource Main.StopAll}" Classes="ToolbarWideButton" Click="BtnStopAll_Click"/>
-                    <Button Grid.Column="10" Content="{DynamicResource Main.Settings}" Classes="ToolbarButton" Click="BtnSettings_Click"/>
+                    <Button Grid.Column="10" Classes="ToolbarIconButton" Click="BtnSettings_Click">
+                        <StackPanel Orientation="Horizontal" Spacing="4">
+                            <lucide:LucideIcon Kind="Settings" Size="14"/>
+                            <TextBlock Text="{DynamicResource Main.Settings}" VerticalAlignment="Center"/>
+                        </StackPanel>
+                    </Button>
                 </Grid>
             </Grid>
         </Border>
