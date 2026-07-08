@@ -3,7 +3,9 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Runtime.InteropServices;
+using Avalonia;
 using Avalonia.Controls;
+using Avalonia.VisualTree;
 using Avalonia.Input;
 using Avalonia.Input.Platform;
 using Avalonia.Threading;
@@ -38,18 +40,33 @@ public partial class MainWindow : ShadUI.Window
         var result = await dialog.ShowDialog<AddTaskResult?>(this);
         if (result == null) return;
         vm.AddTasks(result);
-        ScrollTaskGridToBottom();
+        ScrollTaskGridToBottomAsync();
     }
 
-    private void ScrollTaskGridToBottom()
+    private async void ScrollTaskGridToBottomAsync()
     {
         if (DataContext is not MainWindowViewModel vm) return;
 
         var lastTask = vm.VisibleTasks.LastOrDefault();
         if (lastTask == null) return;
 
+        await System.Threading.Tasks.Task.Delay(50);
         TaskGrid.ScrollIntoView(lastTask, null);
-        Dispatcher.UIThread.Post(() => TaskGrid.ScrollIntoView(lastTask, null), DispatcherPriority.Loaded);
+
+        var sv = FindScrollViewer(TaskGrid);
+        if (sv != null)
+            sv.Offset = new Vector(sv.Offset.X, sv.Extent.Height);
+    }
+
+    private static ScrollViewer? FindScrollViewer(Visual visual)
+    {
+        foreach (var child in visual.GetVisualChildren())
+        {
+            if (child is ScrollViewer sv) return sv;
+            var found = FindScrollViewer(child);
+            if (found != null) return found;
+        }
+        return null;
     }
 
     private void BtnStart_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
