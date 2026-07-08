@@ -201,8 +201,8 @@
                               Classes="ToolbarComboBox"
                               ItemsSource="{Binding ConcurrencyOptions}"
                               SelectedItem="{Binding MaxConcurrency}"/>
-                    <Button Grid.Column="6" Content="{DynamicResource Main.StartAll}" Classes="ToolbarWideButton" Click="BtnStartAll_Click"/>
-                    <Button Grid.Column="8" Content="{DynamicResource Main.StopAll}" Classes="ToolbarWideButton" Click="BtnStopAll_Click"/>
+                    <Button Grid.Column="6" Content="{DynamicResource Main.StartAll}" Classes="ToolbarWideButton" Command="{Binding StartAllCommand}"/>
+                    <Button Grid.Column="8" Content="{DynamicResource Main.StopAll}" Classes="ToolbarWideButton" Command="{Binding StopAllCommand}"/>
                     <Button Grid.Column="10" Classes="ToolbarIconButton" Click="BtnSettings_Click">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <lucide:LucideIcon Kind="Settings" Size="14"/>
@@ -325,13 +325,13 @@
                                 Content="{Binding TaskTreePaneButtonText}"
                                 Classes="QueueFilterButton"
                                 HorizontalAlignment="Right"
-                                Click="BtnToggleTaskTree_Click"/>
+                                Command="{Binding ToggleTaskTreePaneCommand}"/>
 
                         <Button Grid.Column="6"
                                 Content="{Binding DetailPaneButtonText}"
                                 Classes="QueueFilterButton"
                                 HorizontalAlignment="Right"
-                                Click="BtnToggleDetails_Click"/>
+                                Command="{Binding ToggleDetailPaneCommand}"/>
                     </Grid>
                 </Border>
 
@@ -446,7 +446,7 @@
                         <Button Grid.Column="1"
                                 Content="{DynamicResource Main.CollapseDetails}"
                                 Padding="10,5"
-                                Click="BtnToggleDetails_Click"/>
+                                Command="{Binding ToggleDetailPaneCommand}"/>
                     </Grid>
 
                     <Grid Grid.Row="1">

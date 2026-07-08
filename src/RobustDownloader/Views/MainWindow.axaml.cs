@@ -70,34 +70,10 @@ public partial class MainWindow : ShadUI.Window
             vm.DeleteTasks(GetSelectedTasks());
     }
 
-    private void BtnStartAll_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is MainWindowViewModel vm)
-            vm.StartAll();
-    }
-
-    private void BtnStopAll_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is MainWindowViewModel vm)
-            vm.StopAll();
-    }
-
-    private void BtnToggleDetails_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is MainWindowViewModel vm)
-            vm.ToggleDetailPane();
-    }
-
     private void TaskGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e)
     {
         if (DataContext is MainWindowViewModel vm)
             vm.UpdateIsAnyTaskSelected(TaskGrid.SelectedItems.Count > 0);
-    }
-
-    private void BtnToggleTaskTree_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
-    {
-        if (DataContext is MainWindowViewModel vm)
-            vm.ToggleTaskTreePane();
     }
 
     private void TaskTreeNode_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
