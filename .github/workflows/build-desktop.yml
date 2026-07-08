@@ -61,7 +61,7 @@ jobs:
       - name: Publish [win-x64]
         run: |
           cd src/RobustDownloader
-          dotnet publish -r win-x64 -c Release -o artifact
+          dotnet publish -r win-x64 -c Release -o artifact -p:ReleaseTag=build_${{ needs.set-date.outputs.date }}
 
       - name: Package [win-x64]
         run: |
@@ -89,7 +89,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
 
       - name: Publish [linux-x64]
-        run: dotnet publish src/RobustDownloader -r linux-x64 -c Release -o artifact
+        run: dotnet publish src/RobustDownloader -r linux-x64 -c Release -o artifact -p:ReleaseTag=build_${{ needs.set-date.outputs.date }}
 
       - name: Package [linux-x64]
         run: |
@@ -115,7 +115,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_SDK_VERSION }}
 
       - name: Publish [osx-arm64]
-        run: dotnet publish src/RobustDownloader -r osx-arm64 -c Release -o artifact
+        run: dotnet publish src/RobustDownloader -r osx-arm64 -c Release -o artifact -p:ReleaseTag=build_${{ needs.set-date.outputs.date }}
 
       - name: Assemble .app [osx-arm64]
         run: |

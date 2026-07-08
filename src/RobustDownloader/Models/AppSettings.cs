@@ -25,6 +25,8 @@ public sealed class AppSettings
     public SaveDirectoryMode SaveDirectoryMode { get; set; } = SaveDirectoryMode.LastUsed;
     public string FixedDownloadDirectory { get; set; } = "";
     public string LastDownloadDirectory { get; set; } = "";
+    public bool CheckForUpdates { get; set; } = true;
+    public string LatestReleaseTag { get; set; } = "";
     public ObservableCollection<SiteCredential> SiteCredentials { get; set; } = [];
 
     [JsonIgnore]
@@ -55,6 +57,8 @@ public sealed class AppSettings
             SaveDirectoryMode = SaveDirectoryMode,
             FixedDownloadDirectory = FixedDownloadDirectory,
             LastDownloadDirectory = LastDownloadDirectory,
+            CheckForUpdates = CheckForUpdates,
+            LatestReleaseTag = LatestReleaseTag,
             TaskDataFile = TaskDataFile,
             SettingsDataFile = SettingsDataFile,
             SiteCredentials = new ObservableCollection<SiteCredential>(

@@ -33,6 +33,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private bool _suppressTaskCollectionSideEffects;
     private bool _suppressSettingsSideEffects;
     private bool _suppressTaskTreeSelectionSideEffects;
+    private string _latestReleaseUrl = "";
 
     [ObservableProperty] private string _defaultThreads = "4";
     [ObservableProperty] private string _defaultBlockSize = "16";
@@ -45,6 +46,8 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private bool _isTaskTreePaneVisible = true;
     [ObservableProperty] private TaskListScopeOption? _selectedTaskListScope;
     [ObservableProperty] private TaskTreeNode? _selectedTaskTreeNode;
+    [ObservableProperty] private bool _hasUpdate;
+    [ObservableProperty] private string _latestVersionDisplay = "";
 
     public ObservableCollection<DownloadTask> Tasks { get; } = [];
     public ObservableCollection<DownloadTask> VisibleTasks { get; } = [];
@@ -104,6 +107,17 @@ public partial class MainWindowViewModel : ViewModelBase
     }
     public WindowCloseBehavior WindowCloseBehavior => _settings.WindowCloseBehavior;
     public bool ConfirmCloseToTray => _settings.ConfirmCloseToTray;
+    public bool CheckForUpdates
+    {
+        get => _settings.CheckForUpdates;
+        set
+        {
+            _settings.CheckForUpdates = value;
+            OnPropertyChanged();
+            if (!_suppressSettingsSideEffects)
+                SaveSettings();
+        }
+    }
 
     partial void OnSelectedTaskChanged(DownloadTask? value)
     {
@@ -171,6 +185,8 @@ public partial class MainWindowViewModel : ViewModelBase
             _queueStarted = true;
             _ = Task.Run(QueueLoop);
         }
+        CheckForUpdateOnStartup();
+        StartPeriodicUpdateCheck();
     }
 
     public void AddTasks(AddTaskResult result)
@@ -311,6 +327,24 @@ public partial class MainWindowViewModel : ViewModelBase
         IsTaskTreePaneVisible = !IsTaskTreePaneVisible;
     }
 
+    [RelayCommand]
+    private void OpenReleasePage()
+    {
+        if (string.IsNullOrEmpty(_latestReleaseUrl)) return;
+        try
+        {
+            System.Diagnostics.Process.Start(new System.Diagnostics.ProcessStartInfo
+            {
+                FileName = _latestReleaseUrl,
+                UseShellExecute = true
+            });
+        }
+        catch
+        {
+            // ignore
+        }
+    }
+
     public void SelectTaskTreeNode(TaskTreeNode node)
     {
         SelectedTaskTreeNode = node;
@@ -402,6 +436,48 @@ public partial class MainWindowViewModel : ViewModelBase
         SaveTasks();
         SaveSettings();
         DialogManager.Dispose();
+    }
+
+    private async void CheckForUpdateOnStartup()
+    {
+        if (!_settings.CheckForUpdates || UpdateService.IsLocalBuild) return;
+
+        // Use cached tag if available, otherwise fetch
+        if (!string.IsNullOrEmpty(_settings.LatestReleaseTag) &&
+            _settings.LatestReleaseTag != UpdateService.CurrentReleaseTag)
+        {
+            ApplyUpdateInfo(_settings.LatestReleaseTag);
+            return;
+        }
+
+        var latestTag = await UpdateService.CheckForUpdateAsync(_globalCts.Token);
+        if (latestTag == null) return;
+
+        _settings.LatestReleaseTag = latestTag;
+        SaveSettings();
+        ApplyUpdateInfo(latestTag);
+    }
+
+    private void StartPeriodicUpdateCheck()
+    {
+        if (!_settings.CheckForUpdates || UpdateService.IsLocalBuild) return;
+
+        UpdateService.StartPeriodicCheck(async latestTag =>
+        {
+            _settings.LatestReleaseTag = latestTag;
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                ApplyUpdateInfo(latestTag);
+                SaveSettings();
+            });
+        }, _globalCts.Token);
+    }
+
+    private void ApplyUpdateInfo(string latestTag)
+    {
+        _latestReleaseUrl = $"https://github.com/nilaoda/RobustDownloader/releases/tag/{latestTag}";
+        LatestVersionDisplay = LocalizationService.Format("Update.Available", latestTag);
+        HasUpdate = true;
     }
 
     private async Task QueueLoop()

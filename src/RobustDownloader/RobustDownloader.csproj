@@ -17,6 +17,29 @@
         <IsAotCompatible>true</IsAotCompatible>
     </PropertyGroup>
 
+    <Target Name="GenerateReleaseTagSource" BeforeTargets="CoreCompile">
+        <PropertyGroup>
+            <_GenFile>$(IntermediateOutputPath)ReleaseTag.g.cs</_GenFile>
+        </PropertyGroup>
+        <!-- Windows: use cmd echo -->
+        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+              Command="cmd /c echo namespace RobustDownloader.Services;^&gt; &quot;$(_GenFile)&quot;" />
+        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+              Command="cmd /c echo internal static partial class ReleaseTagHolder^&gt;&gt; &quot;$(_GenFile)&quot;" />
+        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+              Command="cmd /c echo {^&gt;&gt; &quot;$(_GenFile)&quot;" />
+        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+              Command="cmd /c echo     internal const string Value = &quot;$(ReleaseTag)&quot;;^&gt;&gt; &quot;$(_GenFile)&quot;" />
+        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
+              Command="cmd /c echo }^&gt;&gt; &quot;$(_GenFile)&quot;" />
+        <!-- macOS/Linux: use printf -->
+        <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))"
+              Command="printf 'namespace RobustDownloader.Services;\ninternal static partial class ReleaseTagHolder\n{\n    internal const string Value = &quot;%s&quot;;\n}\n' '$(ReleaseTag)' > &quot;$(_GenFile)&quot;" />
+        <ItemGroup>
+            <Compile Include="$(_GenFile)" />
+        </ItemGroup>
+    </Target>
+
     <ItemGroup>
         <AvaloniaResource Include="Assets\**" />
     </ItemGroup>

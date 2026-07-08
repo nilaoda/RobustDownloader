@@ -74,6 +74,13 @@
                                   IsChecked="{Binding ConfirmCloseToTray}"/>
                         <TextBlock Classes="Hint" Text="{DynamicResource Settings.WindowBehaviorHint}"/>
                     </StackPanel>
+
+                    <StackPanel Spacing="8">
+                        <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.CheckForUpdates}"/>
+                        <CheckBox Content="{DynamicResource Settings.CheckForUpdates}"
+                                  IsChecked="{Binding CheckForUpdates}"/>
+                        <TextBlock Classes="Hint" Text="{DynamicResource Settings.CheckForUpdatesHint}"/>
+                    </StackPanel>
                 </StackPanel>
             </TabItem>
 

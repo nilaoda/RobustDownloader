@@ -396,7 +396,10 @@ public static class LocalizationService
         ["Toast.DownloadCompleted"] = "{0} 下载完成",
         ["Toast.DownloadSkipped"] = "{0} 已跳过",
         ["Toast.CrcCompleted"] = "{0} CRC 提取完成",
-        ["Toast.DownloadFailed"] = "{0} 下载失败: {1}"
+        ["Toast.DownloadFailed"] = "{0} 下载失败: {1}",
+        ["Update.Available"] = "{0} 可用 →",
+        ["Settings.CheckForUpdates"] = "自动检查更新",
+        ["Settings.CheckForUpdatesHint"] = "启动时和运行期间定期检查是否有新版本。"
     };
 
     private static readonly IReadOnlyDictionary<string, string> En = new Dictionary<string, string>
@@ -627,7 +630,10 @@ public static class LocalizationService
         ["Toast.DownloadCompleted"] = "{0} download completed",
         ["Toast.DownloadSkipped"] = "{0} skipped",
         ["Toast.CrcCompleted"] = "{0} CRC extraction completed",
-        ["Toast.DownloadFailed"] = "{0} download failed: {1}"
+        ["Toast.DownloadFailed"] = "{0} download failed: {1}",
+        ["Update.Available"] = "{0} available →",
+        ["Settings.CheckForUpdates"] = "Check for updates automatically",
+        ["Settings.CheckForUpdatesHint"] = "Periodically check for new versions on startup and while running."
     };
 
     private static readonly IReadOnlyDictionary<string, string> ZhHant = new Dictionary<string, string>
@@ -858,6 +864,9 @@ public static class LocalizationService
         ["Toast.DownloadCompleted"] = "{0} 下載完成",
         ["Toast.DownloadSkipped"] = "{0} 已跳過",
         ["Toast.CrcCompleted"] = "{0} CRC 提取完成",
-        ["Toast.DownloadFailed"] = "{0} 下載失敗: {1}"
+        ["Toast.DownloadFailed"] = "{0} 下載失敗: {1}",
+        ["Update.Available"] = "{0} 可用 →",
+        ["Settings.CheckForUpdates"] = "自動檢查更新",
+        ["Settings.CheckForUpdatesHint"] = "啟動時和執行期間定期檢查是否有新版本。"
     };
 }
