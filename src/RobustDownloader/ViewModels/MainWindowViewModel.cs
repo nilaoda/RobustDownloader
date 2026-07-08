@@ -245,6 +245,38 @@ public partial class MainWindowViewModel : ViewModelBase
         SaveTasks();
     }
 
+    public void ReDownloadTasks(IEnumerable<DownloadTask> tasks)
+    {
+        foreach (var task in tasks)
+        {
+            StopTask(task);
+            DeleteDownloadedFiles(task);
+            ResetTask(task);
+        }
+        RefreshTaskTree();
+        RefreshVisibleTasks();
+        SaveTasks();
+    }
+
+    private static void DeleteDownloadedFiles(DownloadTask task)
+    {
+        var savePath = task.FullSavePath;
+        try { File.Delete(savePath); } catch { /* ignore */ }
+        try { File.Delete(savePath + ".cfg"); } catch { /* ignore */ }
+        try { File.Delete(savePath + ".downloading"); } catch { /* ignore */ }
+    }
+
+    private static void ResetTask(DownloadTask task)
+    {
+        task.Status = DownloadTaskStatus.Pending;
+        task.Progress = 0;
+        task.Speed = "-";
+        task.Eta = "-";
+        task.Log = "TaskLog.Queued";
+        task.Diagnostic = "";
+        task.Mode = "-";
+    }
+
     public void StartAll()
     {
         StartTasks(Tasks.Where(t => t.Status is DownloadTaskStatus.Stopped or DownloadTaskStatus.Error or DownloadTaskStatus.Paused));
@@ -902,7 +934,7 @@ public partial class MainWindowViewModel : ViewModelBase
             var version = typeof(MainWindowViewModel).Assembly
                 .GetCustomAttribute<AssemblyInformationalVersionAttribute>()
                 ?.InformationalVersion;
-            return string.IsNullOrWhiteSpace(version) ? "0.0.3" : version.Split('+')[0];
+            return string.IsNullOrWhiteSpace(version) ? "0.0.4" : version.Split('+')[0];
         }
     }
 

@@ -167,22 +167,22 @@ public partial class MainWindow : ShadUI.Window
 
     private async void CopyUrl_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        await CopyTextAsync(GetContextTask()?.Url);
+        await CopyTextAsync(string.Join("\n", GetSelectedTasks().Select(t => t.Url)));
     }
 
     private async void CopyFileName_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        await CopyTextAsync(GetContextTask()?.FileName);
+        await CopyTextAsync(string.Join("\n", GetSelectedTasks().Select(t => t.FileName)));
     }
 
     private async void CopySavePath_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        await CopyTextAsync(GetContextTask()?.FullSavePath);
+        await CopyTextAsync(string.Join("\n", GetSelectedTasks().Select(t => t.FullSavePath)));
     }
 
     private void OpenFolder_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
-        var task = GetContextTask();
+        var task = GetSelectedTasks().FirstOrDefault();
         if (task == null) return;
 
         try
@@ -193,6 +193,22 @@ public partial class MainWindow : ShadUI.Window
         catch (System.Exception ex)
         {
             SetStatus(LocalizationService.Format("Main.OpenFolderFailed", ex.Message));
+        }
+    }
+
+    private void ReDownload_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        var tasks = GetSelectedTasks();
+        if (tasks.Count == 0) return;
+
+        try
+        {
+            (DataContext as MainWindowViewModel)?.ReDownloadTasks(tasks);
+            SetStatus(LocalizationService.Get("Main.ReDownloadQueued"));
+        }
+        catch (System.Exception ex)
+        {
+            SetStatus(LocalizationService.Format("Main.ReDownloadFailed", ex.Message));
         }
     }
 
