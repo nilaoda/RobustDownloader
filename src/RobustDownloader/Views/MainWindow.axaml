@@ -324,6 +324,7 @@
                                 <MenuItem Header="{DynamicResource Main.CopySavePath}" Click="CopySavePath_Click"/>
                                 <Separator/>
                                 <MenuItem Header="{DynamicResource Main.OpenFolder}" Click="OpenFolder_Click"/>
+                                <MenuItem Header="{DynamicResource Main.ReDownload}" Click="ReDownload_Click"/>
                             </ContextMenu>
                         </DataGrid.ContextMenu>
                         <DataGrid.Columns>
