@@ -21,18 +21,8 @@
         <PropertyGroup>
             <_GenFile>$(IntermediateOutputPath)ReleaseTag.g.cs</_GenFile>
         </PropertyGroup>
-        <!-- Windows: use cmd echo -->
         <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
-              Command="cmd /c echo namespace RobustDownloader.Services;^&gt; &quot;$(_GenFile)&quot;" />
-        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
-              Command="cmd /c echo internal static partial class ReleaseTagHolder^&gt;&gt; &quot;$(_GenFile)&quot;" />
-        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
-              Command="cmd /c echo {^&gt;&gt; &quot;$(_GenFile)&quot;" />
-        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
-              Command="cmd /c echo     internal const string Value = &quot;$(ReleaseTag)&quot;;^&gt;&gt; &quot;$(_GenFile)&quot;" />
-        <Exec Condition="$([MSBuild]::IsOSPlatform('Windows'))"
-              Command="cmd /c echo }^&gt;&gt; &quot;$(_GenFile)&quot;" />
-        <!-- macOS/Linux: use printf -->
+              Command="pwsh -NoProfile -Command &quot;Set-Content -Path '$(_GenFile)' -Value 'namespace RobustDownloader.Services%3B','internal static partial class ReleaseTagHolder','{','    internal const string Value = &quot;&quot;$(ReleaseTag)&quot;&quot;%3B','}' -Encoding UTF8&quot;" />
         <Exec Condition="!$([MSBuild]::IsOSPlatform('Windows'))"
               Command="printf 'namespace RobustDownloader.Services;\ninternal static partial class ReleaseTagHolder\n{\n    internal const string Value = &quot;%s&quot;;\n}\n' '$(ReleaseTag)' > &quot;$(_GenFile)&quot;" />
         <ItemGroup>
