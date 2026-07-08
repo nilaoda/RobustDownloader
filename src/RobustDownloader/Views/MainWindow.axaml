@@ -156,7 +156,7 @@
                             <TextBlock Text="{DynamicResource Main.NewTask}" VerticalAlignment="Center"/>
                         </StackPanel>
                     </Button>
-                    <Button Classes="ToolbarIconButton" Click="BtnStart_Click">
+                    <Button Classes="ToolbarIconButton" Click="BtnStart_Click" IsEnabled="{Binding IsAnyTaskSelected}">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <lucide:LucideIcon Kind="Play" Size="14"/>
                             <TextBlock Text="{DynamicResource Main.Start}" VerticalAlignment="Center"/>
@@ -165,7 +165,7 @@
                             <TextBlock Text="{DynamicResource Main.Start}"/>
                         </ToolTip.Tip>
                     </Button>
-                    <Button Classes="ToolbarIconButton" Click="BtnStop_Click">
+                    <Button Classes="ToolbarIconButton" Click="BtnStop_Click" IsEnabled="{Binding IsAnyTaskSelected}">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <lucide:LucideIcon Kind="Square" Size="14"/>
                             <TextBlock Text="{DynamicResource Main.Stop}" VerticalAlignment="Center"/>
@@ -174,7 +174,7 @@
                             <TextBlock Text="{DynamicResource Main.Stop}"/>
                         </ToolTip.Tip>
                     </Button>
-                    <Button Classes="Destructive ToolbarIconButton" Click="BtnDelete_Click">
+                    <Button Classes="Destructive ToolbarIconButton" Click="BtnDelete_Click" IsEnabled="{Binding IsAnyTaskSelected}">
                         <StackPanel Orientation="Horizontal" Spacing="4">
                             <lucide:LucideIcon Kind="Trash2" Size="14"/>
                             <TextBlock Text="{DynamicResource Main.Delete}" VerticalAlignment="Center"/>
@@ -346,6 +346,7 @@
                               GridLinesVisibility="Horizontal"
                               CanUserResizeColumns="True"
                               CanUserSortColumns="True"
+                              SelectionChanged="TaskGrid_SelectionChanged"
                               x:CompileBindings="False">
                         <DataGrid.ContextMenu>
                             <ContextMenu>
