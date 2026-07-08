@@ -50,6 +50,8 @@ End users do not need to install the .NET SDK or a development environment. Down
 - Close-to-tray support, or close to the macOS menu bar, with an exit menu item
 - Single-instance behavior that activates the existing window when launched again
 - Collapsible task detail panel with logs, headers, diagnostics, and run mode
+- Custom background image with blur, opacity, and stretch mode controls
+- Automatic update check on startup and periodic GitHub release check
 - Window title includes the application version from the project metadata
 
 ## Build From Source
@@ -73,8 +75,9 @@ Building from source requires a .NET SDK compatible with the project target fram
 
 Open **Settings** from the main toolbar to configure:
 
-- Appearance: language and theme
+- Appearance: language, theme, and custom background image (blur, opacity, stretch)
 - Window behavior: close to tray/menu bar or exit directly, plus close confirmation
+- Auto update check: startup and periodic checks
 - Download defaults: thread count, block size, concurrency, CRC64 behavior, timestamp behavior
 - Network: HTTP proxy mode and manual proxy URL
 - Save and headers: default save directory and default HTTP headers
