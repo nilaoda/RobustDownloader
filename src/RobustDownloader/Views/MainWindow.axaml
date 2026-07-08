@@ -213,16 +213,7 @@
             </Grid>
         </Border>
 
-        <Border Grid.Row="1" x:Name="BackgroundBorder">
-            <Border.Background>
-                <ImageBrush Source="{Binding BackgroundImage}"
-                            Opacity="{Binding BackgroundOpacity}"
-                            Stretch="UniformToFill"/>
-            </Border.Background>
-            <Border.Effect>
-                <BlurEffect Radius="{Binding BackgroundBlur}"/>
-            </Border.Effect>
-            <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto">
+        <Grid Grid.Row="1" ColumnDefinitions="Auto,Auto,*,Auto">
             <Border x:Name="TaskTreePane"
                     Grid.Column="0"
                     IsVisible="{Binding IsTaskTreePaneVisible}"
@@ -311,7 +302,18 @@
                         Background="{DynamicResource BorderColor}"/>
             </Border>
 
-            <Grid Grid.Column="2" RowDefinitions="Auto,*">
+            <Panel Grid.Column="2" ClipToBounds="True">
+                <Border x:Name="BackgroundBorder" Margin="-40">
+                 <Border.Background>
+                        <ImageBrush Source="{Binding BackgroundImage}"
+                                    Opacity="{Binding BackgroundOpacity}"
+                                    Stretch="UniformToFill"/>
+                    </Border.Background>
+                    <Border.Effect>
+                        <BlurEffect Radius="{Binding BackgroundBlur}"/>
+                    </Border.Effect>
+                </Border>
+                <Grid RowDefinitions="Auto,*" Background="{DynamicResource BackgroundColor}">
                 <Border Grid.Row="0"
                         Background="{DynamicResource BackgroundColor}"
                         BorderBrush="{DynamicResource BorderColor}"
@@ -436,6 +438,7 @@
                     </StackPanel>
                 </Grid>
             </Grid>
+            </Panel>
 
             <Border Grid.Column="3"
                     IsVisible="{Binding IsDetailPaneOpen}"
@@ -592,8 +595,7 @@
                     </Grid>
                 </Grid>
             </Border>
-            </Grid>
-        </Border>
+        </Grid>
 
         <Border Grid.Row="2"
                 Background="{DynamicResource CardBackgroundColor}"
