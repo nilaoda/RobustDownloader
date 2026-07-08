@@ -81,6 +81,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public bool HasNoMatchingVisibleTasks => Tasks.Count > 0 && VisibleTasks.Count == 0;
     public bool HasSelectedTask => SelectedTask != null;
     public bool HasNoSelectedTask => SelectedTask == null;
+    public bool IsAnyTaskSelected { get; private set; }
     public string WindowTitle => $"{LocalizationService.Get("App.Name")} v{AppVersion}";
     public string GlobalSpeedDisplay => $"{LocalizationService.Get("Main.GlobalSpeed")} {GlobalSpeedText}";
     public string DetailPaneButtonText => LocalizationService.Get(IsDetailPaneOpen ? "Main.HideDetails" : "Main.ShowDetails");
@@ -107,6 +108,13 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         OnPropertyChanged(nameof(HasSelectedTask));
         OnPropertyChanged(nameof(HasNoSelectedTask));
+    }
+
+    public void UpdateIsAnyTaskSelected(bool hasSelection)
+    {
+        if (IsAnyTaskSelected == hasSelection) return;
+        IsAnyTaskSelected = hasSelection;
+        OnPropertyChanged(nameof(IsAnyTaskSelected));
     }
 
     partial void OnGlobalSpeedTextChanged(string value)

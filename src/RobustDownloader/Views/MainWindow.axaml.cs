@@ -88,6 +88,12 @@ public partial class MainWindow : ShadUI.Window
             vm.ToggleDetailPane();
     }
 
+    private void TaskGrid_SelectionChanged(object? sender, SelectionChangedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+            vm.UpdateIsAnyTaskSelected(TaskGrid.SelectedItems.Count > 0);
+    }
+
     private void BtnToggleTaskTree_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         if (DataContext is MainWindowViewModel vm)
