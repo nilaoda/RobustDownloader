@@ -121,8 +121,10 @@ public sealed class DesktopIntegrationService : IDisposable
         DispatcherTimer.RunOnce(HideMainWindow, TimeSpan.FromMilliseconds(120), DispatcherPriority.Background);
     }
 
-    private void HideMainWindow()
+    public void HideMainWindow()
     {
+        if (_disposed) return;
+
         _mainWindow.Hide();
         MacOSDockIconService.HideDockIcon();
     }

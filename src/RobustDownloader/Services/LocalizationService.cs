@@ -16,10 +16,15 @@ public static class LocalizationService
     public static AppLanguageMode Mode => _mode;
     public static AppLanguageMode EffectiveMode { get; private set; } = Resolve(AppLanguageMode.Auto);
 
-    public static void Apply(AppLanguageMode mode)
+    public static void ApplyForCommandLine(AppLanguageMode mode)
     {
         _mode = mode;
         EffectiveMode = Resolve(mode);
+    }
+
+    public static void Apply(AppLanguageMode mode)
+    {
+        ApplyForCommandLine(mode);
         var resources = GetResources(EffectiveMode);
 
         if (Application.Current != null)
@@ -227,6 +232,53 @@ public static class LocalizationService
         ["TextBoxMenu.Copy"] = "复制",
         ["TextBoxMenu.Paste"] = "粘贴",
         ["TextBoxMenu.SelectAll"] = "全选",
+        ["Cli.Help"] = """
+RobustDownloader 命令行用法
+
+用法：
+  RobustDownloader [选项]
+  RobustDownloader --add <url> [<url> ...] [选项]
+
+命令：
+  --add <url> [<url> ...]   添加一个或多个下载任务
+  --show                    显示主窗口
+  --start-all               开始所有已停止或失败的任务
+  --stop-all                停止所有运行中或排队中的任务
+  --help, -h, /?            显示此帮助
+
+添加任务选项：
+  --dir <path>              保存目录
+  --name <filename>         单个 URL 的文件名
+  --threads <number>        新任务线程数
+  --block-size <mb>         新任务分块大小（MB）
+  --header <name:value>     添加自定义 HTTP Header，可重复使用
+  --start                   添加任务并开始下载
+  --queue                   只添加任务，不开始下载
+  --silent                  不激活主窗口
+
+示例：
+  RobustDownloader --add "https://example.com/file.zip"
+  RobustDownloader --add "https://example.com/file.zip" --silent
+  RobustDownloader --add "https://example.com/file.zip" --start --threads 8
+  RobustDownloader --add "https://example.com/file.zip" --dir "$HOME/Downloads" --name "file.zip"
+  RobustDownloader --stop-all --silent
+""",
+        ["Cli.Error.HelpHint"] = "运行 RobustDownloader --help 查看用法。",
+        ["Cli.Error.SendFailed"] = "无法将命令发送到正在运行的 RobustDownloader 实例。",
+        ["Cli.Error.Threads"] = "--threads 必须是 1 到 256 之间的数字。",
+        ["Cli.Error.BlockSize"] = "--block-size 必须是正数。",
+        ["Cli.Error.Header"] = "--header 必须使用 \"Name: value\" 格式。",
+        ["Cli.Error.UnknownOption"] = "未知选项: {0}",
+        ["Cli.Error.UnexpectedArgument"] = "意外参数: {0}",
+        ["Cli.Error.StartQueueConflict"] = "--start 不能与 --queue 同时使用。",
+        ["Cli.Error.SilentRequiresCommand"] = "--silent 需要配合一个命令使用。",
+        ["Cli.Error.AddOptionsRequireAdd"] = "添加任务选项需要配合 --add 使用。",
+        ["Cli.Error.AddRequiresUrl"] = "--add 至少需要一个 URL。",
+        ["Cli.Error.InvalidHttpUrl"] = "无效的 HTTP URL: {0}",
+        ["Cli.Error.NameSingleUrl"] = "--name 只能用于单个 URL。",
+        ["Cli.Error.SaveDirMissing"] = "保存目录不存在: {0}",
+        ["Cli.Error.OnlyOneCommand"] = "一次只能使用一个命令: {0} 和 {1}。",
+        ["Cli.Error.OptionRequiresValue"] = "{0} 需要一个值。",
         ["Queue.Empty"] = "队列空闲 | 无任务",
         ["Queue.Ready"] = "就绪",
         ["Queue.Idle"] = "队列空闲 | 排队: {0} | 总任务: {1}",
@@ -454,6 +506,53 @@ public static class LocalizationService
         ["TextBoxMenu.Copy"] = "Copy",
         ["TextBoxMenu.Paste"] = "Paste",
         ["TextBoxMenu.SelectAll"] = "Select All",
+        ["Cli.Help"] = """
+RobustDownloader command line usage
+
+Usage:
+  RobustDownloader [options]
+  RobustDownloader --add <url> [<url> ...] [options]
+
+Commands:
+  --add <url> [<url> ...]   Add one or more download tasks
+  --show                    Show the main window
+  --start-all               Start all stopped or failed tasks
+  --stop-all                Stop all running or pending tasks
+  --help, -h, /?            Show this help text
+
+Add task options:
+  --dir <path>              Save directory
+  --name <filename>         File name for a single URL
+  --threads <number>        Thread count for added tasks
+  --block-size <mb>         Block size in MB
+  --header <name:value>     Add a custom HTTP header; can be repeated
+  --start                   Add tasks and start them
+  --queue                   Add tasks without starting them
+  --silent                  Do not activate the main window
+
+Examples:
+  RobustDownloader --add "https://example.com/file.zip"
+  RobustDownloader --add "https://example.com/file.zip" --silent
+  RobustDownloader --add "https://example.com/file.zip" --start --threads 8
+  RobustDownloader --add "https://example.com/file.zip" --dir "$HOME/Downloads" --name "file.zip"
+  RobustDownloader --stop-all --silent
+""",
+        ["Cli.Error.HelpHint"] = "Run RobustDownloader --help for usage.",
+        ["Cli.Error.SendFailed"] = "Failed to send command to the running RobustDownloader instance.",
+        ["Cli.Error.Threads"] = "--threads must be a number from 1 to 256.",
+        ["Cli.Error.BlockSize"] = "--block-size must be a positive number.",
+        ["Cli.Error.Header"] = "--header must use the format \"Name: value\".",
+        ["Cli.Error.UnknownOption"] = "Unknown option: {0}",
+        ["Cli.Error.UnexpectedArgument"] = "Unexpected argument: {0}",
+        ["Cli.Error.StartQueueConflict"] = "--start cannot be used together with --queue.",
+        ["Cli.Error.SilentRequiresCommand"] = "--silent requires a command.",
+        ["Cli.Error.AddOptionsRequireAdd"] = "Add task options require --add.",
+        ["Cli.Error.AddRequiresUrl"] = "--add requires at least one URL.",
+        ["Cli.Error.InvalidHttpUrl"] = "Invalid HTTP URL: {0}",
+        ["Cli.Error.NameSingleUrl"] = "--name can only be used with a single URL.",
+        ["Cli.Error.SaveDirMissing"] = "Save directory does not exist: {0}",
+        ["Cli.Error.OnlyOneCommand"] = "Only one command can be used at a time: {0} and {1}.",
+        ["Cli.Error.OptionRequiresValue"] = "{0} requires a value.",
         ["Main.OpenFolder"] = "Open Folder",
         ["Main.ReDownload"] = "Re-download",
         ["Main.ReDownloadQueued"] = "Queued for re-download",
@@ -703,6 +802,53 @@ public static class LocalizationService
         ["TextBoxMenu.Copy"] = "複製",
         ["TextBoxMenu.Paste"] = "貼上",
         ["TextBoxMenu.SelectAll"] = "全選",
+        ["Cli.Help"] = """
+RobustDownloader 命令列用法
+
+用法：
+  RobustDownloader [選項]
+  RobustDownloader --add <url> [<url> ...] [選項]
+
+命令：
+  --add <url> [<url> ...]   新增一個或多個下載任務
+  --show                    顯示主視窗
+  --start-all               開始所有已停止或失敗的任務
+  --stop-all                停止所有執行中或排隊中的任務
+  --help, -h, /?            顯示此說明
+
+新增任務選項：
+  --dir <path>              儲存目錄
+  --name <filename>         單一 URL 的檔名
+  --threads <number>        新任務執行緒數
+  --block-size <mb>         新任務分塊大小（MB）
+  --header <name:value>     新增自訂 HTTP Header，可重複使用
+  --start                   新增任務並開始下載
+  --queue                   只新增任務，不開始下載
+  --silent                  不啟用主視窗
+
+範例：
+  RobustDownloader --add "https://example.com/file.zip"
+  RobustDownloader --add "https://example.com/file.zip" --silent
+  RobustDownloader --add "https://example.com/file.zip" --start --threads 8
+  RobustDownloader --add "https://example.com/file.zip" --dir "$HOME/Downloads" --name "file.zip"
+  RobustDownloader --stop-all --silent
+""",
+        ["Cli.Error.HelpHint"] = "執行 RobustDownloader --help 查看用法。",
+        ["Cli.Error.SendFailed"] = "無法將命令傳送到正在執行的 RobustDownloader 實例。",
+        ["Cli.Error.Threads"] = "--threads 必須是 1 到 256 之間的數字。",
+        ["Cli.Error.BlockSize"] = "--block-size 必須是正數。",
+        ["Cli.Error.Header"] = "--header 必須使用 \"Name: value\" 格式。",
+        ["Cli.Error.UnknownOption"] = "未知選項: {0}",
+        ["Cli.Error.UnexpectedArgument"] = "意外參數: {0}",
+        ["Cli.Error.StartQueueConflict"] = "--start 不能與 --queue 同時使用。",
+        ["Cli.Error.SilentRequiresCommand"] = "--silent 需要搭配一個命令使用。",
+        ["Cli.Error.AddOptionsRequireAdd"] = "新增任務選項需要搭配 --add 使用。",
+        ["Cli.Error.AddRequiresUrl"] = "--add 至少需要一個 URL。",
+        ["Cli.Error.InvalidHttpUrl"] = "無效的 HTTP URL: {0}",
+        ["Cli.Error.NameSingleUrl"] = "--name 只能用於單一 URL。",
+        ["Cli.Error.SaveDirMissing"] = "儲存目錄不存在: {0}",
+        ["Cli.Error.OnlyOneCommand"] = "一次只能使用一個命令: {0} 和 {1}。",
+        ["Cli.Error.OptionRequiresValue"] = "{0} 需要一個值。",
         ["Main.OpenFolder"] = "開啟資料夾",
         ["Main.ReDownload"] = "重新下載",
         ["Main.ReDownloadQueued"] = "已加入重新下載佇列",

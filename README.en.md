@@ -49,6 +49,7 @@ End users do not need to install the .NET SDK or a development environment. Down
 - Theme selection: system, light, dark
 - Close-to-tray support, or close to the macOS menu bar, with an exit menu item
 - Single-instance behavior that activates the existing window when launched again
+- Command line task adding, silent adding, start-all, and stop-all controls
 - Collapsible task detail panel with logs, headers, diagnostics, and run mode
 - Custom background image with blur, opacity, and stretch mode controls
 - Automatic update check on startup and periodic GitHub release check
@@ -70,6 +71,35 @@ dotnet build src/RobustDownloader.sln
 ```
 
 Building from source requires a .NET SDK compatible with the project target framework and a macOS, Windows, or Linux desktop environment supported by Avalonia.
+
+## Command Line Control
+
+RobustDownloader can send task commands from the command line to the running primary instance. Task state is still managed by the primary instance, avoiding concurrent task data writes from multiple processes.
+Command line help and error messages reuse the app language setting; Auto follows the detected system language.
+
+```bash
+RobustDownloader --help
+RobustDownloader --add "https://example.com/file.zip"
+RobustDownloader --add "https://example.com/file.zip" --silent
+RobustDownloader --add "https://example.com/file.zip" --start --threads 8 --block-size 32
+RobustDownloader --add "https://example.com/file.zip" --dir "$HOME/Downloads" --name "file.zip"
+RobustDownloader --start-all --silent
+RobustDownloader --stop-all --silent
+```
+
+Common options:
+
+- `--add <url> [<url> ...]`: add one or more download tasks
+- `--dir <path>`: set the save directory
+- `--name <filename>`: set the file name for a single URL
+- `--threads <number>`: set the thread count for new tasks
+- `--block-size <mb>`: set the block size for new tasks
+- `--header <name:value>`: add a task-level header; can be repeated
+- `--start`: add tasks and start them
+- `--queue`: add tasks without starting them, which is the default
+- `--silent`: do not activate the main window
+- `--show`: show the main window
+- `--start-all` / `--stop-all`: start or stop all tasks
 
 ## Settings
 

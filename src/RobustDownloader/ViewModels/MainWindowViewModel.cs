@@ -212,8 +212,9 @@ public partial class MainWindowViewModel : ViewModelBase
         StartPeriodicUpdateCheck();
     }
 
-    public void AddTasks(AddTaskResult result)
+    public IReadOnlyList<DownloadTask> AddTasks(AddTaskResult result)
     {
+        var addedTasks = new List<DownloadTask>();
         _suppressTaskCollectionSideEffects = true;
         try
         {
@@ -242,6 +243,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 };
 
                 Tasks.Add(task);
+                addedTasks.Add(task);
             }
         }
         finally
@@ -254,6 +256,37 @@ public partial class MainWindowViewModel : ViewModelBase
         RefreshTaskTree();
         RefreshVisibleTasks();
         SaveTasks();
+        return addedTasks;
+    }
+
+    public void AddCommandLineTasks(CommandLineAddTasksOptions options)
+    {
+        if (options.Urls.Length == 0) return;
+
+        var defaults = BuildDefaultAddTask();
+        var saveDirectory = string.IsNullOrWhiteSpace(options.SaveDirectory)
+            ? defaults.SaveDirectory
+            : options.SaveDirectory.Trim();
+        if (!Directory.Exists(saveDirectory))
+            Directory.CreateDirectory(saveDirectory);
+
+        var result = new AddTaskResult
+        {
+            Urls = options.Urls,
+            SaveDirectory = saveDirectory,
+            SingleFileName = options.SingleFileName,
+            ThreadCount = options.ThreadCount ?? defaults.ThreadCount,
+            BlockSize = options.BlockSizeMb ?? defaults.BlockSize,
+            UpdateFileTimestamp = defaults.UpdateFileTimestamp,
+            SkipCrc = defaults.SkipCrc,
+            HeaderText = string.IsNullOrWhiteSpace(options.HeaderText)
+                ? defaults.HeaderText
+                : options.HeaderText
+        };
+
+        var addedTasks = AddTasks(result);
+        if (options.StartImmediately)
+            StartTasks(addedTasks);
     }
 
     public void StartTasks(IEnumerable<DownloadTask> tasks)

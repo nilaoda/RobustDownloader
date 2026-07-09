@@ -49,6 +49,7 @@ RobustDownloader 是一个基于 .NET、Avalonia 和 ShadUI 的跨平台桌面�
 - 支持主题设置：跟随系统、浅色、深色
 - 支持关闭到系统托盘或 macOS 菜单栏，并提供退出菜单
 - 支持单实例运行，重复启动会激活已有窗口
+- 支持命令行添加任务、静默添加、开始全部和停止全部
 - 支持可折叠的任务详情面板，展示日志、Header、诊断和运行模式
 - 支持自定义背景图片，可调整模糊、透明度和拉伸方式
 - 支持自动检查更新，启动时和运行期间定期检查 GitHub 最新版本
@@ -70,6 +71,35 @@ dotnet build src/RobustDownloader.sln
 ```
 
 源码构建需要安装与项目目标框架兼容的 .NET SDK，并使用 macOS、Windows 或 Linux 桌面环境。
+
+## 命令行控制
+
+RobustDownloader 支持从命令行向已运行的主实例发送任务命令。任务状态仍由主实例统一管理，避免多个进程同时修改任务数据。
+命令行帮助和错误信息会复用应用语言设置；设置为自动时会按系统语言识别。
+
+```bash
+RobustDownloader --help
+RobustDownloader --add "https://example.com/file.zip"
+RobustDownloader --add "https://example.com/file.zip" --silent
+RobustDownloader --add "https://example.com/file.zip" --start --threads 8 --block-size 32
+RobustDownloader --add "https://example.com/file.zip" --dir "$HOME/Downloads" --name "file.zip"
+RobustDownloader --start-all --silent
+RobustDownloader --stop-all --silent
+```
+
+常用选项：
+
+- `--add <url> [<url> ...]`：添加一个或多个下载任务
+- `--dir <path>`：指定保存目录
+- `--name <filename>`：为单个 URL 指定文件名
+- `--threads <number>`：指定新任务线程数
+- `--block-size <mb>`：指定新任务分块大小
+- `--header <name:value>`：添加任务级 Header，可重复使用
+- `--start`：添加后立即进入下载队列
+- `--queue`：只添加任务，不自动开始下载（默认行为）
+- `--silent`：执行命令时不激活主窗口
+- `--show`：显示主窗口
+- `--start-all` / `--stop-all`：开始或停止全部任务
 
 ## 设置项
 
