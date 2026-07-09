@@ -13,26 +13,31 @@ public sealed class SingleInstanceService : IDisposable
     private const string MutexName = "RobustDownloader.SingleInstance";
     private const string PipeName = "RobustDownloader.SingleInstance.Activate";
 
-    private readonly Mutex _mutex;
+    private readonly Mutex? _mutex;
+    private readonly FileStream? _lockFile;
     private readonly CancellationTokenSource _cts = new();
     private Action<CommandLineCommand>? _handleCommand;
     private Task? _listenTask;
     private bool _disposed;
 
-    private SingleInstanceService(Mutex mutex)
+    private SingleInstanceService(Mutex? mutex, FileStream? lockFile)
     {
         _mutex = mutex;
+        _lockFile = lockFile;
     }
 
     public static SingleInstanceService? TryAcquire(CommandLineCommand command, out bool commandSent)
     {
-        var mutex = new Mutex(true, MutexName, out var createdNew);
-        if (createdNew)
+        var mutex = new Mutex(true, MutexName, out var mutexCreated);
+        var lockFile = TryAcquireLockFile();
+
+        if (mutexCreated && lockFile != null)
         {
             commandSent = false;
-            return new SingleInstanceService(mutex);
+            return new SingleInstanceService(mutex, lockFile);
         }
 
+        lockFile?.Dispose();
         mutex.Dispose();
         commandSent = NotifyPrimaryInstance(command.Kind == CommandLineCommandKind.None ? CommandLineCommand.Show() : command);
         return null;
@@ -111,7 +116,29 @@ public sealed class SingleInstanceService : IDisposable
 
         _cts.Cancel();
         _cts.Dispose();
-        _mutex.ReleaseMutex();
-        _mutex.Dispose();
+        _lockFile?.Dispose();
+        if (_mutex != null)
+        {
+            _mutex.ReleaseMutex();
+            _mutex.Dispose();
+        }
+    }
+
+    private static FileStream? TryAcquireLockFile()
+    {
+        try
+        {
+            Directory.CreateDirectory(AppPaths.DataDirectory);
+            var lockPath = Path.Combine(AppPaths.DataDirectory, "single-instance.lock");
+            return new FileStream(lockPath, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None);
+        }
+        catch (IOException)
+        {
+            return null;
+        }
+        catch (UnauthorizedAccessException)
+        {
+            return null;
+        }
     }
 }
