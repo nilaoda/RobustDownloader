@@ -266,7 +266,7 @@ public partial class MainWindowViewModel : ViewModelBase
         var defaults = BuildDefaultAddTask();
         var saveDirectory = string.IsNullOrWhiteSpace(options.SaveDirectory)
             ? defaults.SaveDirectory
-            : options.SaveDirectory.Trim();
+            : Path.GetFullPath(options.SaveDirectory.Trim());
         if (!Directory.Exists(saveDirectory))
             Directory.CreateDirectory(saveDirectory);
 

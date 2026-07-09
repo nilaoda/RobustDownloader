@@ -137,8 +137,15 @@ public static class CommandLineParser
             if (!string.IsNullOrWhiteSpace(singleFileName) && urls.Count != 1)
                 return Error(LocalizationService.Get("Cli.Error.NameSingleUrl"));
 
-            if (!string.IsNullOrWhiteSpace(saveDirectory) && !Directory.Exists(saveDirectory))
-                return Error(LocalizationService.Format("Cli.Error.SaveDirMissing", saveDirectory));
+            if (!string.IsNullOrWhiteSpace(saveDirectory))
+            {
+                if (!TryNormalizeDirectory(saveDirectory, out var normalizedDirectory, out var directoryError))
+                    return Error(directoryError);
+
+                saveDirectory = normalizedDirectory;
+                if (!Directory.Exists(saveDirectory))
+                    return Error(LocalizationService.Format("Cli.Error.SaveDirMissing", saveDirectory));
+            }
         }
 
         return new CommandLineParseResult
@@ -227,6 +234,23 @@ public static class CommandLineParser
     {
         return Uri.TryCreate(value, UriKind.Absolute, out var uri) &&
                (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+    }
+
+    private static bool TryNormalizeDirectory(string value, out string normalizedDirectory, out string error)
+    {
+        var trimmed = value.Trim();
+        try
+        {
+            normalizedDirectory = Path.GetFullPath(trimmed);
+            error = "";
+            return true;
+        }
+        catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
+        {
+            normalizedDirectory = "";
+            error = LocalizationService.Format("Cli.Error.InvalidSaveDir", trimmed, ex.Message);
+            return false;
+        }
     }
 
     private static CommandLineParseResult Error(string message)
