@@ -82,7 +82,7 @@ RobustDownloader --help
 RobustDownloader --add "https://example.com/file.zip"
 RobustDownloader --add "https://example.com/file.zip" --silent
 RobustDownloader --add "https://example.com/file.zip" --start --threads 8 --block-size 32
-RobustDownloader --add "https://example.com/file.zip" --dir "$HOME/Downloads" --name "file.zip"
+RobustDownloader --add "https://example.com/file.zip" --dir "<save-dir>" --name "file.zip"
 RobustDownloader --start-all --silent
 RobustDownloader --stop-all --silent
 ```

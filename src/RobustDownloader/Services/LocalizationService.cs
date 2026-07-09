@@ -260,7 +260,7 @@ RobustDownloader 命令行用法
   RobustDownloader --add "https://example.com/file.zip"
   RobustDownloader --add "https://example.com/file.zip" --silent
   RobustDownloader --add "https://example.com/file.zip" --start --threads 8
-  RobustDownloader --add "https://example.com/file.zip" --dir "$HOME/Downloads" --name "file.zip"
+  RobustDownloader --add "https://example.com/file.zip" --dir "<save-dir>" --name "file.zip"
   RobustDownloader --stop-all --silent
 """,
         ["Cli.Error.HelpHint"] = "运行 RobustDownloader --help 查看用法。",
@@ -534,7 +534,7 @@ Examples:
   RobustDownloader --add "https://example.com/file.zip"
   RobustDownloader --add "https://example.com/file.zip" --silent
   RobustDownloader --add "https://example.com/file.zip" --start --threads 8
-  RobustDownloader --add "https://example.com/file.zip" --dir "$HOME/Downloads" --name "file.zip"
+  RobustDownloader --add "https://example.com/file.zip" --dir "<save-dir>" --name "file.zip"
   RobustDownloader --stop-all --silent
 """,
         ["Cli.Error.HelpHint"] = "Run RobustDownloader --help for usage.",
@@ -830,7 +830,7 @@ RobustDownloader 命令列用法
   RobustDownloader --add "https://example.com/file.zip"
   RobustDownloader --add "https://example.com/file.zip" --silent
   RobustDownloader --add "https://example.com/file.zip" --start --threads 8
-  RobustDownloader --add "https://example.com/file.zip" --dir "$HOME/Downloads" --name "file.zip"
+  RobustDownloader --add "https://example.com/file.zip" --dir "<save-dir>" --name "file.zip"
   RobustDownloader --stop-all --silent
 """,
         ["Cli.Error.HelpHint"] = "執行 RobustDownloader --help 查看用法。",
