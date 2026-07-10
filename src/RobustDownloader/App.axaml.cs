@@ -35,6 +35,7 @@ public partial class App : Application
         {
             var viewModel = new MainWindowViewModel();
             viewModel.DialogManager.Register<CloseToTrayDialog, CloseToTrayDialogViewModel>();
+            viewModel.DialogManager.Register<SpeedLimitDialog, SpeedLimitDialogViewModel>();
             viewModel.Initialize();
 
             var mainWindow = new MainWindow

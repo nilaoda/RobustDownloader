@@ -19,6 +19,8 @@ namespace RobustDownloader.ViewModels;
 
 public partial class MainWindowViewModel : ViewModelBase
 {
+    private const double MinimumSpeedLimitMbps = 0.1;
+    private const double MaximumSpeedLimitMbps = 100;
     private readonly ConcurrentDictionary<string, CancellationTokenSource> _runningTasks = new();
     private readonly CancellationTokenSource _globalCts = new();
     private readonly string _dataDirectory;
@@ -33,6 +35,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private bool _suppressTaskCollectionSideEffects;
     private bool _suppressSettingsSideEffects;
     private bool _suppressTaskTreeSelectionSideEffects;
+    private bool _speedLimitDialogOpen;
     private string _latestReleaseUrl = "";
 
     [ObservableProperty] private string _defaultThreads = "4";
@@ -54,6 +57,8 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private double _backgroundOpacity = 0.5;
     [ObservableProperty] private bool _isPlatformProgressVisible;
     [ObservableProperty] private double _platformProgressValue;
+    [ObservableProperty] private bool _isSpeedLimitEnabled;
+    [ObservableProperty] private double _speedLimitMbps = 10;
 
     public Avalonia.Media.Stretch BackgroundStretchValue =>
         Enum.TryParse<Avalonia.Media.Stretch>(BackgroundStretch, out var s)
@@ -103,7 +108,11 @@ public partial class MainWindowViewModel : ViewModelBase
     public bool HasNoSelectedTask => SelectedTask == null;
     public bool IsAnyTaskSelected { get; private set; }
     public string WindowTitle => $"{LocalizationService.Get("App.Name")} v{AppVersion}";
-    public string GlobalSpeedDisplay => $"{LocalizationService.Get("Main.GlobalSpeed")} {GlobalSpeedText}";
+    public string GlobalSpeedDisplay => IsSpeedLimitEnabled
+        ? $"{LocalizationService.Get("Main.GlobalSpeed")} {GlobalSpeedText} ({SpeedLimitStatusText})"
+        : $"{LocalizationService.Get("Main.GlobalSpeed")} {GlobalSpeedText}";
+    public string SpeedLimitStatusText =>
+        LocalizationService.Format("Main.SpeedLimitStatus", FormatSize(SpeedLimitBytesPerSecond));
     public string DetailPaneButtonText => LocalizationService.Get(IsDetailPaneOpen ? "Main.HideDetails" : "Main.ShowDetails");
     public string TaskTreePaneButtonText => LocalizationService.Get(IsTaskTreePaneVisible ? "Main.HideTaskTree" : "Main.ShowTaskTree");
     public string ActiveTaskTreeFilterText => SelectedTaskTreeNode?.Label ?? LocalizationService.Get("TaskTree.All");
@@ -126,6 +135,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public bool ShowPlatformProgressIndicator => _settings.ShowPlatformProgressIndicator;
     public PlatformProgressSnapshot PlatformProgressSnapshot =>
         new(IsPlatformProgressVisible, PlatformProgressValue);
+    private long SpeedLimitBytesPerSecond => checked((long)(SpeedLimitMbps * 1024 * 1024));
     public bool CheckForUpdates
     {
         get => _settings.CheckForUpdates;
@@ -162,6 +172,33 @@ public partial class MainWindowViewModel : ViewModelBase
     partial void OnPlatformProgressValueChanged(double value)
     {
         OnPropertyChanged(nameof(PlatformProgressSnapshot));
+    }
+
+    partial void OnIsSpeedLimitEnabledChanged(bool value)
+    {
+        _settings.IsSpeedLimitEnabled = value;
+        ApplyGlobalSpeedLimit();
+        OnPropertyChanged(nameof(SpeedLimitStatusText));
+        OnPropertyChanged(nameof(GlobalSpeedDisplay));
+        if (!_suppressSettingsSideEffects)
+            SaveSettings();
+    }
+
+    partial void OnSpeedLimitMbpsChanged(double value)
+    {
+        var coerced = CoerceSpeedLimitMbps(value);
+        if (Math.Abs(value - coerced) >= 0.001)
+        {
+            SpeedLimitMbps = coerced;
+            return;
+        }
+
+        _settings.SpeedLimitMbps = coerced;
+        ApplyGlobalSpeedLimit();
+        OnPropertyChanged(nameof(SpeedLimitStatusText));
+        OnPropertyChanged(nameof(GlobalSpeedDisplay));
+        if (!_suppressSettingsSideEffects)
+            SaveSettings();
     }
 
     public void UpdateIsAnyTaskSelected(bool hasSelection)
@@ -424,6 +461,20 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
+    public void ShowSpeedLimitDialog()
+    {
+        if (_speedLimitDialogOpen) return;
+
+        _speedLimitDialogOpen = true;
+        var context = new SpeedLimitDialogViewModel(DialogManager, IsSpeedLimitEnabled, SpeedLimitMbps);
+        DialogManager
+            .CreateDialog(context)
+            .WithSuccessCallback(ApplySpeedLimitDialog)
+            .WithCancelCallback(() => _speedLimitDialogOpen = false)
+            .WithMinWidth(460)
+            .Show();
+    }
+
     public void SelectTaskTreeNode(TaskTreeNode node)
     {
         SelectedTaskTreeNode = node;
@@ -496,11 +547,16 @@ public partial class MainWindowViewModel : ViewModelBase
         BackgroundStretch = _settings.BackgroundStretch;
         BackgroundBlur = _settings.BackgroundBlur;
         BackgroundOpacity = _settings.BackgroundOpacity;
+        IsSpeedLimitEnabled = _settings.IsSpeedLimitEnabled;
+        SpeedLimitMbps = CoerceSpeedLimitMbps(_settings.SpeedLimitMbps);
         OnPropertyChanged(nameof(ShowPlatformProgressIndicator));
+        OnPropertyChanged(nameof(SpeedLimitStatusText));
+        OnPropertyChanged(nameof(GlobalSpeedDisplay));
         RefreshTaskListScopeOptions(_taskListLimit);
         RefreshTaskTree();
         RefreshVisibleTasks();
         UpdatePlatformProgress();
+        ApplyGlobalSpeedLimit();
         SaveSettings();
     }
 
@@ -518,6 +574,7 @@ public partial class MainWindowViewModel : ViewModelBase
         _globalCts.Cancel();
         foreach (var kvp in _runningTasks)
             kvp.Value.Cancel();
+        GlobalSpeedLimiter.Configure(false, 0);
         SaveTasks();
         SaveSettings();
         DialogManager.Dispose();
@@ -832,6 +889,8 @@ public partial class MainWindowViewModel : ViewModelBase
             BackgroundStretch = _settings.BackgroundStretch;
             BackgroundBlur = _settings.BackgroundBlur;
             BackgroundOpacity = _settings.BackgroundOpacity;
+            IsSpeedLimitEnabled = _settings.IsSpeedLimitEnabled;
+            SpeedLimitMbps = CoerceSpeedLimitMbps(_settings.SpeedLimitMbps);
         }
         finally
         {
@@ -839,6 +898,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         RefreshTaskListScopeOptions(_taskListLimit);
         ApplySettingsToTopBar();
+        ApplyGlobalSpeedLimit();
     }
 
     private void SaveSettings()
@@ -863,6 +923,8 @@ public partial class MainWindowViewModel : ViewModelBase
         DefaultThreads = Math.Max(1, _settings.DefaultThreadCount).ToString();
         DefaultBlockSize = Math.Max(0.03125, _settings.DefaultBlockSizeMb).ToString("0.##");
         MaxConcurrency = CoerceConcurrency(_settings.MaxConcurrency);
+        IsSpeedLimitEnabled = _settings.IsSpeedLimitEnabled;
+        SpeedLimitMbps = CoerceSpeedLimitMbps(_settings.SpeedLimitMbps);
     }
 
     private void SyncSettingsFromTopBar()
@@ -879,6 +941,8 @@ public partial class MainWindowViewModel : ViewModelBase
         _settings.BackgroundStretch = BackgroundStretch;
         _settings.BackgroundBlur = BackgroundBlur;
         _settings.BackgroundOpacity = BackgroundOpacity;
+        _settings.IsSpeedLimitEnabled = IsSpeedLimitEnabled;
+        _settings.SpeedLimitMbps = CoerceSpeedLimitMbps(SpeedLimitMbps);
     }
 
     private void UpdateGlobalSpeed()
@@ -981,6 +1045,25 @@ public partial class MainWindowViewModel : ViewModelBase
         if (double.IsNaN(value) || double.IsInfinity(value))
             return 220;
         return Math.Clamp(value, 160, 360);
+    }
+
+    private static double CoerceSpeedLimitMbps(double value)
+    {
+        if (double.IsNaN(value) || double.IsInfinity(value))
+            return 10;
+        return Math.Clamp(value, MinimumSpeedLimitMbps, MaximumSpeedLimitMbps);
+    }
+
+    private void ApplyGlobalSpeedLimit()
+    {
+        GlobalSpeedLimiter.Configure(IsSpeedLimitEnabled, SpeedLimitBytesPerSecond);
+    }
+
+    private void ApplySpeedLimitDialog(SpeedLimitDialogViewModel context)
+    {
+        _speedLimitDialogOpen = false;
+        IsSpeedLimitEnabled = context.IsEnabled;
+        SpeedLimitMbps = CoerceSpeedLimitMbps(context.SpeedLimitMbps);
     }
 
     private void RefreshTaskListScopeOptions(int selectedLimit)
@@ -1162,6 +1245,7 @@ public partial class MainWindowViewModel : ViewModelBase
         UpdateStatusText(_runningTasks.Count, Tasks.Count(t => t.Status == DownloadTaskStatus.Pending));
         OnPropertyChanged(nameof(WindowTitle));
         OnPropertyChanged(nameof(GlobalSpeedDisplay));
+        OnPropertyChanged(nameof(SpeedLimitStatusText));
         OnPropertyChanged(nameof(DetailPaneButtonText));
         OnPropertyChanged(nameof(TaskTreePaneButtonText));
     }

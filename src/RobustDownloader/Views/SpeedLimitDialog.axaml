@@ -1,0 +1,67 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:RobustDownloader.ViewModels"
+             x:Class="RobustDownloader.Views.SpeedLimitDialog"
+             x:DataType="vm:SpeedLimitDialogViewModel">
+    <Border Padding="28,26,28,24" Width="460">
+        <StackPanel Spacing="20">
+            <StackPanel Spacing="8">
+                <TextBlock Text="{Binding Title}"
+                           FontSize="20"
+                           FontWeight="SemiBold"
+                           TextWrapping="Wrap"/>
+                <TextBlock Text="{Binding HintText}"
+                           Foreground="{DynamicResource MutedColor}"
+                           FontSize="13"
+                           LineHeight="19"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <StackPanel Spacing="14">
+                <CheckBox Content="{Binding EnableText}"
+                          IsChecked="{Binding IsEnabled}"/>
+                <Grid ColumnDefinitions="*,18,108,8,Auto"
+                      IsEnabled="{Binding IsEnabled}">
+                    <Slider x:Name="SliderSpeedLimit"
+                            Grid.Column="0"
+                            Minimum="0.1"
+                            Maximum="100"
+                            TickFrequency="1"
+                            IsSnapToTickEnabled="False"
+                            VerticalAlignment="Center"
+                            Value="{Binding SpeedLimitMbps, Mode=TwoWay}"/>
+                    <TextBox x:Name="TxtSpeedLimit"
+                             Grid.Column="2"
+                             Text="{Binding SpeedLimitText, Mode=TwoWay}"
+                             HorizontalContentAlignment="Center"
+                             VerticalContentAlignment="Center"/>
+                    <TextBlock Grid.Column="4"
+                               Text="{Binding UnitText}"
+                               Foreground="{DynamicResource MutedColor}"
+                               FontSize="12"
+                               VerticalAlignment="Center"/>
+                </Grid>
+                <TextBlock Text="{Binding ValidationMessage}"
+                           Foreground="{DynamicResource DestructiveColor}"
+                           FontSize="12"
+                           TextWrapping="Wrap"/>
+            </StackPanel>
+
+            <Grid ColumnDefinitions="*,Auto,10,Auto" Margin="0,2,0,0">
+                <Button Grid.Column="1"
+                        Content="{Binding CancelText}"
+                        MinWidth="88"
+                        Padding="16,8"
+                        HorizontalContentAlignment="Center"
+                        Click="Cancel_Click"/>
+                <Button Grid.Column="3"
+                        Content="{Binding SaveText}"
+                        MinWidth="88"
+                        Padding="18,8"
+                        HorizontalContentAlignment="Center"
+                        Classes="Primary"
+                        Click="Save_Click"/>
+            </Grid>
+        </StackPanel>
+    </Border>
+</UserControl>

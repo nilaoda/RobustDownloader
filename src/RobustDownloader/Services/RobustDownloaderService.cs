@@ -232,7 +232,9 @@ public sealed class RobustDownloaderService
             int read;
             try
             {
-                read = await source.ReadAsync(buffer, ctsRead.Token);
+                using var readLease = await GlobalSpeedLimiter.AcquireReadLeaseAsync(buffer.Length, token);
+                read = await source.ReadAsync(buffer.AsMemory(0, readLease.PermittedBytes), ctsRead.Token);
+                readLease.Consume(read);
             }
             catch (OperationCanceledException)
             {
@@ -333,9 +335,17 @@ public sealed class RobustDownloaderService
                 if (retry > 2) currentRequestLimit = 1 * 1024 * 1024;
                 if (retry > 5) currentRequestLimit = 64 * 1024;
                 if (retry > 8) currentRequestLimit = 32 * 1024;
+                var isRequestPaced = GlobalSpeedLimiter.IsEnabled;
+                if (isRequestPaced)
+                    currentRequestLimit = GlobalSpeedLimiter.GetRangeRequestSize(currentRequestLimit);
 
                 if (currentRequestLimit < remaining)
                     requestEnd = requestStart + currentRequestLimit - 1;
+
+                // Pace Range requests before sending them so the HTTP stack cannot prefetch a large burst.
+                using var requestLease = isRequestPaced
+                    ? await GlobalSpeedLimiter.AcquireRequestLeaseAsync(checked((int)currentRequestLimit), token)
+                    : null;
 
                 using var request = new HttpRequestMessage(HttpMethod.Get, url);
                 request.Headers.Range = new RangeHeaderValue(requestStart, requestEnd);
@@ -366,7 +376,19 @@ public sealed class RobustDownloaderService
 
                     try
                     {
-                        var read = await stream.ReadAsync(data, bytesReceivedTotal, checked((int)(expectedForThisRequest - bytesReadForThisRequest)), ctsRead.Token);
+                        var remainingForThisRequest = checked((int)(expectedForThisRequest - bytesReadForThisRequest));
+                        var read = 0;
+                        if (isRequestPaced)
+                        {
+                            read = await stream.ReadAsync(data, bytesReceivedTotal, remainingForThisRequest, ctsRead.Token);
+                            requestLease?.Consume(read);
+                        }
+                        else
+                        {
+                            using var readLease = await GlobalSpeedLimiter.AcquireReadLeaseAsync(remainingForThisRequest, token);
+                            read = await stream.ReadAsync(data, bytesReceivedTotal, readLease.PermittedBytes, ctsRead.Token);
+                            readLease.Consume(read);
+                        }
                         if (read == 0) break;
 
                         bytesReceivedTotal += read;

@@ -180,6 +180,12 @@ public partial class MainWindow : ShadUI.Window
         ShowToast(LocalizationService.Get("Main.SettingsSaved"), ToastKind.Success);
     }
 
+    private void SpeedLimit_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        if (DataContext is MainWindowViewModel vm)
+            vm.ShowSpeedLimitDialog();
+    }
+
     private List<DownloadTask> GetSelectedTasks()
     {
         return TaskGrid.SelectedItems.Cast<DownloadTask>().ToList();

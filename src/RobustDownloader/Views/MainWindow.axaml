@@ -71,6 +71,14 @@
             <Setter Property="VerticalContentAlignment" Value="Center"/>
             <Setter Property="Padding" Value="6,0"/>
         </Style>
+        <Style Selector="Button.ToolbarTextButton">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="BorderThickness" Value="0"/>
+            <Setter Property="MinWidth" Value="0"/>
+            <Setter Property="Padding" Value="0"/>
+            <Setter Property="HorizontalContentAlignment" Value="Center"/>
+            <Setter Property="VerticalContentAlignment" Value="Center"/>
+        </Style>
         <Style Selector="Button.QueueFilterButton">
             <Setter Property="MinWidth" Value="104"/>
             <Setter Property="HorizontalContentAlignment" Value="Center"/>
@@ -189,10 +197,17 @@
                       HorizontalAlignment="Right"
                       VerticalAlignment="Center"
                       ColumnDefinitions="Auto,18,Auto,8,Auto,10,Auto,10,Auto,10,Auto">
-                    <TextBlock Grid.Column="0"
-                               Classes="ToolbarText"
-                               Text="{Binding GlobalSpeedDisplay}"
-                               FontWeight="SemiBold"/>
+                    <Button Grid.Column="0"
+                            Classes="ToolbarTextButton"
+                            Cursor="Hand"
+                            Click="SpeedLimit_Click">
+                        <TextBlock Classes="ToolbarText"
+                                   Text="{Binding GlobalSpeedDisplay}"
+                                   FontWeight="SemiBold"/>
+                        <ToolTip.Tip>
+                            <TextBlock Text="{DynamicResource Settings.SpeedLimit}"/>
+                        </ToolTip.Tip>
+                    </Button>
                     <TextBlock Grid.Column="2"
                                Classes="ToolbarText"
                                Text="{DynamicResource Main.Concurrency}"
@@ -602,8 +617,10 @@
                 BorderBrush="{DynamicResource BorderColor}"
                 BorderThickness="0,1,0,0"
                 Padding="16,8">
-            <DockPanel>
-                <TextBlock Text="{Binding StatusText}"/>
+            <DockPanel LastChildFill="False">
+                <TextBlock DockPanel.Dock="Left"
+                           Text="{Binding StatusText}"
+                           VerticalAlignment="Center"/>
                 <Button DockPanel.Dock="Right"
                         IsVisible="{Binding HasUpdate}"
                         Command="{Binding OpenReleasePageCommand}"
@@ -611,7 +628,6 @@
                         Background="Transparent"
                         BorderThickness="0"
                         Padding="6,2"
-                        Margin="8,0,0,0"
                         HorizontalAlignment="Right">
                     <StackPanel Orientation="Horizontal" Spacing="4">
                          <Border Background="{DynamicResource DestructiveColor}"
