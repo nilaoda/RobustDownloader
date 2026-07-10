@@ -219,6 +219,29 @@
                             </Grid>
                         </StackPanel>
 
+                        <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.SpeedLimit}"/>
+                            <CheckBox x:Name="ChkSpeedLimit"
+                                      Content="{DynamicResource Settings.SpeedLimitEnable}"/>
+                            <Grid ColumnDefinitions="*,12,92,6,Auto">
+                                <Slider x:Name="SliderSpeedLimit"
+                                        Grid.Column="0"
+                                        Minimum="0.1"
+                                        Maximum="100"
+                                        TickFrequency="1"
+                                        IsSnapToTickEnabled="False"/>
+                                <TextBox x:Name="TxtSpeedLimit"
+                                         Grid.Column="2"
+                                         HorizontalContentAlignment="Center"
+                                         LostFocus="SpeedLimitText_LostFocus"/>
+                                <TextBlock Grid.Column="4"
+                                           Classes="Hint"
+                                           Text="{DynamicResource Settings.SpeedLimitUnit}"
+                                           VerticalAlignment="Center"/>
+                            </Grid>
+                            <TextBlock Classes="Hint" Text="{DynamicResource Settings.SpeedLimitHint}"/>
+                        </StackPanel>
+
                         <StackPanel Spacing="10">
                             <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.DefaultBehavior}"/>
                             <CheckBox Content="{DynamicResource Settings.DefaultUpdateTimestamp}"

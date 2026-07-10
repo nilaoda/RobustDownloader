@@ -31,6 +31,7 @@ End users do not need to install the .NET SDK or a development environment. Down
 - Multi-task download queue with start, stop, delete, start-all, and stop-all actions
 - Resumable segmented downloads with configurable thread count and block size
 - Global concurrency control
+- Global download speed limiting with settings slider and custom input
 - Persisted task list scope: recent 50, recent 100, recent 200, or all tasks
 - Left-side task tree for filtering by all, completed, incomplete, and file extension
 - Automatic fallback to single-thread mode when the server does not support range requests

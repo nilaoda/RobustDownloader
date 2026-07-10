@@ -21,6 +21,8 @@ public sealed class AppSettings
     public WindowCloseBehavior WindowCloseBehavior { get; set; } = WindowCloseBehavior.MinimizeToTray;
     public bool ConfirmCloseToTray { get; set; } = true;
     public bool ShowPlatformProgressIndicator { get; set; } = true;
+    public bool IsSpeedLimitEnabled { get; set; }
+    public double SpeedLimitMbps { get; set; } = 10;
     public string ProxyAddress { get; set; } = "";
     public string DefaultHeaderText { get; set; } = "";
     public SaveDirectoryMode SaveDirectoryMode { get; set; } = SaveDirectoryMode.LastUsed;
@@ -57,6 +59,8 @@ public sealed class AppSettings
             WindowCloseBehavior = WindowCloseBehavior,
             ConfirmCloseToTray = ConfirmCloseToTray,
             ShowPlatformProgressIndicator = ShowPlatformProgressIndicator,
+            IsSpeedLimitEnabled = IsSpeedLimitEnabled,
+            SpeedLimitMbps = SpeedLimitMbps,
             ProxyAddress = ProxyAddress,
             DefaultHeaderText = DefaultHeaderText,
             SaveDirectoryMode = SaveDirectoryMode,

@@ -1,6 +1,8 @@
 using System;
+using System.Globalization;
 using System.IO;
 using System.Linq;
+using Avalonia.Controls.Primitives;
 using Avalonia.Controls;
 using Avalonia.Platform.Storage;
 using RobustDownloader.Models;
@@ -11,11 +13,24 @@ namespace RobustDownloader.Views;
 public partial class SettingsWindow : ShadUI.Window
 {
     private static readonly int[] ConcurrencyOptions = [1, 2, 3, 5, 8];
+    private const double MinimumSpeedLimitMbps = 0.1;
+    private const double MaximumSpeedLimitMbps = 100;
+    private bool _updatingSpeedLimit;
 
     public SettingsWindow()
     {
         InitializeComponent();
         CmbConcurrency.ItemsSource = ConcurrencyOptions;
+        ChkSpeedLimit.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == ToggleButton.IsCheckedProperty)
+                UpdateSpeedLimitControlsState();
+        };
+        SliderSpeedLimit.PropertyChanged += (_, e) =>
+        {
+            if (e.Property == RangeBase.ValueProperty)
+                SyncSpeedLimitTextFromSlider();
+        };
     }
 
     public SettingsWindow(AppSettings settings) : this()
@@ -27,6 +42,10 @@ public partial class SettingsWindow : ShadUI.Window
         SelectComboBoxItem(CmbCloseBehavior, settings.WindowCloseBehavior.ToString());
         SelectComboBoxItem(CmbSaveDirectoryMode, settings.SaveDirectoryMode.ToString());
         SelectComboBoxItem(CmbBackgroundStretch, settings.BackgroundStretch);
+        ChkSpeedLimit.IsChecked = settings.IsSpeedLimitEnabled;
+        SliderSpeedLimit.Value = CoerceSpeedLimitMbps(settings.SpeedLimitMbps);
+        SyncSpeedLimitTextFromSlider();
+        UpdateSpeedLimitControlsState();
         UpdateProxyAddressState();
         UpdateCloseBehaviorState();
         UpdateSaveDirectoryState();
@@ -118,6 +137,8 @@ public partial class SettingsWindow : ShadUI.Window
         settings.SaveDirectoryMode = ReadComboBoxTag(CmbSaveDirectoryMode, SaveDirectoryMode.LastUsed);
         settings.FixedDownloadDirectory = FolderPathHelper.Normalize(settings.FixedDownloadDirectory);
         settings.BackgroundStretch = ReadComboBoxStringTag(CmbBackgroundStretch, "UniformToFill");
+        settings.IsSpeedLimitEnabled = ChkSpeedLimit.IsChecked == true;
+        settings.SpeedLimitMbps = CoerceSpeedLimitMbps(ReadSpeedLimitText());
 
         if (!Validate(settings, out var message))
         {
@@ -131,6 +152,12 @@ public partial class SettingsWindow : ShadUI.Window
     private void Cancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         Close(null);
+    }
+
+    private void SpeedLimitText_LostFocus(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        SliderSpeedLimit.Value = CoerceSpeedLimitMbps(ReadSpeedLimitText());
+        SyncSpeedLimitTextFromSlider();
     }
 
     private static bool Validate(AppSettings settings, out string message)
@@ -150,6 +177,12 @@ public partial class SettingsWindow : ShadUI.Window
         if (!ConcurrencyOptions.Contains(settings.MaxConcurrency))
         {
             message = LocalizationService.Get("Validation.DefaultConcurrency");
+            return false;
+        }
+
+        if (double.IsNaN(settings.SpeedLimitMbps) || double.IsInfinity(settings.SpeedLimitMbps) || settings.SpeedLimitMbps <= 0)
+        {
+            message = LocalizationService.Get("Validation.SpeedLimit");
             return false;
         }
 
@@ -220,6 +253,48 @@ public partial class SettingsWindow : ShadUI.Window
 
         return uri.Scheme is "http" or "https" or "socks4" or "socks4a" or "socks5" &&
                !string.IsNullOrWhiteSpace(uri.Host);
+    }
+
+    private void UpdateSpeedLimitControlsState()
+    {
+        var isEnabled = ChkSpeedLimit.IsChecked == true;
+        SliderSpeedLimit.IsEnabled = isEnabled;
+        TxtSpeedLimit.IsEnabled = isEnabled;
+    }
+
+    private void SyncSpeedLimitTextFromSlider()
+    {
+        if (_updatingSpeedLimit) return;
+
+        _updatingSpeedLimit = true;
+        try
+        {
+            TxtSpeedLimit.Text = CoerceSpeedLimitMbps(SliderSpeedLimit.Value)
+                .ToString("0.##", CultureInfo.CurrentCulture);
+        }
+        finally
+        {
+            _updatingSpeedLimit = false;
+        }
+    }
+
+    private double ReadSpeedLimitText()
+    {
+        if (_updatingSpeedLimit) return SliderSpeedLimit.Value;
+
+        var text = (TxtSpeedLimit.Text ?? "").Trim();
+        if (double.TryParse(text, NumberStyles.Float, CultureInfo.CurrentCulture, out var current) ||
+            double.TryParse(text, NumberStyles.Float, CultureInfo.InvariantCulture, out current))
+            return current;
+
+        return SliderSpeedLimit.Value;
+    }
+
+    private static double CoerceSpeedLimitMbps(double value)
+    {
+        if (double.IsNaN(value) || double.IsInfinity(value))
+            return 10;
+        return Math.Clamp(value, MinimumSpeedLimitMbps, MaximumSpeedLimitMbps);
     }
 
     private static void SelectComboBoxItem(ComboBox comboBox, string value)
