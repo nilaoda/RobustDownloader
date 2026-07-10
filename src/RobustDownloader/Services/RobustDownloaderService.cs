@@ -93,7 +93,7 @@ public sealed class RobustDownloaderService
         if (!request.CrcOnly && File.Exists(_savePath))
         {
             ReportMessage($"Target file already exists, skipping download: {_savePath}");
-            return new DownloadResult { Kind = DownloadResultKind.Skipped, MessageKey = "Download.SkippedExisting" };
+            return new DownloadResult { Kind = DownloadResultKind.Skipped, MessageKey = LocKeys.Download_SkippedExisting };
         }
 
         Directory.CreateDirectory(Path.GetDirectoryName(_savePath) ?? AppContext.BaseDirectory);
@@ -106,7 +106,7 @@ public sealed class RobustDownloaderService
 
             if (request.CrcOnly)
             {
-                return new DownloadResult { Kind = DownloadResultKind.CrcOnlyCompleted, MessageKey = "Download.CrcDone" };
+                return new DownloadResult { Kind = DownloadResultKind.CrcOnlyCompleted, MessageKey = LocKeys.Download_CrcDone };
             }
 
             if (supportsRange)
@@ -118,7 +118,7 @@ public sealed class RobustDownloaderService
             _mode = "Single";
             Report(new DownloadProgress
             {
-                Message = "Download.RangeFallback",
+                Message = LocKeys.Download_RangeFallback,
                 Diagnostic = "No Range support",
                 Mode = _mode,
                 IsWarning = true
@@ -127,8 +127,8 @@ public sealed class RobustDownloaderService
         }
         catch (OperationCanceledException)
         {
-            ReportMessage("Download.CanceledWithResume");
-            return new DownloadResult { Kind = DownloadResultKind.Canceled, MessageKey = "Download.Canceled" };
+            ReportMessage(LocKeys.Download_CanceledWithResume);
+            return new DownloadResult { Kind = DownloadResultKind.Canceled, MessageKey = LocKeys.Download_Canceled };
         }
         catch (Exception ex)
         {
@@ -192,7 +192,7 @@ public sealed class RobustDownloaderService
             return new DownloadResult
             {
                 Kind = DownloadResultKind.Completed,
-                MessageKey = "Download.CompletedAverageSpeed",
+                MessageKey = LocKeys.Download_CompletedAverageSpeed,
                 MessageArgs = [FormatSize(avgSpeed)]
             };
         }
@@ -269,7 +269,7 @@ public sealed class RobustDownloaderService
 
         CompleteFile();
         UpdateProgress("Completed");
-        return new DownloadResult { Kind = DownloadResultKind.Completed, MessageKey = "Download.SingleThreadCompleted" };
+        return new DownloadResult { Kind = DownloadResultKind.Completed, MessageKey = LocKeys.Download_SingleThreadCompleted };
     }
 
     private async Task<bool> InitializeDownloadAsync(HttpClient client, string url, bool crcOnly, bool skipCrc, CancellationToken token)

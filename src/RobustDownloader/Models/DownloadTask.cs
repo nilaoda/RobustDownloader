@@ -10,21 +10,21 @@ namespace RobustDownloader.Models;
 public sealed class DownloadTask : INotifyPropertyChanged
 {
     private const string FormattedLogSeparator = "|";
-    private const string CompletedAverageSpeedKey = "Download.CompletedAverageSpeed";
+    private const string CompletedAverageSpeedKey = LocKeys.Download_CompletedAverageSpeed;
 
     private static readonly string[] LocalizableLogKeys =
     [
-        "TaskLog.Added",
-        "TaskLog.Queued",
-        "TaskLog.Started",
-        "TaskLog.Stopping",
-        "TaskLog.Removed",
-        "Download.SkippedExisting",
-        "Download.CrcDone",
-        "Download.RangeFallback",
-        "Download.CanceledWithResume",
-        "Download.Canceled",
-        "Download.SingleThreadCompleted",
+        LocKeys.TaskLog_Added,
+        LocKeys.TaskLog_Queued,
+        LocKeys.TaskLog_Started,
+        LocKeys.TaskLog_Stopping,
+        LocKeys.TaskLog_Removed,
+        LocKeys.Download_SkippedExisting,
+        LocKeys.Download_CrcDone,
+        LocKeys.Download_RangeFallback,
+        LocKeys.Download_CanceledWithResume,
+        LocKeys.Download_Canceled,
+        LocKeys.Download_SingleThreadCompleted,
         CompletedAverageSpeedKey
     ];
 
@@ -59,18 +59,18 @@ public sealed class DownloadTask : INotifyPropertyChanged
 
     [JsonIgnore]
     public string UpdateFileTimestampText => UpdateFileTimestamp
-        ? LocalizationService.Get("Task.FileTime.Server")
-        : LocalizationService.Get("Task.FileTime.Local");
+        ? L.Task_FileTime_Server
+        : L.Task_FileTime_Local;
 
     [JsonIgnore]
     public string StatusLabel => Status switch
     {
-        DownloadTaskStatus.Pending => LocalizationService.Get("Task.Status.Pending"),
-        DownloadTaskStatus.Running => LocalizationService.Get("Task.Status.Running"),
-        DownloadTaskStatus.Paused => LocalizationService.Get("Task.Status.Paused"),
-        DownloadTaskStatus.Completed => LocalizationService.Get("Task.Status.Completed"),
-        DownloadTaskStatus.Error => LocalizationService.Get("Task.Status.Error"),
-        DownloadTaskStatus.Stopped => LocalizationService.Get("Task.Status.Stopped"),
+        DownloadTaskStatus.Pending => L.Task_Status_Pending,
+        DownloadTaskStatus.Running => L.Task_Status_Running,
+        DownloadTaskStatus.Paused => L.Task_Status_Paused,
+        DownloadTaskStatus.Completed => L.Task_Status_Completed,
+        DownloadTaskStatus.Error => L.Task_Status_Error,
+        DownloadTaskStatus.Stopped => L.Task_Status_Stopped,
         _ => Status.ToString()
     };
 
@@ -119,8 +119,8 @@ public sealed class DownloadTask : INotifyPropertyChanged
     [JsonIgnore]
     public string EtaText => Eta switch
     {
-        "Eta.Completed" => LocalizationService.Get("Eta.Completed"),
-        "Eta.Exists" => LocalizationService.Get("Eta.Exists"),
+        LocKeys.Eta_Completed => L.Eta_Completed,
+        LocKeys.Eta_Exists => L.Eta_Exists,
         _ => Eta
     };
 
@@ -149,15 +149,15 @@ public sealed class DownloadTask : INotifyPropertyChanged
     public string DiagnosticText => Diagnostic switch
     {
         "" or "-" => "-",
-        "Running" => LocalizationService.Get("Diagnostic.None"),
-        "Initializing" => LocalizationService.Get("Diagnostic.Initializing"),
-        "No Range support" => LocalizationService.Get("Diagnostic.NoRangeSupport"),
-        "Disk I/O Bottleneck" => LocalizationService.Get("Diagnostic.DiskBottleneck"),
-        "DEADLOCK: Buffer Full & Missing Next Block" => LocalizationService.Get("Diagnostic.BufferDeadlock"),
-        "Network Hang / Fragmenting" => LocalizationService.Get("Diagnostic.NetworkHang"),
-        "Idle / Queue Empty" => LocalizationService.Get("Diagnostic.Idle"),
-        "Completed" => LocalizationService.Get("Diagnostic.Completed"),
-        "Error" => LocalizationService.Get("Diagnostic.Error"),
+        "Running" => L.Diagnostic_None,
+        "Initializing" => L.Diagnostic_Initializing,
+        "No Range support" => L.Diagnostic_NoRangeSupport,
+        "Disk I/O Bottleneck" => L.Diagnostic_DiskBottleneck,
+        "DEADLOCK: Buffer Full & Missing Next Block" => L.Diagnostic_BufferDeadlock,
+        "Network Hang / Fragmenting" => L.Diagnostic_NetworkHang,
+        "Idle / Queue Empty" => L.Diagnostic_Idle,
+        "Completed" => L.Diagnostic_Completed,
+        "Error" => L.Diagnostic_Error,
         _ => Diagnostic
     };
 
@@ -196,10 +196,10 @@ public sealed class DownloadTask : INotifyPropertyChanged
 
     private static string NormalizeEta(string value)
     {
-        if (LocalizationService.IsLocalizedValue("Eta.Completed", value))
-            return "Eta.Completed";
-        if (LocalizationService.IsLocalizedValue("Eta.Exists", value))
-            return "Eta.Exists";
+        if (LocalizationService.IsLocalizedValue(LocKeys.Eta_Completed, value))
+            return LocKeys.Eta_Completed;
+        if (LocalizationService.IsLocalizedValue(LocKeys.Eta_Exists, value))
+            return LocKeys.Eta_Exists;
         return value;
     }
 

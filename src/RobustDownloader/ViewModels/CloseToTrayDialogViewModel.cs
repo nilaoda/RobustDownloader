@@ -10,12 +10,12 @@ public sealed class CloseToTrayDialogViewModel(DialogManager dialogManager)
     public bool DoNotAskAgain { get; set; }
     public WindowCloseBehavior Choice { get; private set; } = WindowCloseBehavior.MinimizeToTray;
     public bool IsMenuBar => OperatingSystem.IsMacOS();
-    public string Title => LocalizationService.Get("CloseDialog.Title");
-    public string Message => LocalizationService.Get(IsMenuBar ? "CloseDialog.Message.MenuBar" : "CloseDialog.Message.Tray");
-    public string MinimizeText => LocalizationService.Get(IsMenuBar ? "CloseDialog.MinimizeToMenuBar" : "CloseDialog.MinimizeToTray");
-    public string ExitText => LocalizationService.Get("CloseDialog.Exit");
-    public string CancelText => LocalizationService.Get("CloseDialog.Cancel");
-    public string DoNotAskAgainText => LocalizationService.Get("CloseDialog.DoNotAskAgain");
+    public string Title => L.CloseDialog_Title;
+    public string Message => IsMenuBar ? L.CloseDialog_Message_MenuBar : L.CloseDialog_Message_Tray;
+    public string MinimizeText => IsMenuBar ? L.CloseDialog_MinimizeToMenuBar : L.CloseDialog_MinimizeToTray;
+    public string ExitText => L.CloseDialog_Exit;
+    public string CancelText => L.CloseDialog_Cancel;
+    public string DoNotAskAgainText => L.CloseDialog_DoNotAskAgain;
 
     public void MinimizeToTray()
     {

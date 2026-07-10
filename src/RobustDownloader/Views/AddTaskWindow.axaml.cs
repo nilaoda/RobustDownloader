@@ -77,8 +77,8 @@ public partial class AddTaskWindow : ShadUI.Window
     {
         var lines = GetUrls();
         TxtUrlsLabel.Text = lines.Length == 0
-            ? LocalizationService.Get("Add.Urls")
-            : LocalizationService.Format("Add.UrlsWithCount", lines.Length);
+            ? L.Add_Urls
+            : L.Add_UrlsWithCount(lines.Length);
 
         if (lines.Length == 1)
         {
@@ -92,7 +92,7 @@ public partial class AddTaskWindow : ShadUI.Window
             SingleFileNamePanel.IsVisible = false;
             BatchFileNamingPanel.IsVisible = true;
             TxtFileName.IsEnabled = false;
-            TxtFileName.Text = LocalizationService.Get("Add.BatchFileName");
+            TxtFileName.Text = L.Add_BatchFileName;
         }
         else
         {
@@ -120,7 +120,7 @@ public partial class AddTaskWindow : ShadUI.Window
         var isTemplateMode = RdoBatchNamingTemplate.IsChecked == true;
         BatchTemplateSettingsPanel.IsVisible = isTemplateMode;
         BatchNumberSettingsPanel.IsVisible = isTemplateMode && TemplateHasNumberPlaceholder();
-        var duplicateMessage = LocalizationService.Get("Validation.BatchDuplicateFileName");
+        var duplicateMessage = L.Validation_BatchDuplicateFileName;
         if (!isTemplateMode)
         {
             TxtBatchPreview.Text = "";
@@ -148,7 +148,7 @@ public partial class AddTaskWindow : ShadUI.Window
         {
             var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
-                Title = LocalizationService.Get("Dialog.SelectSaveDirectory"),
+                Title = L.Dialog_SelectSaveDirectory,
                 AllowMultiple = false
             });
 
@@ -158,7 +158,7 @@ public partial class AddTaskWindow : ShadUI.Window
         }
         catch (Exception ex)
         {
-            TxtValidation.Text = LocalizationService.Format("Validation.SelectDirectoryFailed", ex.Message);
+            TxtValidation.Text = L.Validation_SelectDirectoryFailed(ex.Message);
         }
     }
 
@@ -168,38 +168,38 @@ public partial class AddTaskWindow : ShadUI.Window
         var urls = GetUrls();
         if (urls.Length == 0)
         {
-            TxtValidation.Text = LocalizationService.Get("Validation.EnterUrl");
+            TxtValidation.Text = L.Validation_EnterUrl;
             return;
         }
 
         var saveDir = FolderPathHelper.Normalize(TxtSaveDir.Text ?? "");
         if (string.IsNullOrWhiteSpace(saveDir))
         {
-            TxtValidation.Text = LocalizationService.Get("Validation.SelectDirectory");
+            TxtValidation.Text = L.Validation_SelectDirectory;
             return;
         }
 
         if (!FolderPathHelper.DirectoryExists(saveDir))
         {
-            TxtValidation.Text = LocalizationService.Get("Validation.DirectoryMissing");
+            TxtValidation.Text = L.Validation_DirectoryMissing;
             return;
         }
 
         if (!int.TryParse(TxtThreads.Text, out var threads) || threads < 1)
         {
-            TxtValidation.Text = LocalizationService.Get("Validation.Threads");
+            TxtValidation.Text = L.Validation_Threads;
             return;
         }
 
         if (!double.TryParse(TxtBlock.Text, out var block) || block <= 0)
         {
-            TxtValidation.Text = LocalizationService.Get("Validation.BlockSize");
+            TxtValidation.Text = L.Validation_BlockSize;
             return;
         }
 
         if (ChkCrcOnly.IsChecked == true && ChkSkipCrc.IsChecked == true)
         {
-            TxtValidation.Text = LocalizationService.Get("Validation.CrcConflict");
+            TxtValidation.Text = L.Validation_CrcConflict;
             return;
         }
 
@@ -255,7 +255,7 @@ public partial class AddTaskWindow : ShadUI.Window
         var template = TxtBatchTemplate.Text?.Trim() ?? "";
         if (string.IsNullOrWhiteSpace(template))
         {
-            error = LocalizationService.Get("Validation.BatchTemplate");
+            error = L.Validation_BatchTemplate;
             return false;
         }
 
@@ -268,19 +268,19 @@ public partial class AddTaskWindow : ShadUI.Window
         {
             if (!int.TryParse(TxtBatchStart.Text, out start) || start < 0)
             {
-                error = LocalizationService.Get("Validation.BatchStart");
+                error = L.Validation_BatchStart;
                 return false;
             }
 
             if (!int.TryParse(TxtBatchStep.Text, out step) || step < 1)
             {
-                error = LocalizationService.Get("Validation.BatchStep");
+                error = L.Validation_BatchStep;
                 return false;
             }
 
             if (!int.TryParse(TxtBatchDigits.Text, out digits) || digits < 1)
             {
-                error = LocalizationService.Get("Validation.BatchDigits");
+                error = L.Validation_BatchDigits;
                 return false;
             }
         }
@@ -299,13 +299,13 @@ public partial class AddTaskWindow : ShadUI.Window
 
         if (fileNames.Any(name => string.IsNullOrWhiteSpace(name) || HasInvalidFileNameChars(name)))
         {
-            error = LocalizationService.Get("Validation.BatchFileName");
+            error = L.Validation_BatchFileName;
             return false;
         }
 
         if (fileNames.Distinct(StringComparer.Ordinal).Count() != fileNames.Length)
         {
-            error = LocalizationService.Get("Validation.BatchDuplicateFileName");
+            error = L.Validation_BatchDuplicateFileName;
             return false;
         }
 

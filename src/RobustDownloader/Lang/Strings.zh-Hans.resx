@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App.Name" xml:space="preserve">
+    <value>RobustDownloader</value>
+  </data>
+  <data name="Main.NewTask" xml:space="preserve">
+    <value>新建任务</value>
+  </data>
+  <data name="Main.Start" xml:space="preserve">
+    <value>开始</value>
+  </data>
+  <data name="Main.Stop" xml:space="preserve">
+    <value>停止</value>
+  </data>
+  <data name="Main.Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="Main.GlobalSpeed" xml:space="preserve">
+    <value>全局速度</value>
+  </data>
+  <data name="Main.SpeedLimit" xml:space="preserve">
+    <value>限速</value>
+  </data>
+  <data name="Main.SpeedLimitUnit" xml:space="preserve">
+    <value>MB/s</value>
+  </data>
+  <data name="Main.SpeedLimitStatus" xml:space="preserve">
+    <value>限速 {0}/s</value>
+  </data>
+  <data name="Main.Concurrency" xml:space="preserve">
+    <value>并发</value>
+  </data>
+  <data name="Main.StartAll" xml:space="preserve">
+    <value>全部开始</value>
+  </data>
+  <data name="Main.StopAll" xml:space="preserve">
+    <value>全部停止</value>
+  </data>
+  <data name="Main.Settings" xml:space="preserve">
+    <value>设置</value>
+  </data>
+  <data name="Main.Queue" xml:space="preserve">
+    <value>下载队列</value>
+  </data>
+  <data name="Main.Recent50" xml:space="preserve">
+    <value>最近50条</value>
+  </data>
+  <data name="Main.Recent100" xml:space="preserve">
+    <value>最近100条</value>
+  </data>
+  <data name="Main.Recent200" xml:space="preserve">
+    <value>最近200条</value>
+  </data>
+  <data name="Main.AllTasks" xml:space="preserve">
+    <value>全部任务</value>
+  </data>
+  <data name="Main.Details" xml:space="preserve">
+    <value>任务详情</value>
+  </data>
+  <data name="Main.ShowDetails" xml:space="preserve">
+    <value>显示详情</value>
+  </data>
+  <data name="Main.HideDetails" xml:space="preserve">
+    <value>隐藏详情</value>
+  </data>
+  <data name="Main.ShowTaskTree" xml:space="preserve">
+    <value>显示分类</value>
+  </data>
+  <data name="Main.HideTaskTree" xml:space="preserve">
+    <value>隐藏分类</value>
+  </data>
+  <data name="Main.CollapseDetails" xml:space="preserve">
+    <value>收起</value>
+  </data>
+  <data name="Main.EmptyTitle" xml:space="preserve">
+    <value>还没有下载任务</value>
+  </data>
+  <data name="Main.EmptyBody" xml:space="preserve">
+    <value>添加一个 URL 或批量粘贴多行链接后，队列会显示下载进度、速度和状态。</value>
+  </data>
+  <data name="Main.EmptyFilterTitle" xml:space="preserve">
+    <value>当前筛选没有任务</value>
+  </data>
+  <data name="Main.EmptyFilterBody" xml:space="preserve">
+    <value>切换左侧分类或上方范围后，可查看其它任务。</value>
+  </data>
+  <data name="Main.SelectTaskTitle" xml:space="preserve">
+    <value>选择一个任务</value>
+  </data>
+  <data name="Main.SelectTaskBody" xml:space="preserve">
+    <value>右侧会显示保存位置、日志、Header 和诊断信息。</value>
+  </data>
+  <data name="Main.CopyUrl" xml:space="preserve">
+    <value>复制链接</value>
+  </data>
+  <data name="Main.CopyFileName" xml:space="preserve">
+    <value>复制文件名</value>
+  </data>
+  <data name="Main.CopySavePath" xml:space="preserve">
+    <value>复制保存路径</value>
+  </data>
+  <data name="Main.CopyPath" xml:space="preserve">
+    <value>复制路径</value>
+  </data>
+  <data name="Main.OpenFolder" xml:space="preserve">
+    <value>打开文件夹</value>
+  </data>
+  <data name="Main.ReDownload" xml:space="preserve">
+    <value>重新下载</value>
+  </data>
+  <data name="Main.ReDownloadQueued" xml:space="preserve">
+    <value>已加入重新下载队列</value>
+  </data>
+  <data name="Main.ReDownloadFailed" xml:space="preserve">
+    <value>重新下载失败: {0}</value>
+  </data>
+  <data name="Main.Overview" xml:space="preserve">
+    <value>概览</value>
+  </data>
+  <data name="Main.Log" xml:space="preserve">
+    <value>日志</value>
+  </data>
+  <data name="Main.Headers" xml:space="preserve">
+    <value>Header</value>
+  </data>
+  <data name="Main.RecentLog" xml:space="preserve">
+    <value>最近日志</value>
+  </data>
+  <data name="Main.Diagnostics" xml:space="preserve">
+    <value>诊断</value>
+  </data>
+  <data name="Diagnostic.None" xml:space="preserve">
+    <value>无异常</value>
+  </data>
+  <data name="Diagnostic.Initializing" xml:space="preserve">
+    <value>初始化中</value>
+  </data>
+  <data name="Diagnostic.NoRangeSupport" xml:space="preserve">
+    <value>服务器不支持 Range</value>
+  </data>
+  <data name="Diagnostic.DiskBottleneck" xml:space="preserve">
+    <value>磁盘写入可能受限</value>
+  </data>
+  <data name="Diagnostic.BufferDeadlock" xml:space="preserve">
+    <value>缓冲区阻塞，正在尝试恢复</value>
+  </data>
+  <data name="Diagnostic.NetworkHang" xml:space="preserve">
+    <value>网络连接可能卡住</value>
+  </data>
+  <data name="Diagnostic.Idle" xml:space="preserve">
+    <value>内部队列空闲</value>
+  </data>
+  <data name="Diagnostic.Completed" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="Diagnostic.Error" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="Main.SettingsSaved" xml:space="preserve">
+    <value>设置已保存</value>
+  </data>
+  <data name="Main.OpenedFolder" xml:space="preserve">
+    <value>已打开保存位置</value>
+  </data>
+  <data name="Main.OpenFolderFailed" xml:space="preserve">
+    <value>打开文件夹失败: {0}</value>
+  </data>
+  <data name="Main.Copied" xml:space="preserve">
+    <value>已复制到剪贴板</value>
+  </data>
+  <data name="TextBoxMenu.Cut" xml:space="preserve">
+    <value>剪切</value>
+  </data>
+  <data name="TextBoxMenu.Copy" xml:space="preserve">
+    <value>复制</value>
+  </data>
+  <data name="TextBoxMenu.Paste" xml:space="preserve">
+    <value>粘贴</value>
+  </data>
+  <data name="TextBoxMenu.SelectAll" xml:space="preserve">
+    <value>全选</value>
+  </data>
+  <data name="Cli.Help" xml:space="preserve">
+    <value>RobustDownloader 命令行用法
+
+用法：
+  RobustDownloader [选项]
+  RobustDownloader --add &lt;url&gt; [&lt;url&gt; ...] [选项]
+
+命令：
+  --add &lt;url&gt; [&lt;url&gt; ...]   添加一个或多个下载任务
+  --show                    显示主窗口
+  --start-all               开始所有已停止或失败的任务
+  --stop-all                停止所有运行中或排队中的任务
+  --help, -h, /?            显示此帮助
+
+添加任务选项：
+  --dir &lt;path&gt;              保存目录
+  --name &lt;filename&gt;         单个 URL 的文件名
+  --threads &lt;number&gt;        新任务线程数
+  --block-size &lt;mb&gt;         新任务分块大小（MB）
+  --header &lt;name:value&gt;     添加自定义 HTTP Header，可重复使用
+  --start                   添加任务并开始下载
+  --queue                   只添加任务，不开始下载
+  --silent                  不激活主窗口
+
+示例：
+  RobustDownloader --add "https://example.com/file.zip"
+  RobustDownloader --add "https://example.com/file.zip" --silent
+  RobustDownloader --add "https://example.com/file.zip" --start --threads 8
+  RobustDownloader --add "https://example.com/file.zip" --dir "&lt;save-dir&gt;" --name "file.zip"
+  RobustDownloader --stop-all --silent</value>
+  </data>
+  <data name="Cli.Error.HelpHint" xml:space="preserve">
+    <value>运行 RobustDownloader --help 查看用法。</value>
+  </data>
+  <data name="Cli.Error.SendFailed" xml:space="preserve">
+    <value>无法将命令发送到正在运行的 RobustDownloader 实例。</value>
+  </data>
+  <data name="Cli.Error.Threads" xml:space="preserve">
+    <value>--threads 必须是 1 到 256 之间的数字。</value>
+  </data>
+  <data name="Cli.Error.BlockSize" xml:space="preserve">
+    <value>--block-size 必须是正数。</value>
+  </data>
+  <data name="Cli.Error.Header" xml:space="preserve">
+    <value>--header 必须使用 "Name: value" 格式。</value>
+  </data>
+  <data name="Cli.Error.UnknownOption" xml:space="preserve">
+    <value>未知选项: {0}</value>
+  </data>
+  <data name="Cli.Error.UnexpectedArgument" xml:space="preserve">
+    <value>意外参数: {0}</value>
+  </data>
+  <data name="Cli.Error.StartQueueConflict" xml:space="preserve">
+    <value>--start 不能与 --queue 同时使用。</value>
+  </data>
+  <data name="Cli.Error.SilentRequiresCommand" xml:space="preserve">
+    <value>--silent 需要配合一个命令使用。</value>
+  </data>
+  <data name="Cli.Error.AddOptionsRequireAdd" xml:space="preserve">
+    <value>添加任务选项需要配合 --add 使用。</value>
+  </data>
+  <data name="Cli.Error.AddRequiresUrl" xml:space="preserve">
+    <value>--add 至少需要一个 URL。</value>
+  </data>
+  <data name="Cli.Error.InvalidHttpUrl" xml:space="preserve">
+    <value>无效的 HTTP URL: {0}</value>
+  </data>
+  <data name="Cli.Error.NameSingleUrl" xml:space="preserve">
+    <value>--name 只能用于单个 URL。</value>
+  </data>
+  <data name="Cli.Error.InvalidSaveDir" xml:space="preserve">
+    <value>无效的保存目录 {0}: {1}</value>
+  </data>
+  <data name="Cli.Error.SaveDirMissing" xml:space="preserve">
+    <value>保存目录不存在: {0}</value>
+  </data>
+  <data name="Cli.Error.OnlyOneCommand" xml:space="preserve">
+    <value>一次只能使用一个命令: {0} 和 {1}。</value>
+  </data>
+  <data name="Cli.Error.OptionRequiresValue" xml:space="preserve">
+    <value>{0} 需要一个值。</value>
+  </data>
+  <data name="Queue.Empty" xml:space="preserve">
+    <value>队列空闲 | 无任务</value>
+  </data>
+  <data name="Queue.Ready" xml:space="preserve">
+    <value>就绪</value>
+  </data>
+  <data name="Queue.Idle" xml:space="preserve">
+    <value>队列空闲 | 排队: {0} | 总任务: {1}</value>
+  </data>
+  <data name="Queue.Running" xml:space="preserve">
+    <value>下载中: {0} | 并发上限: {1} | 排队: {2} | 总任务: {3}</value>
+  </data>
+  <data name="Queue.RecentInfo" xml:space="preserve">
+    <value>显示最近 {0} / {1} 条</value>
+  </data>
+  <data name="Queue.AllInfo" xml:space="preserve">
+    <value>显示全部 {0} 条任务</value>
+  </data>
+  <data name="TaskTree.Title" xml:space="preserve">
+    <value>任务分类</value>
+  </data>
+  <data name="TaskTree.All" xml:space="preserve">
+    <value>所有任务</value>
+  </data>
+  <data name="TaskTree.Completed" xml:space="preserve">
+    <value>已完成</value>
+  </data>
+  <data name="TaskTree.Incomplete" xml:space="preserve">
+    <value>未完成</value>
+  </data>
+  <data name="TaskTree.NoExtension" xml:space="preserve">
+    <value>无扩展名</value>
+  </data>
+  <data name="TaskTree.NodeLabel" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="Column.FileName" xml:space="preserve">
+    <value>文件名</value>
+  </data>
+  <data name="Column.Status" xml:space="preserve">
+    <value>状态</value>
+  </data>
+  <data name="Column.Progress" xml:space="preserve">
+    <value>进度</value>
+  </data>
+  <data name="Column.Speed" xml:space="preserve">
+    <value>速度</value>
+  </data>
+  <data name="Column.Eta" xml:space="preserve">
+    <value>剩余</value>
+  </data>
+  <data name="Eta.Completed" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="Eta.Exists" xml:space="preserve">
+    <value>已存在</value>
+  </data>
+  <data name="Column.Size" xml:space="preserve">
+    <value>大小</value>
+  </data>
+  <data name="Column.Mode" xml:space="preserve">
+    <value>模式</value>
+  </data>
+  <data name="Field.SavePath" xml:space="preserve">
+    <value>保存路径</value>
+  </data>
+  <data name="Field.Url" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="Field.Threads" xml:space="preserve">
+    <value>线程</value>
+  </data>
+  <data name="Field.BlockSizeMb" xml:space="preserve">
+    <value>分块 MB</value>
+  </data>
+  <data name="Field.Mode" xml:space="preserve">
+    <value>运行模式</value>
+  </data>
+  <data name="Field.FileTime" xml:space="preserve">
+    <value>文件时间</value>
+  </data>
+  <data name="Task.Status.Pending" xml:space="preserve">
+    <value>排队</value>
+  </data>
+  <data name="Task.Status.Running" xml:space="preserve">
+    <value>下载中</value>
+  </data>
+  <data name="Task.Status.Paused" xml:space="preserve">
+    <value>已暂停</value>
+  </data>
+  <data name="Task.Status.Completed" xml:space="preserve">
+    <value>完成</value>
+  </data>
+  <data name="Task.Status.Error" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="Task.Status.Stopped" xml:space="preserve">
+    <value>已停止</value>
+  </data>
+  <data name="Task.FileTime.Server" xml:space="preserve">
+    <value>使用服务器时间</value>
+  </data>
+  <data name="Task.FileTime.Local" xml:space="preserve">
+    <value>保留本地完成时间</value>
+  </data>
+  <data name="Add.Title" xml:space="preserve">
+    <value>新建下载任务</value>
+  </data>
+  <data name="Add.Description" xml:space="preserve">
+    <value>粘贴一个或多个 URL，确认保存目录后加入队列。</value>
+  </data>
+  <data name="Add.Urls" xml:space="preserve">
+    <value>下载地址</value>
+  </data>
+  <data name="Add.UrlsWithCount" xml:space="preserve">
+    <value>下载地址（共 {0} 条）</value>
+  </data>
+  <data name="Add.UrlsHint" xml:space="preserve">
+    <value>一行一个 URL。单个 URL 可手动覆盖文件名，批量任务会自动识别文件名。</value>
+  </data>
+  <data name="Add.SaveDirectory" xml:space="preserve">
+    <value>保存目录</value>
+  </data>
+  <data name="Add.Browse" xml:space="preserve">
+    <value>选择</value>
+  </data>
+  <data name="Add.FileName" xml:space="preserve">
+    <value>文件名</value>
+  </data>
+  <data name="Add.FileNameHint" xml:space="preserve">
+    <value>仅在输入单个 URL 时可编辑。</value>
+  </data>
+  <data name="Add.BatchNaming" xml:space="preserve">
+    <value>批量文件命名</value>
+  </data>
+  <data name="Add.BatchNamingMode" xml:space="preserve">
+    <value>命名方式</value>
+  </data>
+  <data name="Add.BatchNamingAuto" xml:space="preserve">
+    <value>自动识别</value>
+  </data>
+  <data name="Add.BatchNamingTemplate" xml:space="preserve">
+    <value>自定义模板</value>
+  </data>
+  <data name="Add.BatchTemplate" xml:space="preserve">
+    <value>文件名模板</value>
+  </data>
+  <data name="Add.BatchTemplateHint" xml:space="preserve">
+    <value># 表示编号，* 表示自动识别出的文件名，例如 文件_#_*。</value>
+  </data>
+  <data name="Add.BatchStart" xml:space="preserve">
+    <value>起始数字</value>
+  </data>
+  <data name="Add.BatchStep" xml:space="preserve">
+    <value>步长</value>
+  </data>
+  <data name="Add.BatchDigits" xml:space="preserve">
+    <value>位数</value>
+  </data>
+  <data name="Add.BatchPreview" xml:space="preserve">
+    <value>预览</value>
+  </data>
+  <data name="Add.Advanced" xml:space="preserve">
+    <value>高级选项</value>
+  </data>
+  <data name="Add.CustomHeaders" xml:space="preserve">
+    <value>自定义 HTTP Header</value>
+  </data>
+  <data name="Add.UpdateTimestamp" xml:space="preserve">
+    <value>使用服务器时间修改文件时间</value>
+  </data>
+  <data name="Add.CrcOnly" xml:space="preserve">
+    <value>仅提取 CRC64</value>
+  </data>
+  <data name="Add.SkipCrc" xml:space="preserve">
+    <value>跳过 CRC64 提取</value>
+  </data>
+  <data name="Add.Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Add.Enqueue" xml:space="preserve">
+    <value>加入队列</value>
+  </data>
+  <data name="Add.BatchFileName" xml:space="preserve">
+    <value>(批量任务 - 自动生成)</value>
+  </data>
+  <data name="Validation.EnterUrl" xml:space="preserve">
+    <value>请输入 URL。</value>
+  </data>
+  <data name="Validation.SelectDirectory" xml:space="preserve">
+    <value>请选择保存目录。</value>
+  </data>
+  <data name="Validation.DirectoryMissing" xml:space="preserve">
+    <value>保存目录不存在。</value>
+  </data>
+  <data name="Validation.SelectDirectoryFailed" xml:space="preserve">
+    <value>选择目录失败：{0}</value>
+  </data>
+  <data name="Validation.Threads" xml:space="preserve">
+    <value>线程数必须是大于 0 的整数。</value>
+  </data>
+  <data name="Validation.BlockSize" xml:space="preserve">
+    <value>分块大小必须是大于 0 的数字。</value>
+  </data>
+  <data name="Validation.CrcConflict" xml:space="preserve">
+    <value>仅提取 CRC64 不能与跳过 CRC64 同时启用。</value>
+  </data>
+  <data name="Validation.BatchTemplate" xml:space="preserve">
+    <value>批量命名模板不能为空。</value>
+  </data>
+  <data name="Validation.BatchStart" xml:space="preserve">
+    <value>起始数字必须是大于或等于 0 的整数。</value>
+  </data>
+  <data name="Validation.BatchStep" xml:space="preserve">
+    <value>步长必须是大于 0 的整数。</value>
+  </data>
+  <data name="Validation.BatchDigits" xml:space="preserve">
+    <value>位数必须是大于 0 的整数。</value>
+  </data>
+  <data name="Validation.BatchFileName" xml:space="preserve">
+    <value>生成的文件名不能为空，且不能包含非法字符。</value>
+  </data>
+  <data name="Validation.BatchDuplicateFileName" xml:space="preserve">
+    <value>模板生成了完全相同的文件名，请加入 # 编号或调整模板。</value>
+  </data>
+  <data name="Settings.Title" xml:space="preserve">
+    <value>全局设置</value>
+  </data>
+  <data name="Settings.Description" xml:space="preserve">
+    <value>这些默认值会用于新建任务；站点凭据会在匹配 URL 时自动携带 Basic Auth。</value>
+  </data>
+  <data name="Settings.Appearance" xml:space="preserve">
+    <value>外观</value>
+  </data>
+  <data name="Settings.Language" xml:space="preserve">
+    <value>语言</value>
+  </data>
+  <data name="Settings.LanguageHint" xml:space="preserve">
+    <value>自动会根据系统语言选择简体中文、繁体中文或英文。</value>
+  </data>
+  <data name="Settings.Theme" xml:space="preserve">
+    <value>主题</value>
+  </data>
+  <data name="Settings.ThemeHint" xml:space="preserve">
+    <value>跟随系统会使用操作系统当前的浅色或深色模式。</value>
+  </data>
+  <data name="Settings.Auto" xml:space="preserve">
+    <value>自动</value>
+  </data>
+  <data name="Settings.LanguageEn" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Settings.LanguageZhHans" xml:space="preserve">
+    <value>简体中文</value>
+  </data>
+  <data name="Settings.LanguageZhHant" xml:space="preserve">
+    <value>繁體中文</value>
+  </data>
+  <data name="Settings.ThemeSystem" xml:space="preserve">
+    <value>跟随系统</value>
+  </data>
+  <data name="Settings.ThemeLight" xml:space="preserve">
+    <value>浅色</value>
+  </data>
+  <data name="Settings.ThemeDark" xml:space="preserve">
+    <value>深色</value>
+  </data>
+  <data name="Settings.WindowBehavior" xml:space="preserve">
+    <value>窗口关闭行为</value>
+  </data>
+  <data name="Settings.CloseToTray" xml:space="preserve">
+    <value>关闭到托盘/菜单栏</value>
+  </data>
+  <data name="Settings.CloseToExit" xml:space="preserve">
+    <value>直接退出软件</value>
+  </data>
+  <data name="Settings.ConfirmCloseToTray" xml:space="preserve">
+    <value>关闭到托盘/菜单栏前显示确认</value>
+  </data>
+  <data name="Settings.WindowBehaviorHint" xml:space="preserve">
+    <value>选择关闭窗口按钮是隐藏到后台继续运行，还是直接退出软件。</value>
+  </data>
+  <data name="Settings.Download" xml:space="preserve">
+    <value>下载参数</value>
+  </data>
+  <data name="Settings.DownloadDefaults" xml:space="preserve">
+    <value>默认下载参数</value>
+  </data>
+  <data name="Settings.DefaultThreads" xml:space="preserve">
+    <value>默认线程</value>
+  </data>
+  <data name="Settings.DefaultBlock" xml:space="preserve">
+    <value>默认分块 MB</value>
+  </data>
+  <data name="Settings.DefaultConcurrency" xml:space="preserve">
+    <value>默认并发</value>
+  </data>
+  <data name="Settings.SpeedLimit" xml:space="preserve">
+    <value>全局下载限速</value>
+  </data>
+  <data name="Settings.SpeedLimitEnable" xml:space="preserve">
+    <value>启用限速</value>
+  </data>
+  <data name="Settings.SpeedLimitUnit" xml:space="preserve">
+    <value>MB/s</value>
+  </data>
+  <data name="Settings.SpeedLimitHint" xml:space="preserve">
+    <value>限制所有正在下载任务共享的总下载速度，可拖动滑块或手动输入 0.1 到 100 之间的数值。</value>
+  </data>
+  <data name="Settings.DefaultBehavior" xml:space="preserve">
+    <value>默认任务行为</value>
+  </data>
+  <data name="Settings.DefaultUpdateTimestamp" xml:space="preserve">
+    <value>默认使用服务器时间修改文件时间</value>
+  </data>
+  <data name="Settings.DefaultSkipCrc" xml:space="preserve">
+    <value>默认跳过 CRC64 提取</value>
+  </data>
+  <data name="Settings.Network" xml:space="preserve">
+    <value>网络</value>
+  </data>
+  <data name="Settings.Proxy" xml:space="preserve">
+    <value>HTTP 代理</value>
+  </data>
+  <data name="Settings.ProxySystem" xml:space="preserve">
+    <value>跟随系统</value>
+  </data>
+  <data name="Settings.ProxyDisabled" xml:space="preserve">
+    <value>不使用代理</value>
+  </data>
+  <data name="Settings.ProxyManual" xml:space="preserve">
+    <value>手动填写</value>
+  </data>
+  <data name="Settings.ProxyHint" xml:space="preserve">
+    <value>手动模式请填写完整代理地址，例如 http://127.0.0.1:7890。</value>
+  </data>
+  <data name="Settings.SaveAndHeaders" xml:space="preserve">
+    <value>保存与 Header</value>
+  </data>
+  <data name="Settings.DefaultSaveDirectory" xml:space="preserve">
+    <value>默认保存目录</value>
+  </data>
+  <data name="Settings.DefaultSaveDirectoryHint" xml:space="preserve">
+    <value>使用上一次目录时，每次成功加入任务后会记住当次保存目录；固定目录默认使用系统下载目录。</value>
+  </data>
+  <data name="Settings.SaveDirectoryLastUsed" xml:space="preserve">
+    <value>使用上一次的下载目录</value>
+  </data>
+  <data name="Settings.SaveDirectoryFixed" xml:space="preserve">
+    <value>使用固定目录</value>
+  </data>
+  <data name="Settings.DefaultHeaders" xml:space="preserve">
+    <value>默认 HTTP Header</value>
+  </data>
+  <data name="Settings.Credentials" xml:space="preserve">
+    <value>站点凭据</value>
+  </data>
+  <data name="Settings.CredentialsTitle" xml:space="preserve">
+    <value>站点用户名/密码</value>
+  </data>
+  <data name="Settings.Add" xml:space="preserve">
+    <value>添加</value>
+  </data>
+  <data name="Settings.Delete" xml:space="preserve">
+    <value>删除</value>
+  </data>
+  <data name="Settings.CredentialsHint" xml:space="preserve">
+    <value>匹配可以填写 example.com、*.example.com 或 https://example.com/path。URL 内已有用户名密码或 Header 已含 Authorization 时不会覆盖。</value>
+  </data>
+  <data name="Settings.Enabled" xml:space="preserve">
+    <value>启用</value>
+  </data>
+  <data name="Settings.Match" xml:space="preserve">
+    <value>匹配</value>
+  </data>
+  <data name="Settings.Username" xml:space="preserve">
+    <value>用户名</value>
+  </data>
+  <data name="Settings.Password" xml:space="preserve">
+    <value>密码</value>
+  </data>
+  <data name="Settings.DataFiles" xml:space="preserve">
+    <value>数据文件</value>
+  </data>
+  <data name="Settings.LocalDataFiles" xml:space="preserve">
+    <value>本地数据文件</value>
+  </data>
+  <data name="Settings.DataFilesHint" xml:space="preserve">
+    <value>这些路径用于排查、备份或迁移配置。文件内容仍由应用自动维护。</value>
+  </data>
+  <data name="Settings.TasksJson" xml:space="preserve">
+    <value>任务列表 JSON</value>
+  </data>
+  <data name="Settings.SettingsJson" xml:space="preserve">
+    <value>设置项 JSON</value>
+  </data>
+  <data name="Settings.Save" xml:space="preserve">
+    <value>保存</value>
+  </data>
+  <data name="Settings.Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="Validation.DefaultThreads" xml:space="preserve">
+    <value>默认线程必须大于 0。</value>
+  </data>
+  <data name="Validation.DefaultBlock" xml:space="preserve">
+    <value>默认分块必须大于 0。</value>
+  </data>
+  <data name="Validation.DefaultConcurrency" xml:space="preserve">
+    <value>默认并发必须是 1、2、3、5、8。</value>
+  </data>
+  <data name="Validation.SpeedLimit" xml:space="preserve">
+    <value>限速必须是大于 0 的数字。</value>
+  </data>
+  <data name="Validation.DefaultDirectoryMissing" xml:space="preserve">
+    <value>默认保存目录不存在。</value>
+  </data>
+  <data name="Validation.ProxyAddress" xml:space="preserve">
+    <value>手动代理地址必须是完整地址，例如 http://127.0.0.1:7890。</value>
+  </data>
+  <data name="Validation.CredentialPattern" xml:space="preserve">
+    <value>站点凭据的匹配规则不能为空。</value>
+  </data>
+  <data name="Dialog.SelectSaveDirectory" xml:space="preserve">
+    <value>选择保存目录</value>
+  </data>
+  <data name="Dialog.SelectDefaultSaveDirectory" xml:space="preserve">
+    <value>选择默认保存目录</value>
+  </data>
+  <data name="Tray.Show" xml:space="preserve">
+    <value>显示主窗口</value>
+  </data>
+  <data name="Tray.Hide" xml:space="preserve">
+    <value>隐藏主窗口</value>
+  </data>
+  <data name="Tray.Exit" xml:space="preserve">
+    <value>退出</value>
+  </data>
+  <data name="CloseDialog.Title" xml:space="preserve">
+    <value>关闭 RobustDownloader？</value>
+  </data>
+  <data name="CloseDialog.Message.Tray" xml:space="preserve">
+    <value>关闭窗口后，下载队列会继续在系统托盘中运行。</value>
+  </data>
+  <data name="CloseDialog.Message.MenuBar" xml:space="preserve">
+    <value>关闭窗口后，下载队列会继续在菜单栏中运行。</value>
+  </data>
+  <data name="CloseDialog.MinimizeToTray" xml:space="preserve">
+    <value>关闭到托盘</value>
+  </data>
+  <data name="CloseDialog.MinimizeToMenuBar" xml:space="preserve">
+    <value>关闭到菜单栏</value>
+  </data>
+  <data name="CloseDialog.Exit" xml:space="preserve">
+    <value>退出软件</value>
+  </data>
+  <data name="CloseDialog.Cancel" xml:space="preserve">
+    <value>取消</value>
+  </data>
+  <data name="CloseDialog.DoNotAskAgain" xml:space="preserve">
+    <value>不再询问并记住我的选择</value>
+  </data>
+  <data name="TaskLog.Added" xml:space="preserve">
+    <value>已加入任务列表</value>
+  </data>
+  <data name="TaskLog.Queued" xml:space="preserve">
+    <value>已加入队列</value>
+  </data>
+  <data name="TaskLog.Started" xml:space="preserve">
+    <value>开始下载</value>
+  </data>
+  <data name="TaskLog.Stopping" xml:space="preserve">
+    <value>正在停止，等待安全写盘点...</value>
+  </data>
+  <data name="TaskLog.Removed" xml:space="preserve">
+    <value>已从队列移除</value>
+  </data>
+  <data name="Download.SkippedExisting" xml:space="preserve">
+    <value>目标文件已存在，已跳过</value>
+  </data>
+  <data name="Download.CrcDone" xml:space="preserve">
+    <value>CRC64 提取完成</value>
+  </data>
+  <data name="Download.RangeFallback" xml:space="preserve">
+    <value>服务器不支持 Range，已切换为单线程顺序下载；该模式无法可靠断点续传。</value>
+  </data>
+  <data name="Download.CanceledWithResume" xml:space="preserve">
+    <value>用户已停止下载。已保留可安全续传的临时数据。</value>
+  </data>
+  <data name="Download.Canceled" xml:space="preserve">
+    <value>用户已停止下载</value>
+  </data>
+  <data name="Download.CompletedAverageSpeed" xml:space="preserve">
+    <value>下载完成，平均速度 {0}/s</value>
+  </data>
+  <data name="Download.SingleThreadCompleted" xml:space="preserve">
+    <value>单线程下载完成</value>
+  </data>
+  <data name="Error.TasksJsonLoadFailed" xml:space="preserve">
+    <value>tasks.json 读取失败</value>
+  </data>
+  <data name="Error.SettingsJsonLoadFailed" xml:space="preserve">
+    <value>settings.json 读取失败，已使用默认设置</value>
+  </data>
+  <data name="Error.TasksSaveFailed" xml:space="preserve">
+    <value>任务保存失败: {0}</value>
+  </data>
+  <data name="Error.SettingsSaveFailed" xml:space="preserve">
+    <value>设置保存失败: {0}</value>
+  </data>
+  <data name="Main.CopyFailed" xml:space="preserve">
+    <value>复制失败: {0}</value>
+  </data>
+  <data name="Toast.Error" xml:space="preserve">
+    <value>错误</value>
+  </data>
+  <data name="Toast.Warning" xml:space="preserve">
+    <value>警告</value>
+  </data>
+  <data name="Toast.Success" xml:space="preserve">
+    <value>成功</value>
+  </data>
+  <data name="Toast.Info" xml:space="preserve">
+    <value>提示</value>
+  </data>
+  <data name="Toast.DownloadCompleted" xml:space="preserve">
+    <value>{0} 下载完成</value>
+  </data>
+  <data name="Toast.DownloadSkipped" xml:space="preserve">
+    <value>{0} 已跳过</value>
+  </data>
+  <data name="Toast.CrcCompleted" xml:space="preserve">
+    <value>{0} CRC 提取完成</value>
+  </data>
+  <data name="Toast.DownloadFailed" xml:space="preserve">
+    <value>{0} 下载失败: {1}</value>
+  </data>
+  <data name="Update.Available" xml:space="preserve">
+    <value>{0} 可用 →</value>
+  </data>
+  <data name="Settings.CheckForUpdates" xml:space="preserve">
+    <value>自动检查更新</value>
+  </data>
+  <data name="Settings.CheckForUpdatesHint" xml:space="preserve">
+    <value>启动时和运行期间定期检查是否有新版本。</value>
+  </data>
+  <data name="Settings.PlatformProgressIndicator" xml:space="preserve">
+    <value>任务栏/Dock 进度指示</value>
+  </data>
+  <data name="Settings.PlatformProgressIndicatorEnable" xml:space="preserve">
+    <value>启用进度指示</value>
+  </data>
+  <data name="Settings.PlatformProgressIndicatorHint" xml:space="preserve">
+    <value>下载中在 Windows 任务栏或 macOS Dock 图标上显示整体进度。</value>
+  </data>
+  <data name="Settings.BackgroundImage" xml:space="preserve">
+    <value>自定义背景图</value>
+  </data>
+  <data name="Settings.BackgroundImageHint" xml:space="preserve">
+    <value>选择 JPG/PNG 图片作为程序背景，支持模糊和透明度调整。</value>
+  </data>
+  <data name="Settings.BackgroundBlur" xml:space="preserve">
+    <value>模糊半径</value>
+  </data>
+  <data name="Settings.BackgroundOpacity" xml:space="preserve">
+    <value>透明度</value>
+  </data>
+  <data name="Settings.ClearBackground" xml:space="preserve">
+    <value>清除</value>
+  </data>
+  <data name="Settings.BackgroundStretch" xml:space="preserve">
+    <value>拉伸方式</value>
+  </data>
+  <data name="Settings.StretchNone" xml:space="preserve">
+    <value>无（原始大小）</value>
+  </data>
+  <data name="Settings.StretchFill" xml:space="preserve">
+    <value>拉伸（可能变形）</value>
+  </data>
+  <data name="Settings.StretchUniform" xml:space="preserve">
+    <value>等比缩放（可能留黑边）</value>
+  </data>
+  <data name="Settings.StretchUniformToFill" xml:space="preserve">
+    <value>等比裁剪填充</value>
+  </data>
+  <data name="Dialog.SelectBackgroundImage" xml:space="preserve">
+    <value>选择背景图片</value>
+  </data>
+</root>

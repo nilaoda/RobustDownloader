@@ -8,7 +8,7 @@ namespace RobustDownloader.Services;
 
 public static class CommandLineParser
 {
-    public static string HelpText => LocalizationService.Get("Cli.Help");
+    public static string HelpText => L.Cli_Help;
 
     public static CommandLineParseResult Parse(string[] args)
     {
@@ -73,7 +73,7 @@ public static class CommandLineParser
                     if (!int.TryParse(threadsValue, NumberStyles.Integer, CultureInfo.InvariantCulture, out var parsedThreads) ||
                         parsedThreads < 1 ||
                         parsedThreads > 256)
-                        return Error(LocalizationService.Get("Cli.Error.Threads"));
+                        return Error(L.Cli_Error_Threads);
                     threadCount = parsedThreads;
                     break;
 
@@ -82,7 +82,7 @@ public static class CommandLineParser
                         return Error(blockError);
                     if (!double.TryParse(blockValue, NumberStyles.Float, CultureInfo.InvariantCulture, out var parsedBlock) ||
                         parsedBlock <= 0)
-                        return Error(LocalizationService.Get("Cli.Error.BlockSize"));
+                        return Error(L.Cli_Error_BlockSize);
                     blockSizeMb = parsedBlock;
                     break;
 
@@ -90,7 +90,7 @@ public static class CommandLineParser
                     if (!TryReadValue(args, ref index, arg, out var header, out var headerError))
                         return Error(headerError);
                     if (!header.Contains(':', StringComparison.Ordinal))
-                        return Error(LocalizationService.Get("Cli.Error.Header"));
+                        return Error(L.Cli_Error_Header);
                     headers.Add(header);
                     break;
 
@@ -108,34 +108,34 @@ public static class CommandLineParser
 
                 default:
                     return IsOption(arg)
-                        ? Error(LocalizationService.Format("Cli.Error.UnknownOption", arg))
-                        : Error(LocalizationService.Format("Cli.Error.UnexpectedArgument", arg));
+                        ? Error(L.Cli_Error_UnknownOption(arg))
+                        : Error(L.Cli_Error_UnexpectedArgument(arg));
             }
         }
 
         if (start && queue)
-            return Error(LocalizationService.Get("Cli.Error.StartQueueConflict"));
+            return Error(L.Cli_Error_StartQueueConflict);
 
         var kind = commandKind ?? (show ? CommandLineCommandKind.Show : CommandLineCommandKind.None);
         if (kind == CommandLineCommandKind.None)
-            return silent ? Error(LocalizationService.Get("Cli.Error.SilentRequiresCommand")) : new CommandLineParseResult();
+            return silent ? Error(L.Cli_Error_SilentRequiresCommand) : new CommandLineParseResult();
 
         if (kind != CommandLineCommandKind.AddTasks && HasAddOnlyOptions(saveDirectory, singleFileName, threadCount, blockSizeMb, headers, start, queue))
-            return Error(LocalizationService.Get("Cli.Error.AddOptionsRequireAdd"));
+            return Error(L.Cli_Error_AddOptionsRequireAdd);
 
         if (kind == CommandLineCommandKind.AddTasks)
         {
             if (urls.Count == 0)
-                return Error(LocalizationService.Get("Cli.Error.AddRequiresUrl"));
+                return Error(L.Cli_Error_AddRequiresUrl);
 
             foreach (var url in urls)
             {
                 if (!IsHttpUrl(url))
-                    return Error(LocalizationService.Format("Cli.Error.InvalidHttpUrl", url));
+                    return Error(L.Cli_Error_InvalidHttpUrl(url));
             }
 
             if (!string.IsNullOrWhiteSpace(singleFileName) && urls.Count != 1)
-                return Error(LocalizationService.Get("Cli.Error.NameSingleUrl"));
+                return Error(L.Cli_Error_NameSingleUrl);
 
             if (!string.IsNullOrWhiteSpace(saveDirectory))
             {
@@ -144,7 +144,7 @@ public static class CommandLineParser
 
                 saveDirectory = normalizedDirectory;
                 if (!Directory.Exists(saveDirectory))
-                    return Error(LocalizationService.Format("Cli.Error.SaveDirMissing", saveDirectory));
+                    return Error(L.Cli_Error_SaveDirMissing(saveDirectory));
             }
         }
 
@@ -189,7 +189,7 @@ public static class CommandLineParser
     {
         if (commandKind is { } existing && existing != value)
         {
-            error = LocalizationService.Format("Cli.Error.OnlyOneCommand", existing, value);
+            error = L.Cli_Error_OnlyOneCommand(existing, value);
             return false;
         }
 
@@ -203,7 +203,7 @@ public static class CommandLineParser
         if (index + 1 >= args.Length || IsOption(args[index + 1]))
         {
             value = "";
-            error = LocalizationService.Format("Cli.Error.OptionRequiresValue", option);
+            error = L.Cli_Error_OptionRequiresValue(option);
             return false;
         }
 
@@ -248,7 +248,7 @@ public static class CommandLineParser
         catch (Exception ex) when (ex is ArgumentException or NotSupportedException or PathTooLongException)
         {
             normalizedDirectory = "";
-            error = LocalizationService.Format("Cli.Error.InvalidSaveDir", trimmed, ex.Message);
+            error = L.Cli_Error_InvalidSaveDir(trimmed, ex.Message);
             return false;
         }
     }

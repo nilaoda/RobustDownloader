@@ -23,10 +23,10 @@ public static class TextBoxContextMenuService
         if (textBox.ContextMenu != null) return;
 
         var shortcutModifier = OperatingSystem.IsMacOS() ? KeyModifiers.Meta : KeyModifiers.Control;
-        var cut = CreateMenuItem(textBox, "TextBoxMenu.Cut", new KeyGesture(Key.X, shortcutModifier), () => textBox.Cut());
-        var copy = CreateMenuItem(textBox, "TextBoxMenu.Copy", new KeyGesture(Key.C, shortcutModifier), () => textBox.Copy());
-        var paste = CreateMenuItem(textBox, "TextBoxMenu.Paste", new KeyGesture(Key.V, shortcutModifier), () => textBox.Paste());
-        var selectAll = CreateMenuItem(textBox, "TextBoxMenu.SelectAll", new KeyGesture(Key.A, shortcutModifier), () => textBox.SelectAll());
+        var cut = CreateMenuItem(textBox, L.TextBoxMenu_Cut, new KeyGesture(Key.X, shortcutModifier), () => textBox.Cut());
+        var copy = CreateMenuItem(textBox, L.TextBoxMenu_Copy, new KeyGesture(Key.C, shortcutModifier), () => textBox.Copy());
+        var paste = CreateMenuItem(textBox, L.TextBoxMenu_Paste, new KeyGesture(Key.V, shortcutModifier), () => textBox.Paste());
+        var selectAll = CreateMenuItem(textBox, L.TextBoxMenu_SelectAll, new KeyGesture(Key.A, shortcutModifier), () => textBox.SelectAll());
 
         var menu = new ContextMenu
         {
@@ -72,11 +72,11 @@ public static class TextBoxContextMenuService
         textBox.ContextMenu = menu;
     }
 
-    private static MenuItem CreateMenuItem(TextBox textBox, string localizationKey, KeyGesture inputGesture, Action action)
+    private static MenuItem CreateMenuItem(TextBox textBox, string header, KeyGesture inputGesture, Action action)
     {
         var item = new MenuItem
         {
-            Header = LocalizationService.Get(localizationKey),
+            Header = header,
             InputGesture = inputGesture
         };
         item.Click += (_, _) =>
@@ -98,9 +98,9 @@ public static class TextBoxContextMenuService
 
     private static void RefreshHeaders(MenuItem cut, MenuItem copy, MenuItem paste, MenuItem selectAll)
     {
-        cut.Header = LocalizationService.Get("TextBoxMenu.Cut");
-        copy.Header = LocalizationService.Get("TextBoxMenu.Copy");
-        paste.Header = LocalizationService.Get("TextBoxMenu.Paste");
-        selectAll.Header = LocalizationService.Get("TextBoxMenu.SelectAll");
+        cut.Header = L.TextBoxMenu_Cut;
+        copy.Header = L.TextBoxMenu_Copy;
+        paste.Header = L.TextBoxMenu_Paste;
+        selectAll.Header = L.TextBoxMenu_SelectAll;
     }
 }

@@ -35,6 +35,18 @@
     </ItemGroup>
 
     <ItemGroup>
+        <EmbeddedResource Remove="Lang\Strings*.resx" />
+        <AdditionalFiles Include="Lang\Strings*.resx" />
+        <AdditionalFiles Include="**\*.axaml" />
+    </ItemGroup>
+
+    <ItemGroup>
+        <ProjectReference Include="..\RobustDownloader.Generators\RobustDownloader.Generators.csproj"
+                          OutputItemType="Analyzer"
+                          ReferenceOutputAssembly="false" />
+    </ItemGroup>
+
+    <ItemGroup>
         <TrimmerRootAssembly Include="RobustDownloader" />
         <TrimmerRootAssembly Include="Avalonia.Controls" />
     </ItemGroup>

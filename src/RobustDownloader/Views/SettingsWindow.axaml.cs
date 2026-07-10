@@ -57,7 +57,7 @@ public partial class SettingsWindow : ShadUI.Window
         {
             var folders = await StorageProvider.OpenFolderPickerAsync(new FolderPickerOpenOptions
             {
-                Title = LocalizationService.Get("Dialog.SelectDefaultSaveDirectory"),
+                Title = L.Dialog_SelectDefaultSaveDirectory,
                 AllowMultiple = false
             });
 
@@ -67,7 +67,7 @@ public partial class SettingsWindow : ShadUI.Window
         }
         catch (Exception ex)
         {
-            TxtValidation.Text = LocalizationService.Format("Validation.SelectDirectoryFailed", ex.Message);
+            TxtValidation.Text = L.Validation_SelectDirectoryFailed(ex.Message);
         }
     }
 
@@ -77,7 +77,7 @@ public partial class SettingsWindow : ShadUI.Window
         {
             var files = await StorageProvider.OpenFilePickerAsync(new FilePickerOpenOptions
             {
-                Title = LocalizationService.Get("Dialog.SelectBackgroundImage"),
+                Title = L.Dialog_SelectBackgroundImage,
                 AllowMultiple = false,
                 FileTypeFilter =
                 [
@@ -95,7 +95,7 @@ public partial class SettingsWindow : ShadUI.Window
         }
         catch (Exception ex)
         {
-            TxtValidation.Text = LocalizationService.Format("Validation.SelectDirectoryFailed", ex.Message);
+            TxtValidation.Text = L.Validation_SelectDirectoryFailed(ex.Message);
         }
     }
 
@@ -164,38 +164,38 @@ public partial class SettingsWindow : ShadUI.Window
     {
         if (settings.DefaultThreadCount < 1)
         {
-            message = LocalizationService.Get("Validation.DefaultThreads");
+            message = L.Validation_DefaultThreads;
             return false;
         }
 
         if (settings.DefaultBlockSizeMb <= 0)
         {
-            message = LocalizationService.Get("Validation.DefaultBlock");
+            message = L.Validation_DefaultBlock;
             return false;
         }
 
         if (!ConcurrencyOptions.Contains(settings.MaxConcurrency))
         {
-            message = LocalizationService.Get("Validation.DefaultConcurrency");
+            message = L.Validation_DefaultConcurrency;
             return false;
         }
 
         if (double.IsNaN(settings.SpeedLimitMbps) || double.IsInfinity(settings.SpeedLimitMbps) || settings.SpeedLimitMbps <= 0)
         {
-            message = LocalizationService.Get("Validation.SpeedLimit");
+            message = L.Validation_SpeedLimit;
             return false;
         }
 
         if (settings.SaveDirectoryMode == SaveDirectoryMode.Fixed &&
             (string.IsNullOrWhiteSpace(settings.FixedDownloadDirectory) || !FolderPathHelper.DirectoryExists(settings.FixedDownloadDirectory)))
         {
-            message = LocalizationService.Get("Validation.DefaultDirectoryMissing");
+            message = L.Validation_DefaultDirectoryMissing;
             return false;
         }
 
         if (settings.ProxyMode == AppProxyMode.Manual && !IsValidProxyAddress(settings.ProxyAddress))
         {
-            message = LocalizationService.Get("Validation.ProxyAddress");
+            message = L.Validation_ProxyAddress;
             return false;
         }
 
@@ -204,7 +204,7 @@ public partial class SettingsWindow : ShadUI.Window
             if (string.IsNullOrWhiteSpace(credential.Pattern) &&
                 (!string.IsNullOrWhiteSpace(credential.Username) || !string.IsNullOrWhiteSpace(credential.Password)))
             {
-                message = LocalizationService.Get("Validation.CredentialPattern");
+                message = L.Validation_CredentialPattern;
                 return false;
             }
         }
