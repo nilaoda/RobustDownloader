@@ -47,12 +47,12 @@ public sealed class SpeedLimitDialogViewModel : ViewModelBase
         get => _validationMessage;
         private set => SetProperty(ref _validationMessage, value);
     }
-    public string Title => LocalizationService.Get("Settings.SpeedLimit");
-    public string EnableText => LocalizationService.Get("Settings.SpeedLimitEnable");
-    public string UnitText => LocalizationService.Get("Settings.SpeedLimitUnit");
-    public string HintText => LocalizationService.Get("Settings.SpeedLimitHint");
-    public string CancelText => LocalizationService.Get("Settings.Cancel");
-    public string SaveText => LocalizationService.Get("Settings.Save");
+    public string Title => L.Settings_SpeedLimit;
+    public string EnableText => L.Settings_SpeedLimitEnable;
+    public string UnitText => L.Settings_SpeedLimitUnit;
+    public string HintText => L.Settings_SpeedLimitHint;
+    public string CancelText => L.Settings_Cancel;
+    public string SaveText => L.Settings_Save;
 
     public void SetSpeedLimitFromSlider(double value)
     {
@@ -66,7 +66,7 @@ public sealed class SpeedLimitDialogViewModel : ViewModelBase
 
         if (!TryParseSpeedLimit(text, out var parsed))
         {
-            ValidationMessage = LocalizationService.Get("Validation.SpeedLimit");
+            ValidationMessage = L.Validation_SpeedLimit;
             return;
         }
 

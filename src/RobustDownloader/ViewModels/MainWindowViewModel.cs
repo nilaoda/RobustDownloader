@@ -41,7 +41,7 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private string _defaultThreads = "4";
     [ObservableProperty] private string _defaultBlockSize = "16";
     [ObservableProperty] private int _maxConcurrency = 3;
-    [ObservableProperty] private string _statusText = LocalizationService.Get("Queue.Ready");
+    [ObservableProperty] private string _statusText = L.Queue_Ready;
     [ObservableProperty] private string _globalSpeedText = "0 B/s";
     [ObservableProperty] private string _tabInfo = "";
     [ObservableProperty] private DownloadTask? _selectedTask;
@@ -107,15 +107,15 @@ public partial class MainWindowViewModel : ViewModelBase
     public bool HasSelectedTask => SelectedTask != null;
     public bool HasNoSelectedTask => SelectedTask == null;
     public bool IsAnyTaskSelected { get; private set; }
-    public string WindowTitle => $"{LocalizationService.Get("App.Name")} v{AppVersion}";
+    public string WindowTitle => $"{L.App_Name} v{AppVersion}";
     public string GlobalSpeedDisplay => IsSpeedLimitEnabled
-        ? $"{LocalizationService.Get("Main.GlobalSpeed")} {GlobalSpeedText} ({SpeedLimitStatusText})"
-        : $"{LocalizationService.Get("Main.GlobalSpeed")} {GlobalSpeedText}";
+        ? $"{L.Main_GlobalSpeed} {GlobalSpeedText} ({SpeedLimitStatusText})"
+        : $"{L.Main_GlobalSpeed} {GlobalSpeedText}";
     public string SpeedLimitStatusText =>
-        LocalizationService.Format("Main.SpeedLimitStatus", FormatSize(SpeedLimitBytesPerSecond));
-    public string DetailPaneButtonText => LocalizationService.Get(IsDetailPaneOpen ? "Main.HideDetails" : "Main.ShowDetails");
-    public string TaskTreePaneButtonText => LocalizationService.Get(IsTaskTreePaneVisible ? "Main.HideTaskTree" : "Main.ShowTaskTree");
-    public string ActiveTaskTreeFilterText => SelectedTaskTreeNode?.Label ?? LocalizationService.Get("TaskTree.All");
+        L.Main_SpeedLimitStatus(FormatSize(SpeedLimitBytesPerSecond));
+    public string DetailPaneButtonText => IsDetailPaneOpen ? L.Main_HideDetails : L.Main_ShowDetails;
+    public string TaskTreePaneButtonText => IsTaskTreePaneVisible ? L.Main_HideTaskTree : L.Main_ShowTaskTree;
+    public string ActiveTaskTreeFilterText => SelectedTaskTreeNode?.Label ?? L.TaskTree_All;
     public double TaskTreePaneWidth
     {
         get => _taskTreePaneWidth;
@@ -292,7 +292,7 @@ public partial class MainWindowViewModel : ViewModelBase
                     UpdateFileTimestamp = result.UpdateFileTimestamp,
                     HeaderText = result.HeaderText,
                     Status = DownloadTaskStatus.Stopped,
-                    Log = "TaskLog.Added"
+                    Log = LocKeys.TaskLog_Added
                 };
 
                 Tasks.Add(task);
@@ -350,7 +350,7 @@ public partial class MainWindowViewModel : ViewModelBase
             if (task.Status is DownloadTaskStatus.Stopped or DownloadTaskStatus.Error or DownloadTaskStatus.Paused)
             {
                 task.Status = DownloadTaskStatus.Pending;
-                task.Log = "TaskLog.Queued";
+                task.Log = LocKeys.TaskLog_Queued;
                 task.Speed = "-";
                 task.Eta = "-";
             }
@@ -414,7 +414,7 @@ public partial class MainWindowViewModel : ViewModelBase
         task.ProgressTotalBytes = 0;
         task.Speed = "-";
         task.Eta = "-";
-        task.Log = "TaskLog.Queued";
+        task.Log = LocKeys.TaskLog_Queued;
         task.Diagnostic = "";
         task.Mode = "-";
     }
@@ -606,7 +606,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private void ApplyUpdateInfo(string latestTag)
     {
         _latestReleaseUrl = $"https://github.com/nilaoda/RobustDownloader/releases/tag/{latestTag}";
-        LatestVersionDisplay = LocalizationService.Format("Update.Available", latestTag);
+        LatestVersionDisplay = L.Update_Available(latestTag);
         HasUpdate = true;
     }
 
@@ -646,7 +646,7 @@ public partial class MainWindowViewModel : ViewModelBase
         await Dispatcher.UIThread.InvokeAsync(() =>
         {
             task.Status = DownloadTaskStatus.Running;
-            task.Log = "TaskLog.Started";
+            task.Log = LocKeys.TaskLog_Started;
             task.Mode = "-";
             UpdatePlatformProgress();
         });
@@ -738,25 +738,25 @@ public partial class MainWindowViewModel : ViewModelBase
                 task.Progress = 100;
                 task.ProgressBytesWritten = task.ProgressTotalBytes;
                 task.Speed = "-";
-                task.Eta = "Eta.Completed";
+                task.Eta = LocKeys.Eta_Completed;
                 if (task.TotalSizeStr != "?")
                     task.FileSize = $"{task.TotalSizeStr} / {task.TotalSizeStr}";
-                ShowToast(LocalizationService.Format("Toast.DownloadCompleted", task.FileName), ToastKind.Success);
+                ShowToast(L.Toast_DownloadCompleted(task.FileName), ToastKind.Success);
                 break;
             case DownloadResultKind.Skipped:
                 task.Status = DownloadTaskStatus.Completed;
                 task.Progress = 100;
                 task.ProgressBytesWritten = task.ProgressTotalBytes;
                 task.Speed = "-";
-                task.Eta = "Eta.Exists";
-                ShowToast(LocalizationService.Format("Toast.DownloadSkipped", task.FileName), ToastKind.Info);
+                task.Eta = LocKeys.Eta_Exists;
+                ShowToast(L.Toast_DownloadSkipped(task.FileName), ToastKind.Info);
                 break;
             case DownloadResultKind.CrcOnlyCompleted:
                 task.Status = DownloadTaskStatus.Completed;
                 task.ProgressBytesWritten = task.ProgressTotalBytes;
                 task.Speed = "-";
                 task.Eta = "CRC";
-                ShowToast(LocalizationService.Format("Toast.CrcCompleted", task.FileName), ToastKind.Success);
+                ShowToast(L.Toast_CrcCompleted(task.FileName), ToastKind.Success);
                 break;
             case DownloadResultKind.Canceled:
                 task.Status = DownloadTaskStatus.Stopped;
@@ -766,7 +766,7 @@ public partial class MainWindowViewModel : ViewModelBase
             case DownloadResultKind.Failed:
                 task.Status = DownloadTaskStatus.Error;
                 task.Speed = "-";
-                ShowToast(LocalizationService.Format("Toast.DownloadFailed", task.FileName, task.Log), ToastKind.Error);
+                ShowToast(L.Toast_DownloadFailed(task.FileName, task.Log), ToastKind.Error);
                 break;
         }
 
@@ -781,14 +781,14 @@ public partial class MainWindowViewModel : ViewModelBase
             if (_runningTasks.TryGetValue(task.Id, out var cts))
             {
                 cts.Cancel();
-                task.Log = "TaskLog.Stopping";
+                task.Log = LocKeys.TaskLog_Stopping;
                 UpdatePlatformProgress();
             }
         }
         else if (task.Status == DownloadTaskStatus.Pending)
         {
             task.Status = DownloadTaskStatus.Stopped;
-            task.Log = "TaskLog.Removed";
+            task.Log = LocKeys.TaskLog_Removed;
             UpdatePlatformProgress();
         }
     }
@@ -840,7 +840,7 @@ public partial class MainWindowViewModel : ViewModelBase
         catch
         {
             _suppressTaskCollectionSideEffects = false;
-            StatusText = LocalizationService.Get("Error.TasksJsonLoadFailed");
+            StatusText = L.Error_TasksJsonLoadFailed;
         }
     }
 
@@ -854,7 +854,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            ShowToast(LocalizationService.Format("Error.TasksSaveFailed", ex.Message), ToastKind.Error);
+            ShowToast(L.Error_TasksSaveFailed(ex.Message), ToastKind.Error);
         }
     }
 
@@ -871,7 +871,7 @@ public partial class MainWindowViewModel : ViewModelBase
         catch
         {
             _settings = new AppSettings();
-            StatusText = LocalizationService.Get("Error.SettingsJsonLoadFailed");
+            StatusText = L.Error_SettingsJsonLoadFailed;
         }
 
         LocalizationService.Apply(_settings.LanguageMode);
@@ -914,7 +914,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
         catch (Exception ex)
         {
-            ShowToast(LocalizationService.Format("Error.SettingsSaveFailed", ex.Message), ToastKind.Error);
+            ShowToast(L.Error_SettingsSaveFailed(ex.Message), ToastKind.Error);
         }
     }
 
@@ -1002,13 +1002,13 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         if (Tasks.Count == 0)
         {
-            StatusText = LocalizationService.Get("Queue.Empty");
+            StatusText = L.Queue_Empty;
             return;
         }
 
         StatusText = running > 0
-            ? LocalizationService.Format("Queue.Running", running, MaxConcurrency, pending, Tasks.Count)
-            : LocalizationService.Format("Queue.Idle", pending, Tasks.Count);
+            ? L.Queue_Running(running, MaxConcurrency, pending, Tasks.Count)
+            : L.Queue_Idle(pending, Tasks.Count);
     }
 
     private static bool ShouldAutoApplyCredential(DownloadTask task)
@@ -1073,10 +1073,10 @@ public partial class MainWindowViewModel : ViewModelBase
         try
         {
             TaskListScopes.Clear();
-            TaskListScopes.Add(new TaskListScopeOption(50, LocalizationService.Get("Main.Recent50")));
-            TaskListScopes.Add(new TaskListScopeOption(100, LocalizationService.Get("Main.Recent100")));
-            TaskListScopes.Add(new TaskListScopeOption(200, LocalizationService.Get("Main.Recent200")));
-            TaskListScopes.Add(new TaskListScopeOption(0, LocalizationService.Get("Main.AllTasks")));
+            TaskListScopes.Add(new TaskListScopeOption(50, L.Main_Recent50));
+            TaskListScopes.Add(new TaskListScopeOption(100, L.Main_Recent100));
+            TaskListScopes.Add(new TaskListScopeOption(200, L.Main_Recent200));
+            TaskListScopes.Add(new TaskListScopeOption(0, L.Main_AllTasks));
             SelectedTaskListScope = TaskListScopes.First(option => option.Limit == selectedLimit);
         }
         finally
@@ -1098,8 +1098,8 @@ public partial class MainWindowViewModel : ViewModelBase
         var visible = VisibleTasks.Count;
         var total = ApplyTaskTreeFilter(Tasks).Count();
         TabInfo = _taskListLimit == 0
-            ? LocalizationService.Format("Queue.AllInfo", total)
-            : LocalizationService.Format("Queue.RecentInfo", visible, total);
+            ? L.Queue_AllInfo(total)
+            : L.Queue_RecentInfo(visible, total);
         OnPropertyChanged(nameof(HasVisibleTasks));
         OnPropertyChanged(nameof(HasNoVisibleTasks));
         OnPropertyChanged(nameof(HasNoTasks));
@@ -1208,20 +1208,20 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         return group switch
         {
-            TaskTreeGroup.Completed => LocalizationService.Get("TaskTree.Completed"),
-            TaskTreeGroup.Incomplete => LocalizationService.Get("TaskTree.Incomplete"),
-            _ => LocalizationService.Get("TaskTree.All")
+            TaskTreeGroup.Completed => L.TaskTree_Completed,
+            TaskTreeGroup.Incomplete => L.TaskTree_Incomplete,
+            _ => L.TaskTree_All
         };
     }
 
     private static string FormatTaskTreeLabel(string label, int count)
     {
-        return LocalizationService.Format("TaskTree.NodeLabel", label, count);
+        return L.TaskTree_NodeLabel(label, count);
     }
 
     private static string GetExtensionLabel(string extension)
     {
-        return extension == NoExtensionKey ? LocalizationService.Get("TaskTree.NoExtension") : extension;
+        return extension == NoExtensionKey ? L.TaskTree_NoExtension : extension;
     }
 
     private const string NoExtensionKey = "__none__";
@@ -1280,10 +1280,10 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             var toast = ToastManager.CreateToast(kind switch
             {
-                ToastKind.Error => LocalizationService.Get("Toast.Error"),
-                ToastKind.Warning => LocalizationService.Get("Toast.Warning"),
-                ToastKind.Success => LocalizationService.Get("Toast.Success"),
-                _ => LocalizationService.Get("Toast.Info")
+                ToastKind.Error => L.Toast_Error,
+                ToastKind.Warning => L.Toast_Warning,
+                ToastKind.Success => L.Toast_Success,
+                _ => L.Toast_Info
             }).WithContent(message).WithDelay(delay).DismissOnClick();
 
             switch (kind)

@@ -182,11 +182,11 @@ public sealed class DesktopIntegrationService : IDisposable
 
     private void UpdateLocalizedText()
     {
-        _showMenuItem.Header = LocalizationService.Get("Tray.Show");
-        _hideMenuItem.Header = LocalizationService.Get("Tray.Hide");
-        _exitMenuItem.Header = LocalizationService.Get("Tray.Exit");
+        _showMenuItem.Header = L.Tray_Show;
+        _hideMenuItem.Header = L.Tray_Hide;
+        _exitMenuItem.Header = L.Tray_Exit;
         if (_trayIcon != null)
-            _trayIcon.ToolTipText = LocalizationService.Get("App.Name");
+            _trayIcon.ToolTipText = L.App_Name;
     }
 
     private void ExitApplication()

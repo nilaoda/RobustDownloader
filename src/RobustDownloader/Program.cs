@@ -27,7 +27,7 @@ sealed class Program
         if (!string.IsNullOrWhiteSpace(parseResult.Error))
         {
             CommandLineConsole.WriteError(parseResult.Error);
-            CommandLineConsole.WriteError(LocalizationService.Get("Cli.Error.HelpHint"));
+            CommandLineConsole.WriteError(L.Cli_Error_HelpHint);
             Environment.ExitCode = 2;
             return;
         }
@@ -37,7 +37,7 @@ sealed class Program
         {
             if (!commandSent)
             {
-                CommandLineConsole.WriteError(LocalizationService.Get("Cli.Error.SendFailed"));
+                CommandLineConsole.WriteError(L.Cli_Error_SendFailed);
                 Environment.ExitCode = 1;
             }
             return;

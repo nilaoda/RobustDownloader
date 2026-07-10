@@ -1,0 +1,865 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="App.Name" xml:space="preserve">
+    <value>RobustDownloader</value>
+  </data>
+  <data name="Main.NewTask" xml:space="preserve">
+    <value>New Task</value>
+  </data>
+  <data name="Main.Start" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Main.Stop" xml:space="preserve">
+    <value>Stop</value>
+  </data>
+  <data name="Main.Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Main.GlobalSpeed" xml:space="preserve">
+    <value>Global speed</value>
+  </data>
+  <data name="Main.SpeedLimit" xml:space="preserve">
+    <value>Speed limit</value>
+  </data>
+  <data name="Main.SpeedLimitUnit" xml:space="preserve">
+    <value>MB/s</value>
+  </data>
+  <data name="Main.SpeedLimitStatus" xml:space="preserve">
+    <value>Limited to {0}/s</value>
+  </data>
+  <data name="Main.Concurrency" xml:space="preserve">
+    <value>Concurrent</value>
+  </data>
+  <data name="Main.StartAll" xml:space="preserve">
+    <value>Start All</value>
+  </data>
+  <data name="Main.StopAll" xml:space="preserve">
+    <value>Stop All</value>
+  </data>
+  <data name="Main.Settings" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Main.Queue" xml:space="preserve">
+    <value>Download Queue</value>
+  </data>
+  <data name="Main.Recent50" xml:space="preserve">
+    <value>Recent 50</value>
+  </data>
+  <data name="Main.Recent100" xml:space="preserve">
+    <value>Recent 100</value>
+  </data>
+  <data name="Main.Recent200" xml:space="preserve">
+    <value>Recent 200</value>
+  </data>
+  <data name="Main.AllTasks" xml:space="preserve">
+    <value>All Tasks</value>
+  </data>
+  <data name="Main.Details" xml:space="preserve">
+    <value>Task Details</value>
+  </data>
+  <data name="Main.ShowDetails" xml:space="preserve">
+    <value>Show Details</value>
+  </data>
+  <data name="Main.HideDetails" xml:space="preserve">
+    <value>Hide Details</value>
+  </data>
+  <data name="Main.ShowTaskTree" xml:space="preserve">
+    <value>Show Tree</value>
+  </data>
+  <data name="Main.HideTaskTree" xml:space="preserve">
+    <value>Hide Tree</value>
+  </data>
+  <data name="Main.CollapseDetails" xml:space="preserve">
+    <value>Collapse</value>
+  </data>
+  <data name="Main.EmptyTitle" xml:space="preserve">
+    <value>No download tasks yet</value>
+  </data>
+  <data name="Main.EmptyBody" xml:space="preserve">
+    <value>Add one URL or paste multiple links. The queue will show progress, speed, and status.</value>
+  </data>
+  <data name="Main.EmptyFilterTitle" xml:space="preserve">
+    <value>No tasks match this filter</value>
+  </data>
+  <data name="Main.EmptyFilterBody" xml:space="preserve">
+    <value>Switch the category on the left or change the range above to view other tasks.</value>
+  </data>
+  <data name="Main.SelectTaskTitle" xml:space="preserve">
+    <value>Select a task</value>
+  </data>
+  <data name="Main.SelectTaskBody" xml:space="preserve">
+    <value>Save path, logs, headers, and diagnostics will appear here.</value>
+  </data>
+  <data name="Main.CopyUrl" xml:space="preserve">
+    <value>Copy URL</value>
+  </data>
+  <data name="Main.CopyFileName" xml:space="preserve">
+    <value>Copy File Name</value>
+  </data>
+  <data name="Main.CopySavePath" xml:space="preserve">
+    <value>Copy Save Path</value>
+  </data>
+  <data name="Main.CopyPath" xml:space="preserve">
+    <value>Copy Path</value>
+  </data>
+  <data name="TextBoxMenu.Cut" xml:space="preserve">
+    <value>Cut</value>
+  </data>
+  <data name="TextBoxMenu.Copy" xml:space="preserve">
+    <value>Copy</value>
+  </data>
+  <data name="TextBoxMenu.Paste" xml:space="preserve">
+    <value>Paste</value>
+  </data>
+  <data name="TextBoxMenu.SelectAll" xml:space="preserve">
+    <value>Select All</value>
+  </data>
+  <data name="Cli.Help" xml:space="preserve">
+    <value>RobustDownloader command line usage
+
+Usage:
+  RobustDownloader [options]
+  RobustDownloader --add &lt;url&gt; [&lt;url&gt; ...] [options]
+
+Commands:
+  --add &lt;url&gt; [&lt;url&gt; ...]   Add one or more download tasks
+  --show                    Show the main window
+  --start-all               Start all stopped or failed tasks
+  --stop-all                Stop all running or pending tasks
+  --help, -h, /?            Show this help text
+
+Add task options:
+  --dir &lt;path&gt;              Save directory
+  --name &lt;filename&gt;         File name for a single URL
+  --threads &lt;number&gt;        Thread count for added tasks
+  --block-size &lt;mb&gt;         Block size in MB
+  --header &lt;name:value&gt;     Add a custom HTTP header; can be repeated
+  --start                   Add tasks and start them
+  --queue                   Add tasks without starting them
+  --silent                  Do not activate the main window
+
+Examples:
+  RobustDownloader --add "https://example.com/file.zip"
+  RobustDownloader --add "https://example.com/file.zip" --silent
+  RobustDownloader --add "https://example.com/file.zip" --start --threads 8
+  RobustDownloader --add "https://example.com/file.zip" --dir "&lt;save-dir&gt;" --name "file.zip"
+  RobustDownloader --stop-all --silent</value>
+  </data>
+  <data name="Cli.Error.HelpHint" xml:space="preserve">
+    <value>Run RobustDownloader --help for usage.</value>
+  </data>
+  <data name="Cli.Error.SendFailed" xml:space="preserve">
+    <value>Failed to send command to the running RobustDownloader instance.</value>
+  </data>
+  <data name="Cli.Error.Threads" xml:space="preserve">
+    <value>--threads must be a number from 1 to 256.</value>
+  </data>
+  <data name="Cli.Error.BlockSize" xml:space="preserve">
+    <value>--block-size must be a positive number.</value>
+  </data>
+  <data name="Cli.Error.Header" xml:space="preserve">
+    <value>--header must use the format "Name: value".</value>
+  </data>
+  <data name="Cli.Error.UnknownOption" xml:space="preserve">
+    <value>Unknown option: {0}</value>
+  </data>
+  <data name="Cli.Error.UnexpectedArgument" xml:space="preserve">
+    <value>Unexpected argument: {0}</value>
+  </data>
+  <data name="Cli.Error.StartQueueConflict" xml:space="preserve">
+    <value>--start cannot be used together with --queue.</value>
+  </data>
+  <data name="Cli.Error.SilentRequiresCommand" xml:space="preserve">
+    <value>--silent requires a command.</value>
+  </data>
+  <data name="Cli.Error.AddOptionsRequireAdd" xml:space="preserve">
+    <value>Add task options require --add.</value>
+  </data>
+  <data name="Cli.Error.AddRequiresUrl" xml:space="preserve">
+    <value>--add requires at least one URL.</value>
+  </data>
+  <data name="Cli.Error.InvalidHttpUrl" xml:space="preserve">
+    <value>Invalid HTTP URL: {0}</value>
+  </data>
+  <data name="Cli.Error.NameSingleUrl" xml:space="preserve">
+    <value>--name can only be used with a single URL.</value>
+  </data>
+  <data name="Cli.Error.InvalidSaveDir" xml:space="preserve">
+    <value>Invalid save directory {0}: {1}</value>
+  </data>
+  <data name="Cli.Error.SaveDirMissing" xml:space="preserve">
+    <value>Save directory does not exist: {0}</value>
+  </data>
+  <data name="Cli.Error.OnlyOneCommand" xml:space="preserve">
+    <value>Only one command can be used at a time: {0} and {1}.</value>
+  </data>
+  <data name="Cli.Error.OptionRequiresValue" xml:space="preserve">
+    <value>{0} requires a value.</value>
+  </data>
+  <data name="Main.OpenFolder" xml:space="preserve">
+    <value>Open Folder</value>
+  </data>
+  <data name="Main.ReDownload" xml:space="preserve">
+    <value>Re-download</value>
+  </data>
+  <data name="Main.ReDownloadQueued" xml:space="preserve">
+    <value>Queued for re-download</value>
+  </data>
+  <data name="Main.ReDownloadFailed" xml:space="preserve">
+    <value>Re-download failed: {0}</value>
+  </data>
+  <data name="Main.Overview" xml:space="preserve">
+    <value>Overview</value>
+  </data>
+  <data name="Main.Log" xml:space="preserve">
+    <value>Log</value>
+  </data>
+  <data name="Main.Headers" xml:space="preserve">
+    <value>Header</value>
+  </data>
+  <data name="Main.RecentLog" xml:space="preserve">
+    <value>Recent Log</value>
+  </data>
+  <data name="Main.Diagnostics" xml:space="preserve">
+    <value>Diagnostics</value>
+  </data>
+  <data name="Diagnostic.None" xml:space="preserve">
+    <value>No issues</value>
+  </data>
+  <data name="Diagnostic.Initializing" xml:space="preserve">
+    <value>Initializing</value>
+  </data>
+  <data name="Diagnostic.NoRangeSupport" xml:space="preserve">
+    <value>Server does not support Range</value>
+  </data>
+  <data name="Diagnostic.DiskBottleneck" xml:space="preserve">
+    <value>Disk write may be bottlenecked</value>
+  </data>
+  <data name="Diagnostic.BufferDeadlock" xml:space="preserve">
+    <value>Buffer is blocked; recovery is in progress</value>
+  </data>
+  <data name="Diagnostic.NetworkHang" xml:space="preserve">
+    <value>Network connection may be stalled</value>
+  </data>
+  <data name="Diagnostic.Idle" xml:space="preserve">
+    <value>Internal queue is idle</value>
+  </data>
+  <data name="Diagnostic.Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="Diagnostic.Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Main.SettingsSaved" xml:space="preserve">
+    <value>Settings saved</value>
+  </data>
+  <data name="Main.OpenedFolder" xml:space="preserve">
+    <value>Save location opened</value>
+  </data>
+  <data name="Main.OpenFolderFailed" xml:space="preserve">
+    <value>Failed to open folder: {0}</value>
+  </data>
+  <data name="Main.Copied" xml:space="preserve">
+    <value>Copied to clipboard</value>
+  </data>
+  <data name="Queue.Empty" xml:space="preserve">
+    <value>Queue idle | No tasks</value>
+  </data>
+  <data name="Queue.Ready" xml:space="preserve">
+    <value>Ready</value>
+  </data>
+  <data name="Queue.Idle" xml:space="preserve">
+    <value>Queue idle | Pending: {0} | Total: {1}</value>
+  </data>
+  <data name="Queue.Running" xml:space="preserve">
+    <value>Downloading: {0} | Limit: {1} | Pending: {2} | Total: {3}</value>
+  </data>
+  <data name="Queue.RecentInfo" xml:space="preserve">
+    <value>Showing recent {0} / {1}</value>
+  </data>
+  <data name="Queue.AllInfo" xml:space="preserve">
+    <value>Showing all {0} tasks</value>
+  </data>
+  <data name="TaskTree.Title" xml:space="preserve">
+    <value>Task Tree</value>
+  </data>
+  <data name="TaskTree.All" xml:space="preserve">
+    <value>All Tasks</value>
+  </data>
+  <data name="TaskTree.Completed" xml:space="preserve">
+    <value>Completed</value>
+  </data>
+  <data name="TaskTree.Incomplete" xml:space="preserve">
+    <value>Incomplete</value>
+  </data>
+  <data name="TaskTree.NoExtension" xml:space="preserve">
+    <value>No Extension</value>
+  </data>
+  <data name="TaskTree.NodeLabel" xml:space="preserve">
+    <value>{0} ({1})</value>
+  </data>
+  <data name="Column.FileName" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="Column.Status" xml:space="preserve">
+    <value>Status</value>
+  </data>
+  <data name="Column.Progress" xml:space="preserve">
+    <value>Progress</value>
+  </data>
+  <data name="Column.Speed" xml:space="preserve">
+    <value>Speed</value>
+  </data>
+  <data name="Column.Eta" xml:space="preserve">
+    <value>ETA</value>
+  </data>
+  <data name="Eta.Completed" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="Eta.Exists" xml:space="preserve">
+    <value>Exists</value>
+  </data>
+  <data name="Column.Size" xml:space="preserve">
+    <value>Size</value>
+  </data>
+  <data name="Column.Mode" xml:space="preserve">
+    <value>Mode</value>
+  </data>
+  <data name="Field.SavePath" xml:space="preserve">
+    <value>Save Path</value>
+  </data>
+  <data name="Field.Url" xml:space="preserve">
+    <value>URL</value>
+  </data>
+  <data name="Field.Threads" xml:space="preserve">
+    <value>Threads</value>
+  </data>
+  <data name="Field.BlockSizeMb" xml:space="preserve">
+    <value>Block MB</value>
+  </data>
+  <data name="Field.Mode" xml:space="preserve">
+    <value>Run Mode</value>
+  </data>
+  <data name="Field.FileTime" xml:space="preserve">
+    <value>File Time</value>
+  </data>
+  <data name="Task.Status.Pending" xml:space="preserve">
+    <value>Pending</value>
+  </data>
+  <data name="Task.Status.Running" xml:space="preserve">
+    <value>Running</value>
+  </data>
+  <data name="Task.Status.Paused" xml:space="preserve">
+    <value>Paused</value>
+  </data>
+  <data name="Task.Status.Completed" xml:space="preserve">
+    <value>Done</value>
+  </data>
+  <data name="Task.Status.Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Task.Status.Stopped" xml:space="preserve">
+    <value>Stopped</value>
+  </data>
+  <data name="Task.FileTime.Server" xml:space="preserve">
+    <value>Use server time</value>
+  </data>
+  <data name="Task.FileTime.Local" xml:space="preserve">
+    <value>Use local completion time</value>
+  </data>
+  <data name="Add.Title" xml:space="preserve">
+    <value>New Download Task</value>
+  </data>
+  <data name="Add.Description" xml:space="preserve">
+    <value>Paste one or more URLs, choose a save directory, then add them to the queue.</value>
+  </data>
+  <data name="Add.Urls" xml:space="preserve">
+    <value>Download URLs</value>
+  </data>
+  <data name="Add.UrlsWithCount" xml:space="preserve">
+    <value>Download URLs ({0} total)</value>
+  </data>
+  <data name="Add.UrlsHint" xml:space="preserve">
+    <value>One URL per line. A single URL can override the file name; batch tasks infer names automatically.</value>
+  </data>
+  <data name="Add.SaveDirectory" xml:space="preserve">
+    <value>Save Directory</value>
+  </data>
+  <data name="Add.Browse" xml:space="preserve">
+    <value>Browse</value>
+  </data>
+  <data name="Add.FileName" xml:space="preserve">
+    <value>File Name</value>
+  </data>
+  <data name="Add.FileNameHint" xml:space="preserve">
+    <value>Editable only when a single URL is entered.</value>
+  </data>
+  <data name="Add.BatchNaming" xml:space="preserve">
+    <value>Batch File Naming</value>
+  </data>
+  <data name="Add.BatchNamingMode" xml:space="preserve">
+    <value>Naming Mode</value>
+  </data>
+  <data name="Add.BatchNamingAuto" xml:space="preserve">
+    <value>Auto Detect</value>
+  </data>
+  <data name="Add.BatchNamingTemplate" xml:space="preserve">
+    <value>Custom Template</value>
+  </data>
+  <data name="Add.BatchTemplate" xml:space="preserve">
+    <value>File Name Template</value>
+  </data>
+  <data name="Add.BatchTemplateHint" xml:space="preserve">
+    <value># inserts the number, * inserts the auto-detected file name, for example File_#_*.</value>
+  </data>
+  <data name="Add.BatchStart" xml:space="preserve">
+    <value>Start</value>
+  </data>
+  <data name="Add.BatchStep" xml:space="preserve">
+    <value>Step</value>
+  </data>
+  <data name="Add.BatchDigits" xml:space="preserve">
+    <value>Digits</value>
+  </data>
+  <data name="Add.BatchPreview" xml:space="preserve">
+    <value>Preview</value>
+  </data>
+  <data name="Add.Advanced" xml:space="preserve">
+    <value>Advanced Options</value>
+  </data>
+  <data name="Add.CustomHeaders" xml:space="preserve">
+    <value>Custom HTTP Headers</value>
+  </data>
+  <data name="Add.UpdateTimestamp" xml:space="preserve">
+    <value>Use server time for file timestamp</value>
+  </data>
+  <data name="Add.CrcOnly" xml:space="preserve">
+    <value>Extract CRC64 only</value>
+  </data>
+  <data name="Add.SkipCrc" xml:space="preserve">
+    <value>Skip CRC64 extraction</value>
+  </data>
+  <data name="Add.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Add.Enqueue" xml:space="preserve">
+    <value>Add to Queue</value>
+  </data>
+  <data name="Add.BatchFileName" xml:space="preserve">
+    <value>(Batch task - auto generated)</value>
+  </data>
+  <data name="Validation.EnterUrl" xml:space="preserve">
+    <value>Enter a URL.</value>
+  </data>
+  <data name="Validation.SelectDirectory" xml:space="preserve">
+    <value>Choose a save directory.</value>
+  </data>
+  <data name="Validation.DirectoryMissing" xml:space="preserve">
+    <value>Save directory does not exist.</value>
+  </data>
+  <data name="Validation.SelectDirectoryFailed" xml:space="preserve">
+    <value>Failed to choose directory: {0}</value>
+  </data>
+  <data name="Validation.Threads" xml:space="preserve">
+    <value>Threads must be an integer greater than 0.</value>
+  </data>
+  <data name="Validation.BlockSize" xml:space="preserve">
+    <value>Block size must be a number greater than 0.</value>
+  </data>
+  <data name="Validation.CrcConflict" xml:space="preserve">
+    <value>CRC64-only mode cannot be used together with skipping CRC64 extraction.</value>
+  </data>
+  <data name="Validation.BatchTemplate" xml:space="preserve">
+    <value>The batch naming template cannot be empty.</value>
+  </data>
+  <data name="Validation.BatchStart" xml:space="preserve">
+    <value>Start must be an integer greater than or equal to 0.</value>
+  </data>
+  <data name="Validation.BatchStep" xml:space="preserve">
+    <value>Step must be an integer greater than 0.</value>
+  </data>
+  <data name="Validation.BatchDigits" xml:space="preserve">
+    <value>Digits must be an integer greater than 0.</value>
+  </data>
+  <data name="Validation.BatchFileName" xml:space="preserve">
+    <value>Generated file names cannot be empty or contain invalid characters.</value>
+  </data>
+  <data name="Validation.BatchDuplicateFileName" xml:space="preserve">
+    <value>The template generated duplicate file names. Add # numbering or adjust the template.</value>
+  </data>
+  <data name="Settings.Title" xml:space="preserve">
+    <value>Settings</value>
+  </data>
+  <data name="Settings.Description" xml:space="preserve">
+    <value>Defaults are used for new tasks; site credentials are sent as Basic Auth when a URL matches.</value>
+  </data>
+  <data name="Settings.Appearance" xml:space="preserve">
+    <value>Appearance</value>
+  </data>
+  <data name="Settings.Language" xml:space="preserve">
+    <value>Language</value>
+  </data>
+  <data name="Settings.LanguageHint" xml:space="preserve">
+    <value>Auto chooses Simplified Chinese, Traditional Chinese, or English from the system language.</value>
+  </data>
+  <data name="Settings.Theme" xml:space="preserve">
+    <value>Theme</value>
+  </data>
+  <data name="Settings.ThemeHint" xml:space="preserve">
+    <value>System follows the operating system light or dark mode.</value>
+  </data>
+  <data name="Settings.Auto" xml:space="preserve">
+    <value>Auto</value>
+  </data>
+  <data name="Settings.LanguageEn" xml:space="preserve">
+    <value>English</value>
+  </data>
+  <data name="Settings.LanguageZhHans" xml:space="preserve">
+    <value>简体中文</value>
+  </data>
+  <data name="Settings.LanguageZhHant" xml:space="preserve">
+    <value>繁體中文</value>
+  </data>
+  <data name="Settings.ThemeSystem" xml:space="preserve">
+    <value>System</value>
+  </data>
+  <data name="Settings.ThemeLight" xml:space="preserve">
+    <value>Light</value>
+  </data>
+  <data name="Settings.ThemeDark" xml:space="preserve">
+    <value>Dark</value>
+  </data>
+  <data name="Settings.WindowBehavior" xml:space="preserve">
+    <value>Window Close Behavior</value>
+  </data>
+  <data name="Settings.CloseToTray" xml:space="preserve">
+    <value>Close to tray / menu bar</value>
+  </data>
+  <data name="Settings.CloseToExit" xml:space="preserve">
+    <value>Exit application</value>
+  </data>
+  <data name="Settings.ConfirmCloseToTray" xml:space="preserve">
+    <value>Confirm before closing to tray / menu bar</value>
+  </data>
+  <data name="Settings.WindowBehaviorHint" xml:space="preserve">
+    <value>Choose whether the window close button hides the app in the background or exits it.</value>
+  </data>
+  <data name="Settings.Download" xml:space="preserve">
+    <value>Download</value>
+  </data>
+  <data name="Settings.DownloadDefaults" xml:space="preserve">
+    <value>Download Defaults</value>
+  </data>
+  <data name="Settings.DefaultThreads" xml:space="preserve">
+    <value>Default Threads</value>
+  </data>
+  <data name="Settings.DefaultBlock" xml:space="preserve">
+    <value>Default Block MB</value>
+  </data>
+  <data name="Settings.DefaultConcurrency" xml:space="preserve">
+    <value>Default Concurrency</value>
+  </data>
+  <data name="Settings.SpeedLimit" xml:space="preserve">
+    <value>Global Download Speed Limit</value>
+  </data>
+  <data name="Settings.SpeedLimitEnable" xml:space="preserve">
+    <value>Enable speed limit</value>
+  </data>
+  <data name="Settings.SpeedLimitUnit" xml:space="preserve">
+    <value>MB/s</value>
+  </data>
+  <data name="Settings.SpeedLimitHint" xml:space="preserve">
+    <value>Limit the total shared download speed across all running tasks. Drag the slider or enter a value from 0.1 to 100.</value>
+  </data>
+  <data name="Settings.DefaultBehavior" xml:space="preserve">
+    <value>Default Task Behavior</value>
+  </data>
+  <data name="Settings.DefaultUpdateTimestamp" xml:space="preserve">
+    <value>Use server time by default</value>
+  </data>
+  <data name="Settings.DefaultSkipCrc" xml:space="preserve">
+    <value>Skip CRC64 extraction by default</value>
+  </data>
+  <data name="Settings.Network" xml:space="preserve">
+    <value>Network</value>
+  </data>
+  <data name="Settings.Proxy" xml:space="preserve">
+    <value>HTTP Proxy</value>
+  </data>
+  <data name="Settings.ProxySystem" xml:space="preserve">
+    <value>Use System Proxy</value>
+  </data>
+  <data name="Settings.ProxyDisabled" xml:space="preserve">
+    <value>No Proxy</value>
+  </data>
+  <data name="Settings.ProxyManual" xml:space="preserve">
+    <value>Manual</value>
+  </data>
+  <data name="Settings.ProxyHint" xml:space="preserve">
+    <value>For manual mode, enter a full proxy URL, for example http://127.0.0.1:7890.</value>
+  </data>
+  <data name="Settings.SaveAndHeaders" xml:space="preserve">
+    <value>Save &amp; Header</value>
+  </data>
+  <data name="Settings.DefaultSaveDirectory" xml:space="preserve">
+    <value>Default Save Directory</value>
+  </data>
+  <data name="Settings.DefaultSaveDirectoryHint" xml:space="preserve">
+    <value>Last-used mode remembers the directory from each successfully added task. Fixed mode defaults to the system Downloads folder.</value>
+  </data>
+  <data name="Settings.SaveDirectoryLastUsed" xml:space="preserve">
+    <value>Use last download directory</value>
+  </data>
+  <data name="Settings.SaveDirectoryFixed" xml:space="preserve">
+    <value>Use fixed directory</value>
+  </data>
+  <data name="Settings.DefaultHeaders" xml:space="preserve">
+    <value>Default HTTP Headers</value>
+  </data>
+  <data name="Settings.Credentials" xml:space="preserve">
+    <value>Credentials</value>
+  </data>
+  <data name="Settings.CredentialsTitle" xml:space="preserve">
+    <value>Site Username / Password</value>
+  </data>
+  <data name="Settings.Add" xml:space="preserve">
+    <value>Add</value>
+  </data>
+  <data name="Settings.Delete" xml:space="preserve">
+    <value>Delete</value>
+  </data>
+  <data name="Settings.CredentialsHint" xml:space="preserve">
+    <value>Match can be example.com, *.example.com, or https://example.com/path. Existing URL credentials or Authorization headers are not overwritten.</value>
+  </data>
+  <data name="Settings.Enabled" xml:space="preserve">
+    <value>Enabled</value>
+  </data>
+  <data name="Settings.Match" xml:space="preserve">
+    <value>Match</value>
+  </data>
+  <data name="Settings.Username" xml:space="preserve">
+    <value>Username</value>
+  </data>
+  <data name="Settings.Password" xml:space="preserve">
+    <value>Password</value>
+  </data>
+  <data name="Settings.DataFiles" xml:space="preserve">
+    <value>Data Files</value>
+  </data>
+  <data name="Settings.LocalDataFiles" xml:space="preserve">
+    <value>Local Data Files</value>
+  </data>
+  <data name="Settings.DataFilesHint" xml:space="preserve">
+    <value>Use these paths for troubleshooting, backup, or migration. The app maintains the files automatically.</value>
+  </data>
+  <data name="Settings.TasksJson" xml:space="preserve">
+    <value>Task List JSON</value>
+  </data>
+  <data name="Settings.SettingsJson" xml:space="preserve">
+    <value>Settings JSON</value>
+  </data>
+  <data name="Settings.Save" xml:space="preserve">
+    <value>Save</value>
+  </data>
+  <data name="Settings.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="Validation.DefaultThreads" xml:space="preserve">
+    <value>Default threads must be greater than 0.</value>
+  </data>
+  <data name="Validation.DefaultBlock" xml:space="preserve">
+    <value>Default block size must be greater than 0.</value>
+  </data>
+  <data name="Validation.DefaultConcurrency" xml:space="preserve">
+    <value>Default concurrency must be 1, 2, 3, 5, or 8.</value>
+  </data>
+  <data name="Validation.SpeedLimit" xml:space="preserve">
+    <value>Speed limit must be a number greater than 0.</value>
+  </data>
+  <data name="Validation.DefaultDirectoryMissing" xml:space="preserve">
+    <value>Default save directory does not exist.</value>
+  </data>
+  <data name="Validation.ProxyAddress" xml:space="preserve">
+    <value>Manual proxy must be a full URL, for example http://127.0.0.1:7890.</value>
+  </data>
+  <data name="Validation.CredentialPattern" xml:space="preserve">
+    <value>Credential match pattern cannot be empty.</value>
+  </data>
+  <data name="Dialog.SelectSaveDirectory" xml:space="preserve">
+    <value>Choose Save Directory</value>
+  </data>
+  <data name="Dialog.SelectDefaultSaveDirectory" xml:space="preserve">
+    <value>Choose Default Save Directory</value>
+  </data>
+  <data name="Tray.Show" xml:space="preserve">
+    <value>Show Main Window</value>
+  </data>
+  <data name="Tray.Hide" xml:space="preserve">
+    <value>Hide Main Window</value>
+  </data>
+  <data name="Tray.Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="CloseDialog.Title" xml:space="preserve">
+    <value>Close RobustDownloader?</value>
+  </data>
+  <data name="CloseDialog.Message.Tray" xml:space="preserve">
+    <value>The download queue will keep running in the system tray after the window is closed.</value>
+  </data>
+  <data name="CloseDialog.Message.MenuBar" xml:space="preserve">
+    <value>The download queue will keep running in the menu bar after the window is closed.</value>
+  </data>
+  <data name="CloseDialog.MinimizeToTray" xml:space="preserve">
+    <value>Close to Tray</value>
+  </data>
+  <data name="CloseDialog.MinimizeToMenuBar" xml:space="preserve">
+    <value>Close to Menu Bar</value>
+  </data>
+  <data name="CloseDialog.Exit" xml:space="preserve">
+    <value>Exit</value>
+  </data>
+  <data name="CloseDialog.Cancel" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <data name="CloseDialog.DoNotAskAgain" xml:space="preserve">
+    <value>Do not ask again and remember my choice</value>
+  </data>
+  <data name="TaskLog.Added" xml:space="preserve">
+    <value>Added to task list</value>
+  </data>
+  <data name="TaskLog.Queued" xml:space="preserve">
+    <value>Added to queue</value>
+  </data>
+  <data name="TaskLog.Started" xml:space="preserve">
+    <value>Download started</value>
+  </data>
+  <data name="TaskLog.Stopping" xml:space="preserve">
+    <value>Stopping; waiting for a safe disk write point...</value>
+  </data>
+  <data name="TaskLog.Removed" xml:space="preserve">
+    <value>Removed from queue</value>
+  </data>
+  <data name="Download.SkippedExisting" xml:space="preserve">
+    <value>Target file already exists; skipped</value>
+  </data>
+  <data name="Download.CrcDone" xml:space="preserve">
+    <value>CRC64 extraction completed</value>
+  </data>
+  <data name="Download.RangeFallback" xml:space="preserve">
+    <value>Server does not support Range. Switched to single-thread sequential download; reliable resume is unavailable in this mode.</value>
+  </data>
+  <data name="Download.CanceledWithResume" xml:space="preserve">
+    <value>Download stopped. Safe resumable temporary data has been kept.</value>
+  </data>
+  <data name="Download.Canceled" xml:space="preserve">
+    <value>Download stopped</value>
+  </data>
+  <data name="Download.CompletedAverageSpeed" xml:space="preserve">
+    <value>Download completed. Average speed: {0}/s</value>
+  </data>
+  <data name="Download.SingleThreadCompleted" xml:space="preserve">
+    <value>Single-thread download completed</value>
+  </data>
+  <data name="Error.TasksJsonLoadFailed" xml:space="preserve">
+    <value>Failed to read tasks.json</value>
+  </data>
+  <data name="Error.SettingsJsonLoadFailed" xml:space="preserve">
+    <value>Failed to read settings.json; defaults are used</value>
+  </data>
+  <data name="Error.TasksSaveFailed" xml:space="preserve">
+    <value>Failed to save tasks: {0}</value>
+  </data>
+  <data name="Error.SettingsSaveFailed" xml:space="preserve">
+    <value>Failed to save settings: {0}</value>
+  </data>
+  <data name="Main.CopyFailed" xml:space="preserve">
+    <value>Copy failed: {0}</value>
+  </data>
+  <data name="Toast.Error" xml:space="preserve">
+    <value>Error</value>
+  </data>
+  <data name="Toast.Warning" xml:space="preserve">
+    <value>Warning</value>
+  </data>
+  <data name="Toast.Success" xml:space="preserve">
+    <value>Success</value>
+  </data>
+  <data name="Toast.Info" xml:space="preserve">
+    <value>Info</value>
+  </data>
+  <data name="Toast.DownloadCompleted" xml:space="preserve">
+    <value>{0} download completed</value>
+  </data>
+  <data name="Toast.DownloadSkipped" xml:space="preserve">
+    <value>{0} skipped</value>
+  </data>
+  <data name="Toast.CrcCompleted" xml:space="preserve">
+    <value>{0} CRC extraction completed</value>
+  </data>
+  <data name="Toast.DownloadFailed" xml:space="preserve">
+    <value>{0} download failed: {1}</value>
+  </data>
+  <data name="Update.Available" xml:space="preserve">
+    <value>{0} available →</value>
+  </data>
+  <data name="Settings.CheckForUpdates" xml:space="preserve">
+    <value>Check for updates automatically</value>
+  </data>
+  <data name="Settings.CheckForUpdatesHint" xml:space="preserve">
+    <value>Periodically check for new versions on startup and while running.</value>
+  </data>
+  <data name="Settings.PlatformProgressIndicator" xml:space="preserve">
+    <value>Taskbar / Dock progress indicator</value>
+  </data>
+  <data name="Settings.PlatformProgressIndicatorEnable" xml:space="preserve">
+    <value>Enable progress indicator</value>
+  </data>
+  <data name="Settings.PlatformProgressIndicatorHint" xml:space="preserve">
+    <value>Show overall download progress on the Windows taskbar or macOS Dock icon while downloading.</value>
+  </data>
+  <data name="Settings.BackgroundImage" xml:space="preserve">
+    <value>Custom Background Image</value>
+  </data>
+  <data name="Settings.BackgroundImageHint" xml:space="preserve">
+    <value>Choose a JPG/PNG image as the app background with blur and opacity controls.</value>
+  </data>
+  <data name="Settings.BackgroundBlur" xml:space="preserve">
+    <value>Blur Radius</value>
+  </data>
+  <data name="Settings.BackgroundOpacity" xml:space="preserve">
+    <value>Opacity</value>
+  </data>
+  <data name="Settings.ClearBackground" xml:space="preserve">
+    <value>Clear</value>
+  </data>
+  <data name="Settings.BackgroundStretch" xml:space="preserve">
+    <value>Stretch Mode</value>
+  </data>
+  <data name="Settings.StretchNone" xml:space="preserve">
+    <value>None (original size)</value>
+  </data>
+  <data name="Settings.StretchFill" xml:space="preserve">
+    <value>Fill (may distort)</value>
+  </data>
+  <data name="Settings.StretchUniform" xml:space="preserve">
+    <value>Uniform (may letterbox)</value>
+  </data>
+  <data name="Settings.StretchUniformToFill" xml:space="preserve">
+    <value>Uniform to Fill (may crop)</value>
+  </data>
+  <data name="Dialog.SelectBackgroundImage" xml:space="preserve">
+    <value>Select Background Image</value>
+  </data>
+</root>

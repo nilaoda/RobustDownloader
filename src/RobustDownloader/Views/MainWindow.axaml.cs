@@ -177,7 +177,7 @@ public partial class MainWindow : ShadUI.Window
         if (result == null) return;
 
         vm.ApplySettings(result);
-        ShowToast(LocalizationService.Get("Main.SettingsSaved"), ToastKind.Success);
+        ShowToast(L.Main_SettingsSaved, ToastKind.Success);
     }
 
     private void SpeedLimit_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -214,11 +214,11 @@ public partial class MainWindow : ShadUI.Window
         try
         {
             OpenContainingFolder(task.FullSavePath, task.SaveDirectory);
-            ShowToast(LocalizationService.Get("Main.OpenedFolder"), ToastKind.Success);
+            ShowToast(L.Main_OpenedFolder, ToastKind.Success);
         }
         catch (System.Exception ex)
         {
-            ShowToast(LocalizationService.Format("Main.OpenFolderFailed", ex.Message), ToastKind.Error);
+            ShowToast(L.Main_OpenFolderFailed(ex.Message), ToastKind.Error);
         }
     }
 
@@ -230,11 +230,11 @@ public partial class MainWindow : ShadUI.Window
         try
         {
             (DataContext as MainWindowViewModel)?.ReDownloadTasks(tasks);
-            ShowToast(LocalizationService.Get("Main.ReDownloadQueued"), ToastKind.Success);
+            ShowToast(L.Main_ReDownloadQueued, ToastKind.Success);
         }
         catch (System.Exception ex)
         {
-            ShowToast(LocalizationService.Format("Main.ReDownloadFailed", ex.Message), ToastKind.Error);
+            ShowToast(L.Main_ReDownloadFailed(ex.Message), ToastKind.Error);
         }
     }
 
@@ -250,11 +250,11 @@ public partial class MainWindow : ShadUI.Window
         try
         {
             await Clipboard.SetTextAsync(text);
-            ShowToast(LocalizationService.Get("Main.Copied"), ToastKind.Success);
+            ShowToast(L.Main_Copied, ToastKind.Success);
         }
         catch (System.Exception ex)
         {
-            ShowToast(LocalizationService.Format("Main.CopyFailed", ex.Message), ToastKind.Error);
+            ShowToast(L.Main_CopyFailed(ex.Message), ToastKind.Error);
         }
     }
 
