@@ -1,4 +1,5 @@
 using System;
+using System.ComponentModel;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -18,6 +19,7 @@ public sealed class DesktopIntegrationService : IDisposable
     private readonly IClassicDesktopStyleApplicationLifetime _desktop;
     private readonly MainWindow _mainWindow;
     private readonly MainWindowViewModel _viewModel;
+    private readonly PlatformProgressIndicatorService _progressIndicator;
     private readonly NativeMenuItem _showMenuItem = new();
     private readonly NativeMenuItem _hideMenuItem = new();
     private readonly NativeMenuItem _exitMenuItem = new();
@@ -39,12 +41,15 @@ public sealed class DesktopIntegrationService : IDisposable
         _desktop.ShutdownMode = ShutdownMode.OnExplicitShutdown;
         _desktop.Exit += (_, _) => _viewModel.Shutdown();
         _mainWindow.Closing += MainWindow_Closing;
+        _viewModel.PropertyChanged += ViewModel_PropertyChanged;
         LocalizationService.LanguageChanged += LocalizationService_LanguageChanged;
         _activatableLifetime = Application.Current?.ApplicationLifetime as IActivatableLifetime;
         if (_activatableLifetime != null)
             _activatableLifetime.Activated += ActivatableLifetime_Activated;
 
         ConfigureTrayIcon();
+        _progressIndicator = new PlatformProgressIndicatorService(_mainWindow);
+        UpdatePlatformProgressIndicator();
     }
 
     public void ShowMainWindow()
@@ -54,7 +59,7 @@ public sealed class DesktopIntegrationService : IDisposable
         _closeDialogOpen = false;
         _viewModel.DialogManager.Dispose();
 
-        MacOSDockIconService.ShowDockIcon();
+        ShowMacOSDockIcon();
         _activatableLifetime?.TryLeaveBackground();
 
         if (_mainWindow.WindowState == WindowState.Minimized)
@@ -126,7 +131,7 @@ public sealed class DesktopIntegrationService : IDisposable
         if (_disposed) return;
 
         _mainWindow.Hide();
-        MacOSDockIconService.HideDockIcon();
+        HideMacOSDockIcon();
     }
 
     private void ConfigureTrayIcon()
@@ -155,6 +160,20 @@ public sealed class DesktopIntegrationService : IDisposable
         UpdateLocalizedText();
     }
 
+    private void ViewModel_PropertyChanged(object? sender, PropertyChangedEventArgs e)
+    {
+        if (e.PropertyName is nameof(MainWindowViewModel.IsPlatformProgressVisible)
+            or nameof(MainWindowViewModel.PlatformProgressValue)
+            or nameof(MainWindowViewModel.PlatformProgressSnapshot))
+            UpdatePlatformProgressIndicator();
+    }
+
+    private void UpdatePlatformProgressIndicator()
+    {
+        if (_disposed) return;
+        _progressIndicator.SetProgress(_viewModel.PlatformProgressSnapshot);
+    }
+
     private void ActivatableLifetime_Activated(object? sender, ActivatedEventArgs e)
     {
         if (!_mainWindow.IsVisible)
@@ -175,7 +194,8 @@ public sealed class DesktopIntegrationService : IDisposable
         if (_exitRequested) return;
 
         _exitRequested = true;
-        MacOSDockIconService.ShowDockIcon();
+        ShowMacOSDockIcon();
+        _progressIndicator.Clear();
         _trayIcon?.Dispose();
         _trayIcon = null;
         _viewModel.Shutdown();
@@ -188,10 +208,24 @@ public sealed class DesktopIntegrationService : IDisposable
         _disposed = true;
 
         LocalizationService.LanguageChanged -= LocalizationService_LanguageChanged;
+        _viewModel.PropertyChanged -= ViewModel_PropertyChanged;
         if (_activatableLifetime != null)
             _activatableLifetime.Activated -= ActivatableLifetime_Activated;
         _mainWindow.Closing -= MainWindow_Closing;
+        _progressIndicator.Dispose();
         _trayIcon?.Dispose();
         _trayIcon = null;
+    }
+
+    private static void ShowMacOSDockIcon()
+    {
+        if (OperatingSystem.IsMacOS())
+            MacOSDockIconService.ShowDockIcon();
+    }
+
+    private static void HideMacOSDockIcon()
+    {
+        if (OperatingSystem.IsMacOS())
+            MacOSDockIconService.HideDockIcon();
     }
 }

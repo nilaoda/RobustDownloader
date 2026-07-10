@@ -52,6 +52,8 @@ public partial class MainWindowViewModel : ViewModelBase
     [ObservableProperty] private string _backgroundStretch = "UniformToFill";
     [ObservableProperty] private double _backgroundBlur;
     [ObservableProperty] private double _backgroundOpacity = 0.5;
+    [ObservableProperty] private bool _isPlatformProgressVisible;
+    [ObservableProperty] private double _platformProgressValue;
 
     public Avalonia.Media.Stretch BackgroundStretchValue =>
         Enum.TryParse<Avalonia.Media.Stretch>(BackgroundStretch, out var s)
@@ -82,6 +84,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             RefreshTaskTree();
             RefreshVisibleTasks();
+            UpdatePlatformProgress();
             SaveTasks();
         };
         LocalizationService.LanguageChanged += (_, _) => RefreshLocalizedText();
@@ -120,6 +123,9 @@ public partial class MainWindowViewModel : ViewModelBase
     }
     public WindowCloseBehavior WindowCloseBehavior => _settings.WindowCloseBehavior;
     public bool ConfirmCloseToTray => _settings.ConfirmCloseToTray;
+    public bool ShowPlatformProgressIndicator => _settings.ShowPlatformProgressIndicator;
+    public PlatformProgressSnapshot PlatformProgressSnapshot =>
+        new(IsPlatformProgressVisible, PlatformProgressValue);
     public bool CheckForUpdates
     {
         get => _settings.CheckForUpdates;
@@ -146,6 +152,16 @@ public partial class MainWindowViewModel : ViewModelBase
     partial void OnBackgroundImagePathChanged(string value)
     {
         OnPropertyChanged(nameof(BackgroundImage));
+    }
+
+    partial void OnIsPlatformProgressVisibleChanged(bool value)
+    {
+        OnPropertyChanged(nameof(PlatformProgressSnapshot));
+    }
+
+    partial void OnPlatformProgressValueChanged(double value)
+    {
+        OnPropertyChanged(nameof(PlatformProgressSnapshot));
     }
 
     public void UpdateIsAnyTaskSelected(bool hasSelection)
@@ -256,6 +272,7 @@ public partial class MainWindowViewModel : ViewModelBase
         RefreshTaskTree();
         RefreshVisibleTasks();
         SaveTasks();
+        UpdatePlatformProgress();
         return addedTasks;
     }
 
@@ -304,6 +321,7 @@ public partial class MainWindowViewModel : ViewModelBase
         RefreshTaskTree();
         RefreshVisibleTasks();
         SaveTasks();
+        UpdatePlatformProgress();
     }
 
     public void StopTasks(IEnumerable<DownloadTask> tasks)
@@ -313,6 +331,7 @@ public partial class MainWindowViewModel : ViewModelBase
         RefreshTaskTree();
         RefreshVisibleTasks();
         SaveTasks();
+        UpdatePlatformProgress();
     }
 
     public void DeleteTasks(IEnumerable<DownloadTask> tasks)
@@ -325,6 +344,7 @@ public partial class MainWindowViewModel : ViewModelBase
         RefreshTaskTree();
         RefreshVisibleTasks();
         SaveTasks();
+        UpdatePlatformProgress();
     }
 
     public void ReDownloadTasks(IEnumerable<DownloadTask> tasks)
@@ -338,6 +358,7 @@ public partial class MainWindowViewModel : ViewModelBase
         RefreshTaskTree();
         RefreshVisibleTasks();
         SaveTasks();
+        UpdatePlatformProgress();
     }
 
     private static void DeleteDownloadedFiles(DownloadTask task)
@@ -352,6 +373,8 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         task.Status = DownloadTaskStatus.Pending;
         task.Progress = 0;
+        task.ProgressBytesWritten = 0;
+        task.ProgressTotalBytes = 0;
         task.Speed = "-";
         task.Eta = "-";
         task.Log = "TaskLog.Queued";
@@ -473,9 +496,11 @@ public partial class MainWindowViewModel : ViewModelBase
         BackgroundStretch = _settings.BackgroundStretch;
         BackgroundBlur = _settings.BackgroundBlur;
         BackgroundOpacity = _settings.BackgroundOpacity;
+        OnPropertyChanged(nameof(ShowPlatformProgressIndicator));
         RefreshTaskListScopeOptions(_taskListLimit);
         RefreshTaskTree();
         RefreshVisibleTasks();
+        UpdatePlatformProgress();
         SaveSettings();
     }
 
@@ -566,6 +591,7 @@ public partial class MainWindowViewModel : ViewModelBase
             task.Status = DownloadTaskStatus.Running;
             task.Log = "TaskLog.Started";
             task.Mode = "-";
+            UpdatePlatformProgress();
         });
 
         var service = new RobustDownloaderService();
@@ -607,7 +633,11 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             _runningTasks.TryRemove(task.Id, out _);
             _taskSpeeds.TryRemove(task.Id, out _);
-            await Dispatcher.UIThread.InvokeAsync(UpdateGlobalSpeed);
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                UpdateGlobalSpeed();
+                UpdatePlatformProgress();
+            });
             cts.Dispose();
             await Dispatcher.UIThread.InvokeAsync(SaveTasks);
         }
@@ -620,10 +650,14 @@ public partial class MainWindowViewModel : ViewModelBase
             task.TotalSizeStr = FormatSize(progress.TotalBytes);
             task.FileSize = $"{FormatSize(progress.BytesWritten)} / {task.TotalSizeStr}";
             task.Progress = progress.ProgressPercent;
+            task.ProgressBytesWritten = progress.BytesWritten;
+            task.ProgressTotalBytes = progress.TotalBytes;
         }
         else if (progress.BytesWritten > 0)
         {
             task.FileSize = FormatSize(progress.BytesWritten);
+            task.ProgressBytesWritten = progress.BytesWritten;
+            task.ProgressTotalBytes = 0;
         }
 
         if (progress.SpeedBytesPerSecond > 0)
@@ -635,6 +669,7 @@ public partial class MainWindowViewModel : ViewModelBase
             task.Log = progress.Message;
         task.Diagnostic = progress.Diagnostic;
         task.Mode = progress.Mode;
+        UpdatePlatformProgress();
     }
 
     private void ApplyResult(DownloadTask task, DownloadResult result)
@@ -644,6 +679,7 @@ public partial class MainWindowViewModel : ViewModelBase
             case DownloadResultKind.Completed:
                 task.Status = DownloadTaskStatus.Completed;
                 task.Progress = 100;
+                task.ProgressBytesWritten = task.ProgressTotalBytes;
                 task.Speed = "-";
                 task.Eta = "Eta.Completed";
                 if (task.TotalSizeStr != "?")
@@ -653,12 +689,14 @@ public partial class MainWindowViewModel : ViewModelBase
             case DownloadResultKind.Skipped:
                 task.Status = DownloadTaskStatus.Completed;
                 task.Progress = 100;
+                task.ProgressBytesWritten = task.ProgressTotalBytes;
                 task.Speed = "-";
                 task.Eta = "Eta.Exists";
                 ShowToast(LocalizationService.Format("Toast.DownloadSkipped", task.FileName), ToastKind.Info);
                 break;
             case DownloadResultKind.CrcOnlyCompleted:
                 task.Status = DownloadTaskStatus.Completed;
+                task.ProgressBytesWritten = task.ProgressTotalBytes;
                 task.Speed = "-";
                 task.Eta = "CRC";
                 ShowToast(LocalizationService.Format("Toast.CrcCompleted", task.FileName), ToastKind.Success);
@@ -676,6 +714,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
 
         task.Log = GetResultLogValue(result);
+        UpdatePlatformProgress();
     }
 
     private void StopTask(DownloadTask task)
@@ -686,12 +725,14 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 cts.Cancel();
                 task.Log = "TaskLog.Stopping";
+                UpdatePlatformProgress();
             }
         }
         else if (task.Status == DownloadTaskStatus.Pending)
         {
             task.Status = DownloadTaskStatus.Stopped;
             task.Log = "TaskLog.Removed";
+            UpdatePlatformProgress();
         }
     }
 
@@ -845,6 +886,52 @@ public partial class MainWindowViewModel : ViewModelBase
         var totalSpeed = _taskSpeeds.Values.Sum();
         GlobalSpeedText = $"{FormatSize(totalSpeed)}/s";
         UpdateStatusText(_runningTasks.Count, Tasks.Count(t => t.Status == DownloadTaskStatus.Pending));
+    }
+
+    private void UpdatePlatformProgress()
+    {
+        if (!_settings.ShowPlatformProgressIndicator)
+        {
+            SetPlatformProgress(false, 0);
+            return;
+        }
+
+        var runningTasks = Tasks
+            .Where(task => task.Status == DownloadTaskStatus.Running)
+            .ToList();
+
+        if (runningTasks.Count == 0)
+        {
+            SetPlatformProgress(false, 0);
+            return;
+        }
+
+        if (runningTasks.Count == 1)
+        {
+            SetPlatformProgress(true, runningTasks[0].Progress / 100);
+            return;
+        }
+
+        var allTotalsKnown = runningTasks.All(task => task.ProgressTotalBytes > 0);
+        if (allTotalsKnown)
+        {
+            var totalBytes = runningTasks.Sum(task => task.ProgressTotalBytes);
+            var writtenBytes = runningTasks.Sum(task => Math.Clamp(task.ProgressBytesWritten, 0, task.ProgressTotalBytes));
+            SetPlatformProgress(true, totalBytes > 0 ? writtenBytes / (double)totalBytes : 0);
+            return;
+        }
+
+        SetPlatformProgress(true, runningTasks.Average(task => task.Progress / 100));
+    }
+
+    private void SetPlatformProgress(bool isVisible, double value)
+    {
+        value = Math.Clamp(value, 0, 1);
+
+        if (IsPlatformProgressVisible != isVisible)
+            IsPlatformProgressVisible = isVisible;
+        if (Math.Abs(PlatformProgressValue - value) >= 0.001)
+            PlatformProgressValue = value;
     }
 
     private void UpdateStatusText(int running, int pending)

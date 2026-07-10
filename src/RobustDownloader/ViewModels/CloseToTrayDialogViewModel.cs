@@ -1,4 +1,4 @@
-using System.Runtime.InteropServices;
+using System;
 using RobustDownloader.Models;
 using RobustDownloader.Services;
 using ShadUI;
@@ -9,7 +9,7 @@ public sealed class CloseToTrayDialogViewModel(DialogManager dialogManager)
 {
     public bool DoNotAskAgain { get; set; }
     public WindowCloseBehavior Choice { get; private set; } = WindowCloseBehavior.MinimizeToTray;
-    public bool IsMenuBar => RuntimeInformation.IsOSPlatform(OSPlatform.OSX);
+    public bool IsMenuBar => OperatingSystem.IsMacOS();
     public string Title => LocalizationService.Get("CloseDialog.Title");
     public string Message => LocalizationService.Get(IsMenuBar ? "CloseDialog.Message.MenuBar" : "CloseDialog.Message.Tray");
     public string MinimizeText => LocalizationService.Get(IsMenuBar ? "CloseDialog.MinimizeToMenuBar" : "CloseDialog.MinimizeToTray");

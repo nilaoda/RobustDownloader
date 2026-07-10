@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Diagnostics;
 using System.Globalization;
+using System.Runtime.Versioning;
 using Avalonia;
 using RobustDownloader.Models;
 
@@ -116,6 +117,7 @@ public static class LocalizationService
             yield return Environment.GetEnvironmentVariable(variable) ?? "";
     }
 
+    [SupportedOSPlatform("macos")]
     private static IReadOnlyList<string> ReadMacOSAppleLanguages()
     {
         try
@@ -457,6 +459,9 @@ RobustDownloader 命令行用法
         ["Update.Available"] = "{0} 可用 →",
         ["Settings.CheckForUpdates"] = "自动检查更新",
         ["Settings.CheckForUpdatesHint"] = "启动时和运行期间定期检查是否有新版本。",
+        ["Settings.PlatformProgressIndicator"] = "任务栏/Dock 进度指示",
+        ["Settings.PlatformProgressIndicatorEnable"] = "启用进度指示",
+        ["Settings.PlatformProgressIndicatorHint"] = "下载中在 Windows 任务栏或 macOS Dock 图标上显示整体进度。",
         ["Settings.BackgroundImage"] = "自定义背景图",
         ["Settings.BackgroundImageHint"] = "选择 JPG/PNG 图片作为程序背景，支持模糊和透明度调整。",
         ["Settings.BackgroundBlur"] = "模糊半径",
@@ -754,6 +759,9 @@ Examples:
         ["Update.Available"] = "{0} available →",
         ["Settings.CheckForUpdates"] = "Check for updates automatically",
         ["Settings.CheckForUpdatesHint"] = "Periodically check for new versions on startup and while running.",
+        ["Settings.PlatformProgressIndicator"] = "Taskbar / Dock progress indicator",
+        ["Settings.PlatformProgressIndicatorEnable"] = "Enable progress indicator",
+        ["Settings.PlatformProgressIndicatorHint"] = "Show overall download progress on the Windows taskbar or macOS Dock icon while downloading.",
         ["Settings.BackgroundImage"] = "Custom Background Image",
         ["Settings.BackgroundImageHint"] = "Choose a JPG/PNG image as the app background with blur and opacity controls.",
         ["Settings.BackgroundBlur"] = "Blur Radius",
@@ -1051,6 +1059,9 @@ RobustDownloader 命令列用法
         ["Update.Available"] = "{0} 可用 →",
         ["Settings.CheckForUpdates"] = "自動檢查更新",
         ["Settings.CheckForUpdatesHint"] = "啟動時和執行期間定期檢查是否有新版本。",
+        ["Settings.PlatformProgressIndicator"] = "工作列/Dock 進度指示",
+        ["Settings.PlatformProgressIndicatorEnable"] = "啟用進度指示",
+        ["Settings.PlatformProgressIndicatorHint"] = "下載中在 Windows 工作列或 macOS Dock 圖示上顯示整體進度。",
         ["Settings.BackgroundImage"] = "自訂背景圖",
         ["Settings.BackgroundImageHint"] = "選擇 JPG/PNG 圖片作為程式背景，支援模糊和透明度調整。",
         ["Settings.BackgroundBlur"] = "模糊半徑",

@@ -1,8 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace RobustDownloader.Services;
 
+[SupportedOSPlatform("macos")]
 internal static class MacOSDockIconService
 {
     private const long NSApplicationActivationPolicyRegular = 0;
@@ -10,16 +12,12 @@ internal static class MacOSDockIconService
 
     public static void ShowDockIcon()
     {
-        if (!OperatingSystem.IsMacOS()) return;
-
         SetActivationPolicy(NSApplicationActivationPolicyRegular);
         ActivateIgnoringOtherApps();
     }
 
     public static void HideDockIcon()
     {
-        if (!OperatingSystem.IsMacOS()) return;
-
         SetActivationPolicy(NSApplicationActivationPolicyAccessory);
     }
 

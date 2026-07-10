@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.IO;
 using System.Linq;
-using System.Runtime.InteropServices;
 using Avalonia;
 using Avalonia.Controls;
 using Avalonia.VisualTree;
@@ -272,7 +271,7 @@ public partial class MainWindow : ShadUI.Window
             ? fallbackDirectory
             : Path.GetDirectoryName(fullPath) ?? fallbackDirectory;
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.Windows))
+        if (OperatingSystem.IsWindows())
         {
             var target = File.Exists(fullPath) ? fullPath : directory;
             if (Win32Util.TryOpenFolderAndSelectItem(target))
@@ -287,7 +286,7 @@ public partial class MainWindow : ShadUI.Window
             return;
         }
 
-        if (RuntimeInformation.IsOSPlatform(OSPlatform.OSX))
+        if (OperatingSystem.IsMacOS())
         {
             var startInfo = new ProcessStartInfo
             {

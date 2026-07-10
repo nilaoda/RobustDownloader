@@ -1,6 +1,7 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 using System.Text;
 
 namespace RobustDownloader.Services;
@@ -36,6 +37,7 @@ public static class CommandLineConsole
         }
     }
 
+    [SupportedOSPlatform("windows")]
     private static void ResetConsoleWriters()
     {
         try
@@ -54,6 +56,7 @@ public static class CommandLineConsole
         }
     }
 
+    [SupportedOSPlatform("windows")]
     [DllImport("kernel32.dll", SetLastError = true)]
     private static extern bool AttachConsole(int processId);
 }
