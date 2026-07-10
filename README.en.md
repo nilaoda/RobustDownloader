@@ -50,6 +50,7 @@ End users do not need to install the .NET SDK or a development environment. Down
 - Close-to-tray support, or close to the macOS menu bar, with an exit menu item
 - Single-instance behavior that activates the existing window when launched again
 - Command line task adding, silent adding, start-all, and stop-all controls
+- Overall download progress indicator on the Windows taskbar and macOS Dock, with a setting to disable it
 - Collapsible task detail panel with logs, headers, diagnostics, and run mode
 - Custom background image with blur, opacity, and stretch mode controls
 - Automatic update check on startup and periodic GitHub release check

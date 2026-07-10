@@ -150,6 +150,13 @@
                         </StackPanel>
 
                         <StackPanel Spacing="8">
+                            <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.PlatformProgressIndicator}"/>
+                            <CheckBox Content="{DynamicResource Settings.PlatformProgressIndicatorEnable}"
+                                      IsChecked="{Binding ShowPlatformProgressIndicator}"/>
+                            <TextBlock Classes="Hint" Text="{DynamicResource Settings.PlatformProgressIndicatorHint}"/>
+                        </StackPanel>
+
+                        <StackPanel Spacing="8">
                             <TextBlock Classes="SectionTitle" Text="{DynamicResource Settings.BackgroundImage}"/>
                             <Grid ColumnDefinitions="*,8,Auto,8,Auto">
                                 <TextBox x:Name="TxtBackgroundImagePath"

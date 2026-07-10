@@ -1,8 +1,10 @@
 using System;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
 
 namespace RobustDownloader.Services;
 
+[SupportedOSPlatform("windows")]
 internal static class Win32Util
 {
     [DllImport("shell32.dll", CharSet = CharSet.Unicode)]

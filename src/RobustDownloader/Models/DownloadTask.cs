@@ -52,6 +52,12 @@ public sealed class DownloadTask : INotifyPropertyChanged
     public string HeaderText { get; set; } = "";
 
     [JsonIgnore]
+    public long ProgressBytesWritten { get; set; }
+
+    [JsonIgnore]
+    public long ProgressTotalBytes { get; set; }
+
+    [JsonIgnore]
     public string UpdateFileTimestampText => UpdateFileTimestamp
         ? LocalizationService.Get("Task.FileTime.Server")
         : LocalizationService.Get("Task.FileTime.Local");
