@@ -3,12 +3,25 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Text;
 
 namespace RobustDownloader.Services;
 
 public static class CommandLineParser
 {
     public static string HelpText => L.Cli_Help;
+
+    public static CommandLineParseResult ParseAddTaskText(string commandLine)
+    {
+        if (!TryTokenize(commandLine, out var args))
+            return Error(L.Cli_Error_UnclosedQuote);
+
+        if (args.Length > 0 && IsApplicationToken(args[0]))
+            args = args[1..];
+
+        args = args.Where(arg => !IsIgnoredAddTaskInputOption(arg)).ToArray();
+        return Parse(args);
+    }
 
     public static CommandLineParseResult Parse(string[] args)
     {
@@ -185,6 +198,15 @@ public static class CommandLineParser
                string.Equals(value, "/?", StringComparison.OrdinalIgnoreCase);
     }
 
+    private static bool IsIgnoredAddTaskInputOption(string value)
+    {
+        return IsHelpOption(value) ||
+               string.Equals(value, "--show", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(value, "--start-all", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(value, "--stop-all", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(value, "--silent", StringComparison.OrdinalIgnoreCase);
+    }
+
     private static bool SetCommandKind(CommandLineCommandKind value, ref CommandLineCommandKind? commandKind, out string error)
     {
         if (commandKind is { } existing && existing != value)
@@ -234,6 +256,83 @@ public static class CommandLineParser
     {
         return Uri.TryCreate(value, UriKind.Absolute, out var uri) &&
                (uri.Scheme == Uri.UriSchemeHttp || uri.Scheme == Uri.UriSchemeHttps);
+    }
+
+    private static bool TryTokenize(string commandLine, out string[] args)
+    {
+        var result = new List<string>();
+        var current = new StringBuilder();
+        char? activeQuote = null;
+        var tokenStarted = false;
+
+        for (var index = 0; index < commandLine.Length; index++)
+        {
+            var character = commandLine[index];
+            if (activeQuote is { } quote)
+            {
+                if (character == quote)
+                {
+                    if (index + 1 < commandLine.Length && commandLine[index + 1] == quote)
+                    {
+                        current.Append(quote);
+                        index++;
+                    }
+                    else
+                    {
+                        activeQuote = null;
+                    }
+                }
+                else
+                {
+                    current.Append(character);
+                }
+
+                tokenStarted = true;
+                continue;
+            }
+
+            if (character is '"' or '\'')
+            {
+                activeQuote = character;
+                tokenStarted = true;
+                continue;
+            }
+
+            if (char.IsWhiteSpace(character))
+            {
+                if (tokenStarted)
+                {
+                    result.Add(current.ToString());
+                    current.Clear();
+                    tokenStarted = false;
+                }
+
+                continue;
+            }
+
+            current.Append(character);
+            tokenStarted = true;
+        }
+
+        if (activeQuote != null)
+        {
+            args = [];
+            return false;
+        }
+
+        if (tokenStarted)
+            result.Add(current.ToString());
+
+        args = result.ToArray();
+        return true;
+    }
+
+    private static bool IsApplicationToken(string value)
+    {
+        var normalized = value.Replace('\\', '/');
+        var fileName = normalized[(normalized.LastIndexOf('/') + 1)..];
+        return string.Equals(fileName, "RobustDownloader", StringComparison.OrdinalIgnoreCase) ||
+               string.Equals(fileName, "RobustDownloader.exe", StringComparison.OrdinalIgnoreCase);
     }
 
     private static bool TryNormalizeDirectory(string value, out string normalizedDirectory, out string error)

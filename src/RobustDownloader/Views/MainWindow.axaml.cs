@@ -58,9 +58,9 @@ public partial class MainWindow : ShadUI.Window
     {
         if (DataContext is not MainWindowViewModel vm) return;
         var dialog = new AddTaskWindow(vm.BuildDefaultAddTask());
-        var result = await dialog.ShowDialog<AddTaskResult?>(this);
-        if (result == null) return;
-        vm.AddTasks(result);
+        var results = await dialog.ShowDialog<AddTaskResult[]?>(this);
+        if (results == null) return;
+        vm.AddTaskGroups(results);
         ScrollTaskGridToBottomAsync();
     }
 
