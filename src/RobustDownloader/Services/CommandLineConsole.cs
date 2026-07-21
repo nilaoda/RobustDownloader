@@ -2,7 +2,6 @@ using System;
 using System.IO;
 using System.Runtime.InteropServices;
 using System.Runtime.Versioning;
-using System.Text;
 
 namespace RobustDownloader.Services;
 
@@ -42,13 +41,15 @@ public static class CommandLineConsole
     {
         try
         {
+            var encoding = Console.OutputEncoding;
+
             var output = Console.OpenStandardOutput();
             if (output != Stream.Null)
-                Console.SetOut(new StreamWriter(output, Encoding.UTF8) { AutoFlush = true });
+                Console.SetOut(new StreamWriter(output, encoding) { AutoFlush = true });
 
             var error = Console.OpenStandardError();
             if (error != Stream.Null)
-                Console.SetError(new StreamWriter(error, Encoding.UTF8) { AutoFlush = true });
+                Console.SetError(new StreamWriter(error, encoding) { AutoFlush = true });
         }
         catch
         {

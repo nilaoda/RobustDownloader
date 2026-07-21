@@ -143,7 +143,7 @@ public static class CommandLineParser
                     return Error(directoryError);
 
                 saveDirectory = normalizedDirectory;
-                if (!Directory.Exists(saveDirectory))
+                if (!FolderPathHelper.DirectoryExists(saveDirectory))
                     return Error(L.Cli_Error_SaveDirMissing(saveDirectory));
             }
         }
@@ -241,7 +241,7 @@ public static class CommandLineParser
         var trimmed = value.Trim();
         try
         {
-            normalizedDirectory = Path.GetFullPath(trimmed);
+            normalizedDirectory = Path.GetFullPath(FolderPathHelper.Normalize(trimmed));
             error = "";
             return true;
         }
