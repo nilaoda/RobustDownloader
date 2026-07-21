@@ -124,6 +124,7 @@ jobs:
           CONTENTS_DIR="$APP_ROOT/Contents"
           MACOS_DIR="$CONTENTS_DIR/MacOS"
           RESOURCES_DIR="$CONTENTS_DIR/Resources"
+          VERSION=$(dotnet msbuild src/RobustDownloader/RobustDownloader.csproj -getProperty:Version)
 
           rm -rf "$APP_ROOT"
           mkdir -p "$MACOS_DIR" "$RESOURCES_DIR"
@@ -154,7 +155,7 @@ jobs:
             <key>CFBundlePackageType</key>
             <string>APPL</string>
             <key>CFBundleShortVersionString</key>
-            <string>0.0.1</string>
+            <string>$VERSION</string>
             <key>CFBundleVersion</key>
             <string>${{ needs.set-date.outputs.date }}</string>
             <key>LSMinimumSystemVersion</key>
