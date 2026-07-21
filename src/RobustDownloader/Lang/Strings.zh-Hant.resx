@@ -208,6 +208,9 @@
   <data name="Cli.Error.OptionRequiresValue" xml:space="preserve">
     <value>{0} 需要一個值。</value>
   </data>
+  <data name="Cli.Error.UnclosedQuote" xml:space="preserve">
+    <value>命令中存在未閉合的引號。</value>
+  </data>
   <data name="Main.OpenFolder" xml:space="preserve">
     <value>開啟資料夾</value>
   </data>
@@ -383,7 +386,25 @@
     <value>新增下載任務</value>
   </data>
   <data name="Add.Description" xml:space="preserve">
-    <value>貼上一個或多個 URL，確認儲存目錄後加入佇列。</value>
+    <value>手動輸入下載地址，或貼上一條或多條 RobustDownloader 命令。</value>
+  </data>
+  <data name="Add.InputMode" xml:space="preserve">
+    <value>輸入方式</value>
+  </data>
+  <data name="Add.InputUrls" xml:space="preserve">
+    <value>下載地址</value>
+  </data>
+  <data name="Add.InputCommands" xml:space="preserve">
+    <value>命令列</value>
+  </data>
+  <data name="Add.Commands" xml:space="preserve">
+    <value>RobustDownloader 命令</value>
+  </data>
+  <data name="Add.CommandsWithCount" xml:space="preserve">
+    <value>RobustDownloader 命令（共 {0} 筆）</value>
+  </data>
+  <data name="Add.CommandsHint" xml:space="preserve">
+    <value>一行一條完整命令。程式名稱可以省略；非新增任務選項會被忽略。</value>
   </data>
   <data name="Add.Urls" xml:space="preserve">
     <value>下載地址</value>
@@ -462,6 +483,15 @@
   </data>
   <data name="Validation.EnterUrl" xml:space="preserve">
     <value>請輸入 URL。</value>
+  </data>
+  <data name="Validation.EnterCommand" xml:space="preserve">
+    <value>請至少輸入一條命令。</value>
+  </data>
+  <data name="Validation.NoAddCommands" xml:space="preserve">
+    <value>沒有找到可新增任務的命令。</value>
+  </data>
+  <data name="Validation.CommandLineError" xml:space="preserve">
+    <value>第 {0} 行：{1}</value>
   </data>
   <data name="Validation.SelectDirectory" xml:space="preserve">
     <value>請選擇儲存目錄。</value>

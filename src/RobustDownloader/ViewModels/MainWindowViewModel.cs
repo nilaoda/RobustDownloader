@@ -267,36 +267,45 @@ public partial class MainWindowViewModel : ViewModelBase
 
     public IReadOnlyList<DownloadTask> AddTasks(AddTaskResult result)
     {
+        return AddTaskGroups([result]);
+    }
+
+    public IReadOnlyList<DownloadTask> AddTaskGroups(IEnumerable<AddTaskResult> results)
+    {
+        var groups = results.Where(result => result.Urls.Length > 0).ToArray();
         var addedTasks = new List<DownloadTask>();
         _suppressTaskCollectionSideEffects = true;
         try
         {
-            for (var index = 0; index < result.Urls.Length; index++)
+            foreach (var result in groups)
             {
-                var url = result.Urls[index];
-                var fileName = result.Urls.Length == 1 && !string.IsNullOrWhiteSpace(result.SingleFileName)
-                    ? result.SingleFileName.Trim()
-                    : result.FileNames.Length == result.Urls.Length && !string.IsNullOrWhiteSpace(result.FileNames[index])
-                    ? result.FileNames[index].Trim()
-                    : TaskFileNameHelper.GetFileName(url);
-
-                var task = new DownloadTask
+                for (var index = 0; index < result.Urls.Length; index++)
                 {
-                    Url = url,
-                    SaveDirectory = result.SaveDirectory,
-                    FileName = fileName,
-                    ThreadCount = result.ThreadCount,
-                    BlockSize = result.BlockSize,
-                    CrcOnly = result.CrcOnly,
-                    SkipCrc = result.SkipCrc,
-                    UpdateFileTimestamp = result.UpdateFileTimestamp,
-                    HeaderText = result.HeaderText,
-                    Status = DownloadTaskStatus.Stopped,
-                    Log = LocKeys.TaskLog_Added
-                };
+                    var url = result.Urls[index];
+                    var fileName = result.Urls.Length == 1 && !string.IsNullOrWhiteSpace(result.SingleFileName)
+                        ? result.SingleFileName.Trim()
+                        : result.FileNames.Length == result.Urls.Length && !string.IsNullOrWhiteSpace(result.FileNames[index])
+                        ? result.FileNames[index].Trim()
+                        : TaskFileNameHelper.GetFileName(url);
 
-                Tasks.Add(task);
-                addedTasks.Add(task);
+                    var task = new DownloadTask
+                    {
+                        Url = url,
+                        SaveDirectory = result.SaveDirectory,
+                        FileName = fileName,
+                        ThreadCount = result.ThreadCount,
+                        BlockSize = result.BlockSize,
+                        CrcOnly = result.CrcOnly,
+                        SkipCrc = result.SkipCrc,
+                        UpdateFileTimestamp = result.UpdateFileTimestamp,
+                        HeaderText = result.HeaderText,
+                        Status = result.StartImmediately ? DownloadTaskStatus.Pending : DownloadTaskStatus.Stopped,
+                        Log = result.StartImmediately ? LocKeys.TaskLog_Queued : LocKeys.TaskLog_Added
+                    };
+
+                    Tasks.Add(task);
+                    addedTasks.Add(task);
+                }
             }
         }
         finally
@@ -304,7 +313,10 @@ public partial class MainWindowViewModel : ViewModelBase
             _suppressTaskCollectionSideEffects = false;
         }
 
-        _settings.LastDownloadDirectory = result.SaveDirectory;
+        if (groups.Length == 0)
+            return addedTasks;
+
+        _settings.LastDownloadDirectory = groups[^1].SaveDirectory;
         SaveSettings();
         RefreshTaskTree();
         RefreshVisibleTasks();
@@ -335,12 +347,11 @@ public partial class MainWindowViewModel : ViewModelBase
             SkipCrc = defaults.SkipCrc,
             HeaderText = string.IsNullOrWhiteSpace(options.HeaderText)
                 ? defaults.HeaderText
-                : options.HeaderText
+                : options.HeaderText,
+            StartImmediately = options.StartImmediately
         };
 
-        var addedTasks = AddTasks(result);
-        if (options.StartImmediately)
-            StartTasks(addedTasks);
+        AddTasks(result);
     }
 
     public void StartTasks(IEnumerable<DownloadTask> tasks)

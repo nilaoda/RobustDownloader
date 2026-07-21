@@ -208,6 +208,9 @@ Examples:
   <data name="Cli.Error.OptionRequiresValue" xml:space="preserve">
     <value>{0} requires a value.</value>
   </data>
+  <data name="Cli.Error.UnclosedQuote" xml:space="preserve">
+    <value>The command contains an unclosed quote.</value>
+  </data>
   <data name="Main.OpenFolder" xml:space="preserve">
     <value>Open Folder</value>
   </data>
@@ -383,7 +386,25 @@ Examples:
     <value>New Download Task</value>
   </data>
   <data name="Add.Description" xml:space="preserve">
-    <value>Paste one or more URLs, choose a save directory, then add them to the queue.</value>
+    <value>Enter URLs manually or paste one or more RobustDownloader commands.</value>
+  </data>
+  <data name="Add.InputMode" xml:space="preserve">
+    <value>Input Mode</value>
+  </data>
+  <data name="Add.InputUrls" xml:space="preserve">
+    <value>URLs</value>
+  </data>
+  <data name="Add.InputCommands" xml:space="preserve">
+    <value>Commands</value>
+  </data>
+  <data name="Add.Commands" xml:space="preserve">
+    <value>RobustDownloader Commands</value>
+  </data>
+  <data name="Add.CommandsWithCount" xml:space="preserve">
+    <value>RobustDownloader Commands ({0} total)</value>
+  </data>
+  <data name="Add.CommandsHint" xml:space="preserve">
+    <value>One complete command per line. The executable name is optional; non-add command options are ignored.</value>
   </data>
   <data name="Add.Urls" xml:space="preserve">
     <value>Download URLs</value>
@@ -462,6 +483,15 @@ Examples:
   </data>
   <data name="Validation.EnterUrl" xml:space="preserve">
     <value>Enter a URL.</value>
+  </data>
+  <data name="Validation.EnterCommand" xml:space="preserve">
+    <value>Enter at least one command.</value>
+  </data>
+  <data name="Validation.NoAddCommands" xml:space="preserve">
+    <value>No add commands were found.</value>
+  </data>
+  <data name="Validation.CommandLineError" xml:space="preserve">
+    <value>Line {0}: {1}</value>
   </data>
   <data name="Validation.SelectDirectory" xml:space="preserve">
     <value>Choose a save directory.</value>

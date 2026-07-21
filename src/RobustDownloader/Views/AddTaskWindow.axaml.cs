@@ -1,4 +1,5 @@
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Linq;
 using System.Threading.Tasks;
@@ -13,6 +14,8 @@ namespace RobustDownloader.Views;
 
 public partial class AddTaskWindow : ShadUI.Window
 {
+    private AddTaskResult _defaults = new();
+
     public AddTaskWindow()
     {
         InitializeComponent();
@@ -21,11 +24,13 @@ public partial class AddTaskWindow : ShadUI.Window
         TxtBatchStep.Text = "1";
         TxtBatchDigits.Text = "2";
         RdoBatchNamingAuto.IsChecked = true;
+        UpdateInputMode();
         UpdateUrlDependentFields();
     }
 
     public AddTaskWindow(AddTaskResult defaults) : this()
     {
+        _defaults = defaults;
         TxtSaveDir.Text = defaults.SaveDirectory;
         TxtThreads.Text = defaults.ThreadCount.ToString();
         TxtBlock.Text = defaults.BlockSize.ToString("0.##");
@@ -71,6 +76,30 @@ public partial class AddTaskWindow : ShadUI.Window
     private void TxtUrls_TextChanged(object? sender, TextChangedEventArgs e)
     {
         UpdateUrlDependentFields();
+    }
+
+    private void TxtCommands_TextChanged(object? sender, TextChangedEventArgs e)
+    {
+        var count = GetCommandLines().Length;
+        TxtCommandsLabel.Text = count == 0
+            ? L.Add_Commands
+            : L.Add_CommandsWithCount(count);
+    }
+
+    private void InputMode_Changed(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
+    {
+        UpdateInputMode();
+        Dispatcher.UIThread.Post(
+            () => (RdoInputCommands.IsChecked == true ? TxtCommands : TxtUrls).Focus(),
+            DispatcherPriority.Input);
+    }
+
+    private void UpdateInputMode()
+    {
+        var commandMode = RdoInputCommands.IsChecked == true;
+        UrlInputPanel.IsVisible = !commandMode;
+        CommandInputPanel.IsVisible = commandMode;
+        TxtValidation.Text = "";
     }
 
     private void UpdateUrlDependentFields()
@@ -165,6 +194,12 @@ public partial class AddTaskWindow : ShadUI.Window
     private void BtnAdd_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
     {
         TxtValidation.Text = "";
+        if (RdoInputCommands.IsChecked == true)
+        {
+            AddCommandLineTasks();
+            return;
+        }
+
         var urls = GetUrls();
         if (urls.Length == 0)
         {
@@ -213,19 +248,78 @@ public partial class AddTaskWindow : ShadUI.Window
             }
         }
 
-        Close(new AddTaskResult
+        Close(new[]
         {
-            Urls = urls,
-            FileNames = fileNames,
-            SaveDirectory = saveDir,
-            SingleFileName = TxtFileName.IsEnabled ? TxtFileName.Text?.Trim() ?? "" : "",
-            ThreadCount = threads,
-            BlockSize = block,
-            CrcOnly = ChkCrcOnly.IsChecked == true,
-            SkipCrc = ChkSkipCrc.IsChecked == true,
-            UpdateFileTimestamp = ChkUpdateFileTimestamp.IsChecked == true,
-            HeaderText = TxtHeaders.Text ?? ""
+            new AddTaskResult
+            {
+                Urls = urls,
+                FileNames = fileNames,
+                SaveDirectory = saveDir,
+                SingleFileName = TxtFileName.IsEnabled ? TxtFileName.Text?.Trim() ?? "" : "",
+                ThreadCount = threads,
+                BlockSize = block,
+                CrcOnly = ChkCrcOnly.IsChecked == true,
+                SkipCrc = ChkSkipCrc.IsChecked == true,
+                UpdateFileTimestamp = ChkUpdateFileTimestamp.IsChecked == true,
+                HeaderText = TxtHeaders.Text ?? ""
+            }
         });
+    }
+
+    private void AddCommandLineTasks()
+    {
+        var commandLines = GetCommandLines();
+        if (commandLines.Length == 0)
+        {
+            TxtValidation.Text = L.Validation_EnterCommand;
+            return;
+        }
+
+        var results = new List<AddTaskResult>();
+        foreach (var commandLine in commandLines)
+        {
+            var parseResult = CommandLineParser.ParseAddTaskText(commandLine.Text);
+            if (!string.IsNullOrWhiteSpace(parseResult.Error))
+            {
+                TxtValidation.Text = L.Validation_CommandLineError(commandLine.LineNumber, parseResult.Error);
+                return;
+            }
+
+            if (parseResult.Command.Kind != CommandLineCommandKind.AddTasks ||
+                parseResult.Command.AddTasks == null)
+                continue;
+
+            results.Add(BuildCommandTaskResult(parseResult.Command.AddTasks));
+        }
+
+        if (results.Count == 0)
+        {
+            TxtValidation.Text = L.Validation_NoAddCommands;
+            return;
+        }
+
+        Close(results.ToArray());
+    }
+
+    private AddTaskResult BuildCommandTaskResult(CommandLineAddTasksOptions options)
+    {
+        return new AddTaskResult
+        {
+            Urls = options.Urls,
+            SaveDirectory = string.IsNullOrWhiteSpace(options.SaveDirectory)
+                ? _defaults.SaveDirectory
+                : options.SaveDirectory,
+            SingleFileName = options.SingleFileName,
+            ThreadCount = options.ThreadCount ?? _defaults.ThreadCount,
+            BlockSize = options.BlockSizeMb ?? _defaults.BlockSize,
+            CrcOnly = _defaults.CrcOnly,
+            SkipCrc = _defaults.SkipCrc,
+            UpdateFileTimestamp = _defaults.UpdateFileTimestamp,
+            HeaderText = string.IsNullOrWhiteSpace(options.HeaderText)
+                ? _defaults.HeaderText
+                : options.HeaderText,
+            StartImmediately = options.StartImmediately
+        };
     }
 
     private void BtnCancel_Click(object? sender, Avalonia.Interactivity.RoutedEventArgs e)
@@ -239,6 +333,17 @@ public partial class AddTaskWindow : ShadUI.Window
             .Split(['\r', '\n'], StringSplitOptions.RemoveEmptyEntries)
             .Select(u => u.Trim())
             .Where(u => !string.IsNullOrWhiteSpace(u))
+            .ToArray();
+    }
+
+    private (int LineNumber, string Text)[] GetCommandLines()
+    {
+        return (TxtCommands.Text ?? "")
+            .Replace("\r\n", "\n", StringComparison.Ordinal)
+            .Replace('\r', '\n')
+            .Split('\n')
+            .Select((line, index) => (LineNumber: index + 1, Text: line.Trim()))
+            .Where(line => !string.IsNullOrWhiteSpace(line.Text))
             .ToArray();
     }
 

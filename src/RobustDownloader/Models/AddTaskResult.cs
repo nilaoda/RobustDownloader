@@ -12,4 +12,5 @@ public sealed class AddTaskResult
     public bool SkipCrc { get; init; }
     public bool UpdateFileTimestamp { get; init; } = true;
     public string HeaderText { get; init; } = "";
+    public bool StartImmediately { get; init; }
 }

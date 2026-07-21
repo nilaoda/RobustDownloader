@@ -274,6 +274,9 @@
   <data name="Cli.Error.OptionRequiresValue" xml:space="preserve">
     <value>{0} 需要一个值。</value>
   </data>
+  <data name="Cli.Error.UnclosedQuote" xml:space="preserve">
+    <value>命令中存在未闭合的引号。</value>
+  </data>
   <data name="Queue.Empty" xml:space="preserve">
     <value>队列空闲 | 无任务</value>
   </data>
@@ -383,7 +386,25 @@
     <value>新建下载任务</value>
   </data>
   <data name="Add.Description" xml:space="preserve">
-    <value>粘贴一个或多个 URL，确认保存目录后加入队列。</value>
+    <value>手动输入下载地址，或粘贴一条或多条 RobustDownloader 命令。</value>
+  </data>
+  <data name="Add.InputMode" xml:space="preserve">
+    <value>输入方式</value>
+  </data>
+  <data name="Add.InputUrls" xml:space="preserve">
+    <value>下载地址</value>
+  </data>
+  <data name="Add.InputCommands" xml:space="preserve">
+    <value>命令行</value>
+  </data>
+  <data name="Add.Commands" xml:space="preserve">
+    <value>RobustDownloader 命令</value>
+  </data>
+  <data name="Add.CommandsWithCount" xml:space="preserve">
+    <value>RobustDownloader 命令（共 {0} 条）</value>
+  </data>
+  <data name="Add.CommandsHint" xml:space="preserve">
+    <value>一行一条完整命令。程序名称可以省略；非添加任务选项会被忽略。</value>
   </data>
   <data name="Add.Urls" xml:space="preserve">
     <value>下载地址</value>
@@ -462,6 +483,15 @@
   </data>
   <data name="Validation.EnterUrl" xml:space="preserve">
     <value>请输入 URL。</value>
+  </data>
+  <data name="Validation.EnterCommand" xml:space="preserve">
+    <value>请至少输入一条命令。</value>
+  </data>
+  <data name="Validation.NoAddCommands" xml:space="preserve">
+    <value>没有找到可添加任务的命令。</value>
+  </data>
+  <data name="Validation.CommandLineError" xml:space="preserve">
+    <value>第 {0} 行：{1}</value>
   </data>
   <data name="Validation.SelectDirectory" xml:space="preserve">
     <value>请选择保存目录。</value>
